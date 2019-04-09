@@ -23,75 +23,11 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 @Configuration
 public class SecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
-	private static final String AUTH_HEADER_TOKEN_NAME = "X-HEADER-TOKEN";
-
-    @Value("${paasta.uaa.api.url}")
-    private String paastaUaaApiUrl;
-
-    @Autowired
-    UserRepository userRepository;
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // @formatter:off
-        http.antMatcher("/**")
-            .addFilterAfter(preAuthenticationFilter(), RequestHeaderAuthenticationFilter.class)
-            .authorizeRequests()
-                .anyRequest().authenticated()
-            .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
-            .and()
-                .csrf().disable();
-        // @formatter:on
-    }
-
-    @Bean
-    public RequestHeaderAuthenticationFilter preAuthenticationFilter() {
-        RequestHeaderAuthenticationFilter preAuthenticationFilter = new RequestHeaderAuthenticationFilter();
-        preAuthenticationFilter.setPrincipalRequestHeader(AUTH_HEADER_TOKEN_NAME);
-        preAuthenticationFilter.setCredentialsRequestHeader(AUTH_HEADER_TOKEN_NAME);
-        preAuthenticationFilter.setAuthenticationManager(authenticationManager());
-        preAuthenticationFilter.setExceptionIfHeaderMissing(false);
-
-        return preAuthenticationFilter;
-    }
-
-    @Override
-    protected AuthenticationManager authenticationManager() {
-        return new ProviderManager(Collections.singletonList(authenticationProvider()));
-    }
-
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        PreAuthenticatedAuthenticationProvider authenticationProvider = new PreAuthenticatedAuthenticationProvider();
-        authenticationProvider.setPreAuthenticatedUserDetailsService(authorizationUserDetailsService());
-        authenticationProvider.setThrowExceptionWhenTokenRejected(false);
-
-        return authenticationProvider;
-    }
-
-    @Bean
-    public AuthorizationUserDetailsService authorizationUserDetailsService() {
-        AuthorizationUserDetailsService authorizationUserDetailsService = new AuthorizationUserDetailsService();
-        authorizationUserDetailsService.setAuthRest(authRest());
-        authorizationUserDetailsService.setUserRepository(userRepository);
-
-        return authorizationUserDetailsService;
-    }
-
-    @Bean
-    public AuthenticationEntryPoint authenticationEntryPoint() {
-        return new Http403ForbiddenEntryPoint();
-    }
-
-    @Bean
-    RestTemplate authRest() {
-        RestTemplate rest = new RestTemplate();
-        rest.setUriTemplateHandler(new DefaultUriBuilderFactory(paastaUaaApiUrl));
-
-        return rest;
+        http.authorizeRequests()
+                .antMatchers("/**").permitAll();
+        http.csrf().disable();
     }
 
 }
