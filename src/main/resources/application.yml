@@ -1,9 +1,11 @@
+server:
+  port: 8778
+
 spring:
   application:
     name: marketplace-api
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://13.125.149.239:3333/marketplace?characterEncoding=utf8
     url: jdbc:mysql://localhost:3306/market_place?characterEncoding=utf8
     username: root
     password: admin
@@ -17,8 +19,8 @@ spring:
     serialization:
       fail-on-empty-beans: false
     default-property-inclusion: NON_NULL
-  batch:
-    initialize-schema: always
+#  batch:
+#    initialize-schema: always
   servlet:
     multipart:
       max-file-size: 100MB
@@ -29,44 +31,26 @@ logging:
     org.springframework.web.client.RestTemplate: TRACE
     org.openpaas.paasta.marketplace.api.config.LoggingInterceptor: DEBUG
 
-server:
-  port: 9080
 
-#kepri:
-#  hubpop:
-#    api:
-##     url: http://www.kepri-demo.crossent.com/comm-api/api/hubpop/v1
-#      url: http://localhost/comm-api/api/hubpop/v1
-#  comm:
-#    api:
-##     url: http://www.kepri-demo.crossent.com/comm-api/api/portal/v1
-#      url: http://localhost/comm-api/api/portal/v1
-#      authorization:
-#        email: saasManager
-#        password: manager1234 
-#  paas:
-#    api:
-##     url: http://www.kepri-demo.crossent.com/paas-api/api/portal/v1
-#      url: http://localhost/paas-api/api/portal/v1
-#      org: f56be489-7514-48b2-855b-b191a8899205
-#      space: bd62d015-88a7-49e2-b38a-b7e2bc100bcc
-#      host: ".kepri-dev.crossent.com"
-paasta:
-  uaa:
-    api:
-      url: http://portal-web-user.115.68.46.215.xip.io
-      authorization:
-        email: saasManager
-        password: manager1234
-  cf:
-    api:
-      url: http://portal-web-user.115.68.46.215.xip.io
+cloudfoundry:
+  api:
+    url: "https://api.115.68.46.188.xip.io"
+    uaaUrl: "https://uaa.115.68.46.188.xip.io"
+    host: "api.115.68.46.188.xip.io"
+    sslSkipValidation: true
+  user:
+    admin:
+      username: admin
+      password: admin_test
+    uaaClient:
+      clientId: marketclient
+      clientSecret: clientsecret
+      adminClientId: admin
+      adminClientSecret: admin-secret
+      loginClientId: login
+      loginClientSecret: login-secret
+      skipSSLValidation: true
+  authorization: cf-Authorization
 
-#saasapi:
-#  swagger:
-#    basePackage: com.example.keprisaasapi
-#    host: localhost
-#    pathMapping: /saas-api
-
-local:
-  uploadPath: /home/ubuntu/upload/market
+#local:
+#  uploadPath: /home/ubuntu/upload/market
