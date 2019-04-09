@@ -31,9 +31,7 @@ public class OrgController {
 
     @GetMapping
     public List<OrganizationResource> getOrgsForUser(){
-
         LOGGER.debug("Org list for admin");
-//        LOGGER.info("토큰은??? " + token);
 
         return orgService.getOrgsForUser();
     }
@@ -51,18 +49,37 @@ public class OrgController {
     }
 
 
+    /**
+     * Org Quota 생성
+     *
+     * @param quota
+     * @return
+     */
     @PostMapping(value = "/quotas")
     public Quota createOrgQuota(@RequestBody Quota quota){
         return orgService.createOrgQuota(quota);
     }
 
 
+    /**
+     * Org 생성
+     *
+     * @param org
+     * @param token
+     * @return
+     */
     @PostMapping
     public Org createOrg(@RequestBody Org org,
                          @RequestHeader(CF_AUTHORIZATION_HEADER_KEY) String token){
         return orgService.createOrg(org, token);
     }
 
+
+    /**
+     * Org Quotas 목록 조회
+     *
+     * @return
+     */
     @GetMapping(value = "/quotas")
     public QuotaList getOrgQuotas(){
         return orgService.getOrgQuotas();
