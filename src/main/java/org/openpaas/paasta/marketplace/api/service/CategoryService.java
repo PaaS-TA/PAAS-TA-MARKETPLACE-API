@@ -4,9 +4,9 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.openpaas.paasta.marketplace.api.domain.Category;
-import org.openpaas.paasta.marketplace.api.domain.Category.Direction;
-import org.openpaas.paasta.marketplace.api.domain.CategorySpecification;
+import org.openpaas.paasta.marketplace.api.model.Category;
+import org.openpaas.paasta.marketplace.api.model.Category.Direction;
+import org.openpaas.paasta.marketplace.api.model.CategorySpecification;
 import org.openpaas.paasta.marketplace.api.exception.NotFoundException;
 import org.openpaas.paasta.marketplace.api.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;

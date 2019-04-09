@@ -1,13 +1,12 @@
 package org.openpaas.paasta.marketplace.api.thirdparty.paas;
 
+import lombok.Data;
+import org.hibernate.service.spi.ServiceBinding;
+
 import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.hibernate.service.spi.ServiceBinding;
-
-import lombok.Data;
 
 @Data
 public class Application {

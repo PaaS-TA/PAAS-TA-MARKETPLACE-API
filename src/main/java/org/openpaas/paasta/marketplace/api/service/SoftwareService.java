@@ -4,8 +4,8 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.openpaas.paasta.marketplace.api.domain.Software;
-import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
+import org.openpaas.paasta.marketplace.api.model.Software;
+import org.openpaas.paasta.marketplace.api.model.SoftwareSpecification;
 import org.openpaas.paasta.marketplace.api.repository.SoftwareRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

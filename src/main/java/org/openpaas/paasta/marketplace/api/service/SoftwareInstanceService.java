@@ -4,11 +4,11 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.openpaas.paasta.marketplace.api.domain.Software;
-import org.openpaas.paasta.marketplace.api.domain.SoftwareInstance;
-import org.openpaas.paasta.marketplace.api.domain.SoftwareInstance.ProvisionStatus;
-import org.openpaas.paasta.marketplace.api.domain.SoftwareInstance.Status;
-import org.openpaas.paasta.marketplace.api.domain.SoftwareInstanceSpecification;
+import org.openpaas.paasta.marketplace.api.model.Software;
+import org.openpaas.paasta.marketplace.api.model.SoftwareInstance;
+import org.openpaas.paasta.marketplace.api.model.SoftwareInstance.ProvisionStatus;
+import org.openpaas.paasta.marketplace.api.model.SoftwareInstance.Status;
+import org.openpaas.paasta.marketplace.api.model.SoftwareInstanceSpecification;
 import org.openpaas.paasta.marketplace.api.repository.SoftwareInstanceRepository;
 import org.openpaas.paasta.marketplace.api.repository.SoftwareRepository;
 import org.springframework.beans.factory.annotation.Autowired;
