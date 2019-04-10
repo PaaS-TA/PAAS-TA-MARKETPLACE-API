@@ -19,19 +19,24 @@ repositories {
 	mavenCentral()
 }
 
+ext {
+	lombokVersion = '1.18.2'
+	gsonVersion = '2.8.5'
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
-	implementation 'org.springframework.boot:spring-boot-starter-batch'
+	//implementation 'org.springframework.boot:spring-boot-starter-batch'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	compile group: 'commons-io', name: 'commons-io', version: '2.6'
 
-	compileOnly 'org.projectlombok:lombok'
+	compileOnly "org.projectlombok:lombok:${lombokVersion}"
+	compile "com.google.code.gson:gson:${gsonVersion}"
 	runtimeOnly 'mysql:mysql-connector-java'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-	annotationProcessor 'org.projectlombok:lombok'
 
 	// cloud foundry client
 	compile ('org.cloudfoundry:cloudfoundry-client-reactor:3.15.0.RELEASE')
@@ -46,6 +51,6 @@ dependencies {
 	compile files('libs/uaa-java-client-1.0.2-SNAPSHOT.jar')
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.batch:spring-batch-test'
+	//testImplementation 'org.springframework.batch:spring-batch-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 }
