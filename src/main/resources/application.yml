@@ -28,6 +28,7 @@ spring:
 
 logging:
   level:
+    org.springframework.web: DEBUG
     org.springframework.web.client.RestTemplate: TRACE
     org.openpaas.paasta.marketplace.api.config.LoggingInterceptor: DEBUG
 
