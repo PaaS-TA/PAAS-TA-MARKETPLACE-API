@@ -53,5 +53,6 @@ cloudfoundry:
       skipSSLValidation: true
   authorization: cf-Authorization
 
-#local:
-#  uploadPath: /home/ubuntu/upload/market
+# local test
+local:
+  uploadPath: D:/home/ubuntu/saas/

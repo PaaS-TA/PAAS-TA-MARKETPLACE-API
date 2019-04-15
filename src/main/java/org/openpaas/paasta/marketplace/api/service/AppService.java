@@ -10,6 +10,8 @@ import org.cloudfoundry.client.v3.*;
 import org.cloudfoundry.client.v3.applications.*;
 import org.cloudfoundry.client.v3.builds.CreateBuildRequest;
 import org.cloudfoundry.client.v3.builds.CreateBuildResponse;
+import org.cloudfoundry.client.v3.builds.GetBuildRequest;
+import org.cloudfoundry.client.v3.builds.GetBuildResponse;
 import org.cloudfoundry.client.v3.packages.*;
 import org.cloudfoundry.reactor.client.ReactorCloudFoundryClient;
 import org.openpaas.paasta.marketplace.api.common.Common;
@@ -18,13 +20,10 @@ import org.openpaas.paasta.marketplace.api.model.App;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.nio.file.FileSystems;
 import java.util.Map;
 
 
@@ -39,8 +38,12 @@ import java.util.Map;
 public class AppService extends Common{
     private static final Logger LOGGER = LoggerFactory.getLogger(AppService.class);
 
+    @Value("${local.uploadPath}")
+    private String localUploadPath;
+
     @Autowired
     CommonService commonService;
+
 
     /**
      * 관리자 계정으로 Application 목록 조회.
@@ -73,8 +76,8 @@ public class AppService extends Common{
         // ★ 5. If your package is type buildpack, upload your bits to your new package
         // ★ 6. Stage your package and create a build
         // 7. Wait for the state of the new build to reach STAGED (watch cf curl /v3/builds/$BUILD_GUID)
-        // 8. Get the droplet corresponding to the staged build
-        // 9. Assign the droplet to the app
+        // ★ 8. Get the droplet corresponding to the staged build
+        // ★ 9. Assign the droplet to the app
         // ★ 10. Create a route
         // ★ 11. Map the route to your app
         // 12. Start your app
@@ -110,20 +113,13 @@ public class AppService extends Common{
                 ).block();
 
 
-        UploadPackageResponse uploadPackageResponse = null;
-
-
         // If your package is type buildpack, upload your bits to your new package (POST /v3/packages/:guid/upload)
-        try {
-            uploadPackageResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).packages()
-                    .upload(UploadPackageRequest.builder()
-                            .packageId(packageResponse.getId())
-                            .bits(new ClassPathResource("/paasta-sample-app-test.jar").getFile().toPath())
-                            .build()).block();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        UploadPackageResponse uploadPackageResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).packages()
+                .upload(UploadPackageRequest.builder()
+                        .packageId(packageResponse.getId())
+                        .bits(FileSystems.getDefault().getPath(localUploadPath,"php-sample.zip"))
+                        //.bits(new ClassPathResource(localUploadPath + "/php-sample.zip").getFile().toPath())
+                        .build()).block();
 
 
         // Stage your package and create a build (POST /v3/builds)
@@ -134,9 +130,28 @@ public class AppService extends Common{
                                 .lifecycle(Lifecycle.builder()
                                         .type(LifecycleType.BUILDPACK)
                                         .data(BuildpackData.builder()
-                                                .buildpacks("java_buildpack_offline")
+                                                .buildpacks("php_buildpack")
                                                 .stack("cflinuxfs2")
                                                 .build()).build())
+                        .build()).block();
+
+        // Get the droplet corresponding to the staged build
+        GetBuildResponse getBuildResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).builds()
+                .get(GetBuildRequest.builder()
+                        .buildId(createBuildResponse.getId())
+                        .build()).block();
+
+
+        // droplet guid
+        String dropletGuid = getBuildResponse.getDroplet().getId();
+
+
+        // Assign the droplet to the app (PATCH /v3/apps/:guid/relationships/current_droplet)
+        SetApplicationCurrentDropletResponse currentDropletResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).applicationsV3()
+                .setCurrentDroplet(SetApplicationCurrentDropletRequest.builder()
+                        .applicationId(appResponse.getId())
+                        .data(Relationship.builder()
+                                .id(dropletGuid).build())
                         .build()).block();
 
 
