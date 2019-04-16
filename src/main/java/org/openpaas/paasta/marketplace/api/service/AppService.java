@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.FileSystems;
+import java.time.Duration;
 import java.util.Map;
 
 
@@ -80,10 +81,72 @@ public class AppService extends Common{
         // ★ 9. Assign the droplet to the app
         // ★ 10. Create a route
         // ★ 11. Map the route to your app
-        // 12. Start your app
+        // ★ 12. Start your app
+
+
+        String appGuid = getAppGuid(app);
+        LOGGER.info("appGuid = " + appGuid);
+
+        String packageGuid = getPackageGuid(appGuid);
+        LOGGER.info("packageGuid = " + packageGuid);
+
+        uploadPackage(packageGuid);
+
+        String buildGuid = null;
+
+        while(buildGuid == null){
+
+            try{
+                buildGuid = getBuildGuid(packageGuid).getId();
+            }catch (NullPointerException e){
+                System.out.println("null 이야 임뫄~~~");
+            }
+
+            if(buildGuid != null){
+                LOGGER.info("buildGuid = " + buildGuid);
+                break;
+            }
+        }
+
+
+        // droplet guid
+        String dropletGuid = null;
+
+        while(dropletGuid == null){
+
+            try{
+                dropletGuid = getDropletGuid(buildGuid).getDroplet().getId();
+            }catch (NullPointerException e){
+                System.out.println("null 이야 임뫄~~~");
+            }
+
+            if(dropletGuid != null){
+                assignDroplet(appGuid, dropletGuid);
+                break;
+            }
+        }
+
+
+        CreateRouteResponse route = createRoute(app);
+
+        routeMapping(appGuid, route);
+
+
+        // Start your app
+        StartApplicationResponse startApplicationResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).applicationsV3()
+                .start(StartApplicationRequest.builder()
+                        .applicationId(appGuid).build()).block();
+
+
+        Map resultMap = objectMapper.convertValue(startApplicationResponse, Map.class);
+
+        return commonService.setResultObject(resultMap, App.class);
+    }
 
 
 
+
+    private String getAppGuid(App app){
         // Create an empty app (POST /v3/apps)
         CreateApplicationResponse appResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).applicationsV3()
                 .create(CreateApplicationRequest.builder()
@@ -96,8 +159,11 @@ public class AppService extends Common{
                                         .build())
                                 .build())
                         .build()).block();
+        LOGGER.info("빈 app 생성~~");
+        return appResponse.getId();
+    }
 
-
+    private String getPackageGuid(String appGuid){
         // Create an empty package for the app (POST /v3/packages)
         CreatePackageResponse packageResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).packages()
                 .create(CreatePackageRequest.builder()
@@ -105,56 +171,69 @@ public class AppService extends Common{
                         .relationships(PackageRelationships.builder()
                                 .application(ToOneRelationship.builder()
                                         .data(Relationship.builder()
-                                                .id(appResponse.getId())
+                                                .id(appGuid)
                                                 .build())
                                         .build())
                                 .build())
                         .build()
                 ).block();
+        LOGGER.info("package 생성~~");
+        return packageResponse.getId();
+    }
 
-
+    private void uploadPackage(String packageGuid){
         // If your package is type buildpack, upload your bits to your new package (POST /v3/packages/:guid/upload)
         UploadPackageResponse uploadPackageResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).packages()
                 .upload(UploadPackageRequest.builder()
-                        .packageId(packageResponse.getId())
+                        .packageId(packageGuid)
                         .bits(FileSystems.getDefault().getPath(localUploadPath,"php-sample.zip"))
                         //.bits(new ClassPathResource(localUploadPath + "/php-sample.zip").getFile().toPath())
-                        .build()).block();
+                        .build()).blockOptional(Duration.ofSeconds(60)).get();
+        LOGGER.info("package 업로드~~");
+    }
 
-
+    private CreateBuildResponse getBuildGuid(String packageGuid) {
         // Stage your package and create a build (POST /v3/builds)
         CreateBuildResponse createBuildResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).builds()
                 .create(CreateBuildRequest.builder()
-                                .getPackage(Relationship.builder()
-                                                .id(packageResponse.getId()).build())
-                                .lifecycle(Lifecycle.builder()
-                                        .type(LifecycleType.BUILDPACK)
-                                        .data(BuildpackData.builder()
-                                                .buildpacks("php_buildpack")
-                                                .stack("cflinuxfs2")
-                                                .build()).build())
-                        .build()).block();
+                        .getPackage(Relationship.builder()
+                                .id(packageGuid).build())
+                        .lifecycle(Lifecycle.builder()
+                                .type(LifecycleType.BUILDPACK)
+                                .data(BuildpackData.builder()
+                                        .buildpacks("php_buildpack")
+                                        .stack("cflinuxfs2")
+                                        .build()).build())
+                        .build()).blockOptional(Duration.ofSeconds(60)).get();
+        LOGGER.info("Build 생성~~");
+        return createBuildResponse;
+    }
 
+    private GetBuildResponse getDropletGuid(String buildGuid) {
         // Get the droplet corresponding to the staged build
         GetBuildResponse getBuildResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).builds()
                 .get(GetBuildRequest.builder()
-                        .buildId(createBuildResponse.getId())
-                        .build()).block();
+                        .buildId(buildGuid)
+                        .build()).blockOptional(Duration.ofSeconds(60)).get();
+
+        LOGGER.info("droplet 조회~~");
+        return getBuildResponse;
+    }
 
 
-        // droplet guid
-        String dropletGuid = getBuildResponse.getDroplet().getId();
-
-
+    private void assignDroplet(String appGuid, String dropletGuid) {
+        LOGGER.info("appGuid :::: " + appGuid + " & dropletGuid :::: " + dropletGuid);
         // Assign the droplet to the app (PATCH /v3/apps/:guid/relationships/current_droplet)
         SetApplicationCurrentDropletResponse currentDropletResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).applicationsV3()
                 .setCurrentDroplet(SetApplicationCurrentDropletRequest.builder()
-                        .applicationId(appResponse.getId())
+                        .applicationId(appGuid)
                         .data(Relationship.builder()
                                 .id(dropletGuid).build())
                         .build()).block();
+        LOGGER.info("droplet assign~~");
+    }
 
-
+    private CreateRouteResponse createRoute(App app) {
         // Create a route
         CreateRouteResponse createRouteResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).routes()
                 .create(CreateRouteRequest.builder()
@@ -162,30 +241,20 @@ public class AppService extends Common{
                         .domainId(app.getDomainId())
                         .spaceId(app.getSpaceGuid())
                         .build()).block();
+        LOGGER.info("라우트 생성~~");
+        return createRouteResponse;
+    }
 
-
+    private void routeMapping(String appGuid, CreateRouteResponse route) {
         // Map the route to your app
         CreateRouteMappingResponse createRouteMappingResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).routeMappings()
                 .create(CreateRouteMappingRequest.builder()
-                        .applicationId(appResponse.getId())
-                        .routeId(createRouteResponse.getMetadata().getId())
+                        .applicationId(appGuid)
+                        .routeId(route.getMetadata().getId())
                         .build()).block();
-
-
-        // Start your app
-        StartApplicationResponse startApplicationResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).applicationsV3()
-                .start(StartApplicationRequest.builder()
-                        .applicationId(appResponse.getId()).build()).block();
-
-
-
-
-        Map resultMap = objectMapper.convertValue(startApplicationResponse, Map.class);
-
-        return commonService.setResultObject(resultMap, App.class);
     }
 
-//    @Autowired
+    //    @Autowired
 //    private PropertyService propertyService;
 //
 //    @Autowired
