@@ -2,6 +2,9 @@ package org.openpaas.paasta.marketplace.api.service;
 
 import org.cloudfoundry.client.v2.applications.ListApplicationsRequest;
 import org.cloudfoundry.client.v2.applications.ListApplicationsResponse;
+import org.cloudfoundry.client.v2.buildpacks.BuildpackEntity;
+import org.cloudfoundry.client.v2.buildpacks.BuildpackResource;
+import org.cloudfoundry.client.v2.buildpacks.ListBuildpacksRequest;
 import org.cloudfoundry.client.v2.routemappings.CreateRouteMappingRequest;
 import org.cloudfoundry.client.v2.routemappings.CreateRouteMappingResponse;
 import org.cloudfoundry.client.v2.routes.CreateRouteRequest;
@@ -24,8 +27,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.FileSystems;
-import java.time.Duration;
-import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 
 /**
@@ -45,6 +50,8 @@ public class AppService extends Common{
     @Autowired
     CommonService commonService;
 
+    // TODO ::: 추후 build_pack 이름 받아와야 함.
+    private static final String buildPackName =  "java_buildpack_offline";
 
     /**
      * 관리자 계정으로 Application 목록 조회.
@@ -65,41 +72,133 @@ public class AppService extends Common{
     /**
      * Application 생성.
      *
+     * 1. Find the GUID of your space and set an APP_NAME
+     * ★ 2. Create an empty app
+     * ★ 3. Create an empty package for the app
+     * 4. If your package is type buildpack, create a ZIP file of your application (zip -r my-app.zip *)
+     * ★ 5. If your package is type buildpack, upload your bits to your new package
+     * ★ 6. Stage your package and create a build
+     * 7. Wait for the state of the new build to reach STAGED (watch cf curl /v3/builds/$BUILD_GUID)
+     * ★ 8. Get the droplet corresponding to the staged build
+     * ★ 9. Assign the droplet to the app
+     * ★ 10. Create a route
+     * ★ 11. Map the route to your app
+     * ★ 12. Start your app
+     *
+     *
      * @param app the app
      * @return App
      */
-    public App createApp(App app){
+    public void createApp(App app){
 
-        // 1. Find the GUID of your space and set an APP_NAME
-        // ★ 2. Create an empty app
-        // ★ 3. Create an empty package for the app
-        // 4. If your package is type buildpack, create a ZIP file of your application (zip -r my-app.zip *)
-        // ★ 5. If your package is type buildpack, upload your bits to your new package
-        // ★ 6. Stage your package and create a build
-        // 7. Wait for the state of the new build to reach STAGED (watch cf curl /v3/builds/$BUILD_GUID)
-        // ★ 8. Get the droplet corresponding to the staged build
-        // ★ 9. Assign the droplet to the app
-        // ★ 10. Create a route
-        // ★ 11. Map the route to your app
-        // ★ 12. Start your app
-
-
-        String appGuid = getAppGuid(app);
+        // 빈 App 생성 후 appGuid 조회
+        String appGuid = createEmptyApp(app).getId();
         LOGGER.info("appGuid = " + appGuid);
 
-        String packageGuid = getPackageGuid(appGuid);
+        // 빈 package 생성 후 packageGuid 조회
+        String packageGuid = createEmptyPackage(appGuid).getId();
         LOGGER.info("packageGuid = " + packageGuid);
 
+        // 파일 및 빌드팩 포함한 package 업로드
         uploadPackage(packageGuid);
 
+        try {
+            BuildpackResource buildpackResource = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).buildpacks()
+                    .list(ListBuildpacksRequest.builder().build()).block()
+                    .getResources().stream().filter(r -> r.getEntity().getName().equals(buildPackName)).collect(Collectors.toList()).get(0);
+            LOGGER.info(buildpackResource.getEntity().getName());
+            LOGGER.info(buildpackResource.getEntity().getStack());
+            Thread.sleep(4000);
+
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            CompletableFuture.runAsync(() -> {
+                // build 생성
+                CreateBuildResponse createdBuild = createBuild(packageGuid, buildpackResource.getEntity());
+
+                String buildId = createdBuild.getId();
+
+                int count = 1;
+
+                // 조회한 build 의 state 가 STAGED 가 아닌 경우 STAGED 될때까지 반복
+                while(buildCompleted(buildId).equals(false)){
+                    GetBuildResponse build = getBuild(buildId);
+                    LOGGER.info("머리 아프다 집에 가자 이건 또 왜 안되니 ::::::::::::: " + build.toString());
+
+
+                    if(buildCompleted(build.getId())){
+                        LOGGER.info("이거슨 트루다 트루. 참 트루!!!!!!!!!!!");
+                        assignDroplet(appGuid, getBuild(build.getId()).getDroplet().getId());
+                        LOGGER.info("나간다 와일 문................");
+                        break;
+                    }
+
+                    LOGGER.info("count ::: " + count);
+                    count++;
+                }
+
+
+
+/*
+                // 위에서 만든 app 을 build 한 후 build list 에 해당 app 이 있는지 확인.
+                while(Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).builds().list(ListBuildsRequest.builder().applicationId(appGuid).build()).block().getResources().get(0).getDroplet() == null){
+                    try {
+                        LOGGER.info("::::::::::::::::::::::::::::::::::::::::::" + Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).builds().list(ListBuildsRequest.builder().applicationId(appGuid).build()).block().toString());
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                // 있으면 listBuildsResponse 조회!
+                ListBuildsResponse listBuildsResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).builds()
+                        .list(ListBuildsRequest.builder()
+                                .applicationId(appGuid)
+                                .build()).block();
+
+                LOGGER.info("요고닷!!!!" + listBuildsResponse.toString());*/
+
+
+//                try {
+//                    Thread.sleep(4000);
+//                    LOGGER.info("::::::::::::::::::::::::::::::::::");
+//
+//                    assignDroplet(appGuid, listBuildsResponse.getResources().get(0).getDroplet().getId());
+//
+//                } catch (Exception error) {
+//                    LOGGER.info(error.getMessage());
+//                }
+
+                try {
+                    // 라우트 생성
+                    CreateRouteResponse route = createRoute(app);
+
+                    // 라우트 매핑
+                    routeMapping(appGuid, route);
+
+                    // app 시작
+                    StartApplicationResponse startApplicationResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).applicationsV3()
+                            .start(StartApplicationRequest.builder()
+                                    .applicationId(appGuid).build()).block();
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            },executor);
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+/*
         String buildGuid = null;
 
+        // Build 생성한 후 buildGuid 조회
         while(buildGuid == null){
-
             try{
-                buildGuid = getBuildGuid(packageGuid).getId();
+                buildGuid = createBuild(packageGuid).getId();
             }catch (NullPointerException e){
-                System.out.println("null 이야 임뫄~~~");
+                System.out.println("뷜드 null 이야 임뫄~~~");
             }
 
             if(buildGuid != null){
@@ -112,42 +211,29 @@ public class AppService extends Common{
         // droplet guid
         String dropletGuid = null;
 
+        // buildGuid 로 해당 dropletGuid 조회
         while(dropletGuid == null){
-
             try{
-                dropletGuid = getDropletGuid(buildGuid).getDroplet().getId();
+                dropletGuid = getBuild(buildGuid).getDroplet().getId();
             }catch (NullPointerException e){
-                System.out.println("null 이야 임뫄~~~");
+                System.out.println("드뢉뤳 null 이야 임뫄~~~");
             }
 
             if(dropletGuid != null){
                 assignDroplet(appGuid, dropletGuid);
                 break;
             }
-        }
-
-
-        CreateRouteResponse route = createRoute(app);
-
-        routeMapping(appGuid, route);
-
-
-        // Start your app
-        StartApplicationResponse startApplicationResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).applicationsV3()
-                .start(StartApplicationRequest.builder()
-                        .applicationId(appGuid).build()).block();
-
-
-        Map resultMap = objectMapper.convertValue(startApplicationResponse, Map.class);
-
-        return commonService.setResultObject(resultMap, App.class);
+        }*/
     }
 
 
-
-
-    private String getAppGuid(App app){
-        // Create an empty app (POST /v3/apps)
+    /**
+     * Create an empty app (POST /v3/apps)
+     *
+     * @param app the app
+     * @return CreateApplicationResponse
+     */
+    private CreateApplicationResponse createEmptyApp(App app){
         CreateApplicationResponse appResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).applicationsV3()
                 .create(CreateApplicationRequest.builder()
                         .name(app.getName())
@@ -160,11 +246,17 @@ public class AppService extends Common{
                                 .build())
                         .build()).block();
         LOGGER.info("빈 app 생성~~");
-        return appResponse.getId();
+        return appResponse;
     }
 
-    private String getPackageGuid(String appGuid){
-        // Create an empty package for the app (POST /v3/packages)
+
+    /**
+     * Create an empty package for the app (POST /v3/packages)
+     *
+     * @param appGuid the appGuid
+     * @return CreatePackageResponse
+     */
+    private CreatePackageResponse createEmptyPackage(String appGuid){
         CreatePackageResponse packageResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).packages()
                 .create(CreatePackageRequest.builder()
                         .type(PackageType.BITS)
@@ -178,22 +270,34 @@ public class AppService extends Common{
                         .build()
                 ).block();
         LOGGER.info("package 생성~~");
-        return packageResponse.getId();
+        return packageResponse;
     }
 
+
+    /**
+     * Upload package
+     *
+     * @param packageGuid the packageGuid
+     */
     private void uploadPackage(String packageGuid){
         // If your package is type buildpack, upload your bits to your new package (POST /v3/packages/:guid/upload)
         UploadPackageResponse uploadPackageResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).packages()
                 .upload(UploadPackageRequest.builder()
                         .packageId(packageGuid)
-                        .bits(FileSystems.getDefault().getPath(localUploadPath,"php-sample.zip"))
+                        .bits(FileSystems.getDefault().getPath(localUploadPath,"spring-music.war"))
                         //.bits(new ClassPathResource(localUploadPath + "/php-sample.zip").getFile().toPath())
-                        .build()).blockOptional(Duration.ofSeconds(60)).get();
+                        .build()).block();
         LOGGER.info("package 업로드~~");
     }
 
-    private CreateBuildResponse getBuildGuid(String packageGuid) {
-        // Stage your package and create a build (POST /v3/builds)
+
+    /**
+     * Stage your package and create a build (POST /v3/builds)
+     *
+     * @param packageGuid the packageGuid
+     * @return CreateBuildResponse
+     */
+    private CreateBuildResponse createBuild(String packageGuid, BuildpackEntity buildpackEntity){
         CreateBuildResponse createBuildResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).builds()
                 .create(CreateBuildRequest.builder()
                         .getPackage(Relationship.builder()
@@ -201,29 +305,42 @@ public class AppService extends Common{
                         .lifecycle(Lifecycle.builder()
                                 .type(LifecycleType.BUILDPACK)
                                 .data(BuildpackData.builder()
-                                        .buildpacks("php_buildpack")
-                                        .stack("cflinuxfs2")
+                                        .buildpacks(buildpackEntity.getName())
+                                        .stack(buildpackEntity.getStack())
                                         .build()).build())
-                        .build()).blockOptional(Duration.ofSeconds(60)).get();
+                        //.build()).delaySubscription(Duration.ofSeconds(60)).block();
+                        .build()).block();
         LOGGER.info("Build 생성~~");
         return createBuildResponse;
     }
 
-    private GetBuildResponse getDropletGuid(String buildGuid) {
-        // Get the droplet corresponding to the staged build
+
+    /**
+     * Get the droplet corresponding to the staged build
+     *
+     * @param buildGuid the buildGuid
+     * @return GetBuildResponse
+     */
+    private GetBuildResponse getBuild(String buildGuid) {
         GetBuildResponse getBuildResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).builds()
                 .get(GetBuildRequest.builder()
                         .buildId(buildGuid)
-                        .build()).blockOptional(Duration.ofSeconds(60)).get();
+                        //.build()).blockOptional(Duration.ofSeconds(60)).get();
+                        .build()).block();
 
         LOGGER.info("droplet 조회~~");
         return getBuildResponse;
     }
 
 
+    /**
+     * Assign the droplet to the app (PATCH /v3/apps/:guid/relationships/current_droplet)
+     *
+     * @param appGuid the appGuid
+     * @param dropletGuid the dropletGuid
+     */
     private void assignDroplet(String appGuid, String dropletGuid) {
         LOGGER.info("appGuid :::: " + appGuid + " & dropletGuid :::: " + dropletGuid);
-        // Assign the droplet to the app (PATCH /v3/apps/:guid/relationships/current_droplet)
         SetApplicationCurrentDropletResponse currentDropletResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).applicationsV3()
                 .setCurrentDroplet(SetApplicationCurrentDropletRequest.builder()
                         .applicationId(appGuid)
@@ -233,8 +350,14 @@ public class AppService extends Common{
         LOGGER.info("droplet assign~~");
     }
 
+
+    /**
+     * Create a route
+     *
+     * @param app the app
+     * @return CreateRouteResponse
+     */
     private CreateRouteResponse createRoute(App app) {
-        // Create a route
         CreateRouteResponse createRouteResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).routes()
                 .create(CreateRouteRequest.builder()
                         .host(app.getHostName())
@@ -245,8 +368,14 @@ public class AppService extends Common{
         return createRouteResponse;
     }
 
+
+    /**
+     * Mapping the route to your app
+     *
+     * @param appGuid the appGuid
+     * @param route the route
+     */
     private void routeMapping(String appGuid, CreateRouteResponse route) {
-        // Map the route to your app
         CreateRouteMappingResponse createRouteMappingResponse = Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).routeMappings()
                 .create(CreateRouteMappingRequest.builder()
                         .applicationId(appGuid)
@@ -254,21 +383,21 @@ public class AppService extends Common{
                         .build()).block();
     }
 
-    //    @Autowired
-//    private PropertyService propertyService;
-//
-//    @Autowired
-//    @Qualifier("portalRest")
-//    private RestTemplate portalRest;
-//
-//
-//    /**
-//     * Application 실행
-//     *
-//     * @param app the app
-//     * @return Map
-//     */
-//    public Map startApp(App app) {
-//        return portalRest.postForObject(propertyService.getPortalApiUrl() + Constants.V3_URL + "/apps/startApp", app, Map.class);
-//    }
+
+    /**
+     * build 된 상태가 STAGED 인지 판별.
+     *
+     * @param buildGuid the buildGuid
+     * @return Boolean
+     */
+    public Boolean buildCompleted (String buildGuid) {
+        switch (getBuild(buildGuid).getState()) {
+            case FAILED:
+                return  false;
+            case STAGED:
+                return true;
+            default:
+                return false;
+        }
+    }
 }
