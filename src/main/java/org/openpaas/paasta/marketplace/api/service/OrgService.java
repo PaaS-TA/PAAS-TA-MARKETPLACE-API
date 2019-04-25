@@ -19,8 +19,8 @@ import java.util.Map;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-//import org.cloudfoundry.client.v3.organizations.CreateOrganizationRequest;
-//import org.cloudfoundry.client.v3.organizations.CreateOrganizationResponse;
+import org.cloudfoundry.client.v3.organizations.CreateOrganizationRequest;
+import org.cloudfoundry.client.v3.organizations.CreateOrganizationResponse;
 
 /**
  * Org 서비스
@@ -45,34 +45,37 @@ public class OrgService extends Common {
         return Common.cloudFoundryClient(connectionContext(), tokenProvider(getToken())).organizations().list(ListOrganizationsRequest.builder().build()).block().getResources();
     }
 
-    public Org createOrg(Org org, String adminToken){
-        // Org 생성
-        CreateOrganizationResponse organization = Common.cloudFoundryClient(connectionContext(), tokenProvider(adminToken)).organizations().create(CreateOrganizationRequest.builder().name(org.getName()).quotaDefinitionId(org.getQuotaGuid()).build()).block();
-
-        Map resultMap = objectMapper.convertValue(organization, Map.class);
-        LOGGER.info("이거 되는거니????????? " + resultMap.toString());
-
-        return commonService.setResultObject(resultMap, Org.class);
-    }
-
-//    /**
-//     * V3 버전 - ORG 생성
-//     *
-//     * @param org
-//     * @param token
-//     * @return
-//     */
-//    public Org createOrg(Org org, String token){
-//        LOGGER.info("uaa 통과한 admin token ::: " + token);
-//
+//    public Org createOrg(Org org, String adminToken){
 //        // Org 생성
-//        CreateOrganizationResponse organization = Common.cloudFoundryClient(connectionContext(), tokenProvider(token)).organizationsV3().create(CreateOrganizationRequest.builder().name(org.getName()).build()).block();
+//        CreateOrganizationResponse organization = Common.cloudFoundryClient(connectionContext(), tokenProvider(adminToken)).organizations().create(CreateOrganizationRequest.builder().name(org.getName()).quotaDefinitionId(org.getQuotaGuid()).build()).block();
 //
 //        Map resultMap = objectMapper.convertValue(organization, Map.class);
 //        LOGGER.info("이거 되는거니????????? " + resultMap.toString());
 //
 //        return commonService.setResultObject(resultMap, Org.class);
 //    }
+
+    /**
+     * V3 버전 - ORG 생성
+     *
+     * @param org
+     * @param token
+     * @return
+     */
+    public Org createOrg(Org org, String token){
+        LOGGER.info("uaa 통과한 admin token ::: " + token);
+
+        // Org 생성
+        CreateOrganizationResponse organization = Common.cloudFoundryClient(connectionContext(), tokenProvider(token)).organizationsV3()
+                .create(CreateOrganizationRequest.builder()
+                        .name(org.getName())
+                        .build()).block();
+
+        Map resultMap = objectMapper.convertValue(organization, Map.class);
+        LOGGER.info("이거 되는거니????????? " + resultMap.toString());
+
+        return commonService.setResultObject(resultMap, Org.class);
+    }
 
 
     public boolean isExistOrgName(final String orgName) {
