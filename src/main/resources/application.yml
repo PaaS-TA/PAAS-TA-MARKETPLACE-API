@@ -1,5 +1,5 @@
 server:
-  port: 8778
+  port: 8777
 
 spring:
   application:
@@ -8,7 +8,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/market_place?characterEncoding=utf8
     username: root
-    password: admin
+    password: xxxxxxxxx
   jpa:
     hibernate:
       ddl-auto: update
@@ -31,27 +31,6 @@ logging:
     org.springframework.web: DEBUG
     org.springframework.web.client.RestTemplate: TRACE
     org.openpaas.paasta.marketplace.api.config.LoggingInterceptor: DEBUG
-
-
-cloudfoundry:
-  api:
-    url: "https://api.115.68.46.188.xip.io"
-    uaaUrl: "https://uaa.115.68.46.188.xip.io"
-    host: "api.115.68.46.188.xip.io"
-    sslSkipValidation: true
-  user:
-    admin:
-      username: admin
-      password: admin_test
-    uaaClient:
-      clientId: marketclient
-      clientSecret: clientsecret
-      adminClientId: admin
-      adminClientSecret: admin-secret
-      loginClientId: login
-      loginClientSecret: login-secret
-      skipSSLValidation: true
-  authorization: cf-Authorization
 
 # local test
 local:
