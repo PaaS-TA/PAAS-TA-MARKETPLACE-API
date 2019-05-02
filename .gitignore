@@ -1,5 +1,6 @@
 HELP.md
 .gradle
+.settings
 /build/
 !gradle/wrapper/gradle-wrapper.jar
 
@@ -13,9 +14,10 @@ HELP.md
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea
-*.iws
 *.iml
+*.idea
+.idea/**
+*.iws
 *.ipr
 /out/
 
@@ -28,3 +30,34 @@ HELP.md
 
 ### VS Code ###
 .vscode/
+
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# ignore output and build directories 
+build/**
+bin/**
+out/**
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# remove spring bean configuration
+.spring*
