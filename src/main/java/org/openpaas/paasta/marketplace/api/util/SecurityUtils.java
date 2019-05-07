@@ -39,7 +39,7 @@ public class SecurityUtils {
             return null;
         }
 
-        return user.getId();
+        return user.getUsername();
     }
 
 }

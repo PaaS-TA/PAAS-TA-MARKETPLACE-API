@@ -1,100 +1,134 @@
 package org.openpaas.paasta.marketplace.api.thirdparty.paas;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.Transient;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import lombok.Data;
+import org.springframework.security.core.CredentialsContainer;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.SpringSecurityCoreVersion;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.Assert;
 
-@Entity
+import java.io.Serializable;
+import java.util.*;
+
 @Data
-public class User implements UserDetails {
+public class User implements UserDetails, CredentialsContainer {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = SpringSecurityCoreVersion.SERIAL_VERSION_UID;
 
-    @Id
-    private String id;
-
-    private String name;
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
-    @Transient
+    private String password;
     private String token;
+    private String name;
+    private Long expireDate;
+    private String imgPath;
+    private String serviceInstanceId;
+    private String organizationGuid;
+    private String spaceGuid;
+    private String nameSpace;
+    private final String username;
+    private final Set<GrantedAuthority> authorities;
+    private final boolean accountNonExpired;
+    private final boolean accountNonLocked;
+    private final boolean credentialsNonExpired;
+    private final boolean enabled;
 
-    private Date createdDate;
 
-    private Date updatedDate;
+    public User(String username, String password, Collection<? extends GrantedAuthority> authorities) {
+        this(username, password, true, true, true, true, authorities);
+    }
 
-    public enum Role implements GrantedAuthority {
-        // 관리자
-        Admin,
-        // 연구원
-        Manager,
-        // 사용자
-        User,;
+    public User(String username, String password, boolean enabled, boolean accountNonExpired,
+                boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
 
-        @Override
-        public String getAuthority() {
-            return name();
+        if (((username == null) || "".equals(username)) || (password == null)) {
+            throw new IllegalArgumentException("Cannot pass null or empty values to constructor");
+        }
+
+        this.username = username;
+        this.password = password;
+        this.enabled = enabled;
+        this.accountNonExpired = accountNonExpired;
+        this.credentialsNonExpired = credentialsNonExpired;
+        this.accountNonLocked = accountNonLocked;
+        this.authorities = Collections.unmodifiableSet(sortAuthorities(authorities));
+    }
+
+
+    public void eraseCredentials() {
+        //password = null;
+    }
+
+    private static SortedSet<GrantedAuthority> sortAuthorities(Collection<? extends GrantedAuthority> authorities) {
+        Assert.notNull(authorities, "Cannot pass a null GrantedAuthority collection");
+        // Ensure array iteration order is predictable (as per UserDetails.getAuthorities() contract and SEC-717)
+        SortedSet<GrantedAuthority> sortedAuthorities =
+                new TreeSet<GrantedAuthority>(new AuthorityComparator());
+
+        for (GrantedAuthority grantedAuthority : authorities) {
+            Assert.notNull(grantedAuthority, "GrantedAuthority list cannot contain any null elements");
+            sortedAuthorities.add(grantedAuthority);
+        }
+
+        return sortedAuthorities;
+    }
+
+    private static class AuthorityComparator implements Comparator<GrantedAuthority>, Serializable {
+        private static final long serialVersionUID = SpringSecurityCoreVersion.SERIAL_VERSION_UID;
+
+        public int compare(GrantedAuthority g1, GrantedAuthority g2) {
+            // Neither should ever be null as each entry is checked before adding it to the set.
+            // If the authority is null, it is a custom authority and should precede others.
+            if (g2.getAuthority() == null) {
+                return -1;
+            }
+
+            if (g1.getAuthority() == null) {
+                return 1;
+            }
+
+            return g1.getAuthority().compareTo(g2.getAuthority());
         }
     }
 
-    public User() {
-    }
-
-    @PrePersist
-    public void prePersist() {
-        createdDate = new Date();
+    @Override
+    public boolean equals(Object rhs) {
+        if (rhs instanceof User) {
+            return username.equals(((User) rhs).username);
+        }
+        return false;
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<Role> roles = new ArrayList<>();
-        roles.add(role);
-
-        return roles;
+    public int hashCode() {
+        return username.hashCode();
     }
 
     @Override
-    public String getUsername() {
-        return id;
-    }
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(super.toString()).append(": ");
+        sb.append("Username: ").append(this.username).append("; ");
+        sb.append("Password: [PROTECTED]; ");
+        sb.append("Enabled: ").append(this.enabled).append("; ");
+        sb.append("AccountNonExpired: ").append(this.accountNonExpired).append("; ");
+        sb.append("credentialsNonExpired: ").append(this.credentialsNonExpired).append("; ");
+        sb.append("AccountNonLocked: ").append(this.accountNonLocked).append("; ");
 
-    @Override
-    public String getPassword() {
-        return null;
-    }
+        if (!authorities.isEmpty()) {
+            sb.append("Granted Authorities: ");
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+            boolean first = true;
+            for (GrantedAuthority auth : authorities) {
+                if (!first) {
+                    sb.append(",");
+                }
+                first = false;
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+                sb.append(auth);
+            }
+        } else {
+            sb.append("Not granted any authorities");
+        }
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
+        return sb.toString();
     }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
 }
