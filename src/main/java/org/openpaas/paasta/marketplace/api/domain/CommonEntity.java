@@ -1,18 +1,13 @@
 package org.openpaas.paasta.marketplace.api.domain;
 
-import java.util.Date;
+import lombok.Data;
+import org.openpaas.paasta.marketplace.api.util.Constants;
+import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
 
+import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
-
-import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
-
-import lombok.Data;
-import org.openpaas.paasta.marketplace.api.common.Constants;
-import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
-
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;

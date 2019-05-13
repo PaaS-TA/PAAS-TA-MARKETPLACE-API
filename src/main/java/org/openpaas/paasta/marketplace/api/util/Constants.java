@@ -1,4 +1,4 @@
-package org.openpaas.paasta.marketplace.api.common;
+package org.openpaas.paasta.marketplace.api.util;
 
 /**
  * Constants 클래스
