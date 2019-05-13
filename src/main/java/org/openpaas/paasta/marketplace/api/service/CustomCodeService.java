@@ -39,4 +39,8 @@ public class CustomCodeService {
     public List<CustomCode> getGroupCodeListByGroupName(String groupTypeName) {
         return customCodeRepository.findByGroupCode(groupTypeName);
     }
+
+    public CustomCode getCodeUnit(String groupTypeName, String codeUnit) {
+        return customCodeRepository.findByGroupCodeAndCodeUnit(groupTypeName, codeUnit);
+    }
 }

@@ -41,4 +41,9 @@ public class CustomCodeController {
     public List<CustomCode> getGroupCodeListByGroupName(@PathVariable String groupTypeName){
         return customCodeService.getGroupCodeListByGroupName(groupTypeName);
     }
+
+    @GetMapping(value = "/{groupTypeName}/{codeUnit}")
+    public CustomCode getCodeUnit(@PathVariable String groupTypeName, @PathVariable String codeUnit){
+        return customCodeService.getCodeUnit(groupTypeName, codeUnit);
+    }
 }
