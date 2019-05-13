@@ -2,9 +2,9 @@ package org.openpaas.paasta.marketplace.api.controller;
 
 import java.util.List;
 
-import org.openpaas.paasta.marketplace.api.model.Category;
-import org.openpaas.paasta.marketplace.api.model.Category.Direction;
-import org.openpaas.paasta.marketplace.api.model.CategorySpecification;
+import org.openpaas.paasta.marketplace.api.domain.Category;
+import org.openpaas.paasta.marketplace.api.domain.CategorySpecification;
+import org.openpaas.paasta.marketplace.api.domain.Category.Direction;
 import org.openpaas.paasta.marketplace.api.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;

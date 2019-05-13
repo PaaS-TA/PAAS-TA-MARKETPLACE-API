@@ -1,4 +1,4 @@
-package org.openpaas.paasta.marketplace.api.model;
+package org.openpaas.paasta.marketplace.api.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -8,15 +8,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-import org.openpaas.paasta.marketplace.api.model.Software.Type;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-@Entity
 @Data
+@Entity
 @EqualsAndHashCode(callSuper = true)
-public abstract class SoftwareInstance extends AbstractEntity {
+public abstract class SoftwareInstance extends CommonEntity {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,8 +25,8 @@ public abstract class SoftwareInstance extends AbstractEntity {
 
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    protected Type type;
+//    @Enumerated(EnumType.STRING)
+//    protected Type type;
 
     @Enumerated(EnumType.STRING)
     private Status status;

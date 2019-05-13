@@ -1,4 +1,4 @@
-package org.openpaas.paasta.marketplace.api.model;
+package org.openpaas.paasta.marketplace.api.domain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,38 +8,27 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.openpaas.paasta.marketplace.api.model.AbstractEntity.UseYn;
 import org.springframework.data.jpa.domain.Specification;
 
 import lombok.Data;
 
 @Data
-public class SoftwareSpecification implements Specification<Software> {
+public class SoftwareInstanceSpecification implements Specification<SoftwareInstance> {
 
 	private static final long serialVersionUID = 1L;
 
-    private UseYn useYn = UseYn.Y;
-
-    private Long categoryId;
-
-    private Software.Type type;
+//    private UseYn useYn = UseYn.Y;
 
     private String createdId;
 
     private String nameLike;
 
     @Override
-    public Predicate toPredicate(Root<Software> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+    public Predicate toPredicate(Root<SoftwareInstance> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
         List<Predicate> restrictions = new ArrayList<>();
-        if (useYn != null && useYn != UseYn.All) {
-            restrictions.add(builder.equal(root.get("useYn"), useYn));
-        }
-        if (categoryId != null) {
-            restrictions.add(builder.equal(root.get("category").get("id"), categoryId));
-        }
-        if (type != null) {
-            restrictions.add(builder.equal(root.get("type"), type));
-        }
+//        if (useYn != null && useYn != UseYn.All) {
+//            restrictions.add(builder.equal(root.get("useYn"), useYn));
+//        }
         if (createdId != null) {
             restrictions.add(builder.equal(root.get("createdId"), createdId));
         }

@@ -1,6 +1,4 @@
-package org.openpaas.paasta.marketplace.api.model;
-
-import lombok.Data;
+package org.openpaas.paasta.marketplace.api.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,16 +6,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
+import lombok.Data;
+
 /**
  * Custom Code 모델
  *
- * @author hrjin
+ * @author peter
  * @version 1.0
  * @since 2019-05-08
  */
 @Data
 @Entity
-public class CustomCode extends AbstractEntity{
+public class CustomCode extends CommonEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -1,4 +1,12 @@
-package org.openpaas.paasta.marketplace.api.model;
+package org.openpaas.paasta.marketplace.api.domain;
+
+import java.util.Date;
+
+import javax.persistence.MappedSuperclass;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+
+import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
 
 import lombok.Data;
 import org.openpaas.paasta.marketplace.api.common.Constants;
@@ -11,10 +19,7 @@ import java.time.format.DateTimeFormatter;
 
 @MappedSuperclass
 @Data
-public abstract class AbstractEntity {
-
-	@Enumerated(EnumType.STRING)
-    protected UseYn useYn;
+public abstract class CommonEntity {
 
     protected String createdId;
 
@@ -28,7 +33,6 @@ public abstract class AbstractEntity {
 
     @PrePersist
     public void prePersist() {
-        useYn = UseYn.Y;
         createdId = SecurityUtils.getUserId();
         if (this.createdDate == null) {
             this.createdDate = LocalDateTime.now(ZoneId.of(Constants.STRING_TIME_ZONE_ID)).format(DateTimeFormatter.ofPattern(Constants.STRING_DATE_TYPE));
@@ -46,9 +50,5 @@ public abstract class AbstractEntity {
             this.updatedDate = LocalDateTime.now(ZoneId.of(Constants.STRING_TIME_ZONE_ID)).format(DateTimeFormatter.ofPattern(Constants.STRING_DATE_TYPE));
         }
     }
-
-    public enum UseYn {
-        Y, N, All,
-    };
 
 }

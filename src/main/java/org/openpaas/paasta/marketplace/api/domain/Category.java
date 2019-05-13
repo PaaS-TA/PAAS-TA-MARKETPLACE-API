@@ -1,4 +1,4 @@
-package org.openpaas.paasta.marketplace.api.model;
+package org.openpaas.paasta.marketplace.api.domain;
 
 import java.util.List;
 
@@ -15,10 +15,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-@Entity
 @Data
+@Entity
 @EqualsAndHashCode(callSuper = true)
-public class Category extends AbstractEntity {
+public class Category extends CommonEntity {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)

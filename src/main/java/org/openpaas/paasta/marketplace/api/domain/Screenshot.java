@@ -1,4 +1,4 @@
-package org.openpaas.paasta.marketplace.api.model;
+package org.openpaas.paasta.marketplace.api.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,10 +8,10 @@ import javax.persistence.Id;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-@Entity
 @Data
+@Entity
 @EqualsAndHashCode(callSuper = true)
-public class Screenshot extends AbstractEntity {
+public class Screenshot extends CommonEntity {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)

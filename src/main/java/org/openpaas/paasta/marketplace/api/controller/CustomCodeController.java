@@ -1,6 +1,6 @@
 package org.openpaas.paasta.marketplace.api.controller;
 
-import org.openpaas.paasta.marketplace.api.model.CustomCode;
+import org.openpaas.paasta.marketplace.api.domain.CustomCode;
 import org.openpaas.paasta.marketplace.api.service.CustomCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

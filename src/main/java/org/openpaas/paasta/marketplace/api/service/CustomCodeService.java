@@ -1,6 +1,6 @@
 package org.openpaas.paasta.marketplace.api.service;
 
-import org.openpaas.paasta.marketplace.api.model.CustomCode;
+import org.openpaas.paasta.marketplace.api.domain.CustomCode;
 import org.openpaas.paasta.marketplace.api.repository.CustomCodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

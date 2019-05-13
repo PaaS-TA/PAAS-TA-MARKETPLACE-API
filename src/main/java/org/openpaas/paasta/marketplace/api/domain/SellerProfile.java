@@ -1,4 +1,4 @@
-package org.openpaas.paasta.marketplace.api.model;
+package org.openpaas.paasta.marketplace.api.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
@@ -6,6 +6,15 @@ import lombok.Data;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
+import lombok.Data;
 
 /**
  * 판매자 프로필 모델
@@ -17,7 +26,7 @@ import java.util.List;
 @Data
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class SellerProfile extends AbstractEntity{
+public class SellerProfile extends CommonEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
