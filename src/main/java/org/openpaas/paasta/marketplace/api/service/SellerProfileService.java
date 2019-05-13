@@ -1,6 +1,6 @@
 package org.openpaas.paasta.marketplace.api.service;
 
-import org.openpaas.paasta.marketplace.api.model.SellerProfile;
+import org.openpaas.paasta.marketplace.api.domain.SellerProfile;
 import org.openpaas.paasta.marketplace.api.repository.SellerProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

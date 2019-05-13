@@ -2,8 +2,8 @@ package org.openpaas.paasta.marketplace.api.controller;
 
 import java.util.List;
 
-import org.openpaas.paasta.marketplace.api.model.SoftwareInstance;
-import org.openpaas.paasta.marketplace.api.model.SoftwareInstanceSpecification;
+import org.openpaas.paasta.marketplace.api.domain.SoftwareInstance;
+import org.openpaas.paasta.marketplace.api.domain.SoftwareInstanceSpecification;
 import org.openpaas.paasta.marketplace.api.service.SoftwareInstanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

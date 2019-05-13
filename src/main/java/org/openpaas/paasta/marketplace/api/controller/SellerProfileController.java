@@ -1,6 +1,6 @@
 package org.openpaas.paasta.marketplace.api.controller;
 
-import org.openpaas.paasta.marketplace.api.model.SellerProfile;
+import org.openpaas.paasta.marketplace.api.domain.SellerProfile;
 import org.openpaas.paasta.marketplace.api.service.SellerProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
