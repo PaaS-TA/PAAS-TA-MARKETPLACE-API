@@ -1,6 +1,7 @@
 package org.openpaas.paasta.marketplace.api.util;
 
-import org.openpaas.paasta.marketplace.api.thirdparty.paas.User;
+import org.openpaas.paasta.marketplace.api.config.Users;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -10,7 +11,7 @@ public class SecurityUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(SecurityUtils.class);
 
-    public static User getUser() {
+    public static Users getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         logger.debug("authentication={}", authentication);
 
@@ -25,15 +26,15 @@ public class SecurityUtils {
             return null;
         }
 
-        if (principal instanceof User) {
-            return (User) principal;
+        if (principal instanceof Users) {
+            return (Users) principal;
         }
 
         return null;
     }
 
     public static String getUserId() {
-        User user = getUser();
+        Users user = getUser();
 
         if (user == null) {
             return null;

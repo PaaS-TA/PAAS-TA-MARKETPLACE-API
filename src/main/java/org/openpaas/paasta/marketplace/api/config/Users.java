@@ -1,4 +1,4 @@
-package org.openpaas.paasta.marketplace.api.thirdparty.paas;
+package org.openpaas.paasta.marketplace.api.config;
 
 import lombok.Data;
 import org.springframework.security.core.CredentialsContainer;
@@ -10,8 +10,15 @@ import org.springframework.util.Assert;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * User Model 클래스
+ *
+ * @author indra
+ * @version 1.0
+ * @since 2018.08.28
+ */
 @Data
-public class User implements UserDetails, CredentialsContainer {
+public class Users implements UserDetails, CredentialsContainer {
 
     private static final long serialVersionUID = SpringSecurityCoreVersion.SERIAL_VERSION_UID;
 
@@ -32,12 +39,12 @@ public class User implements UserDetails, CredentialsContainer {
     private final boolean enabled;
 
 
-    public User(String username, String password, Collection<? extends GrantedAuthority> authorities) {
+    public Users(String username, String password, Collection<? extends GrantedAuthority> authorities) {
         this(username, password, true, true, true, true, authorities);
     }
 
-    public User(String username, String password, boolean enabled, boolean accountNonExpired,
-                boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+    public Users(String username, String password, boolean enabled, boolean accountNonExpired,
+                 boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
 
         if (((username == null) || "".equals(username)) || (password == null)) {
             throw new IllegalArgumentException("Cannot pass null or empty values to constructor");
@@ -91,8 +98,8 @@ public class User implements UserDetails, CredentialsContainer {
 
     @Override
     public boolean equals(Object rhs) {
-        if (rhs instanceof User) {
-            return username.equals(((User) rhs).username);
+        if (rhs instanceof Users) {
+            return username.equals(((Users) rhs).username);
         }
         return false;
     }
