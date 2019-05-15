@@ -5,6 +5,7 @@ plugins {
 
 apply plugin: 'java'
 apply plugin: 'idea'
+apply plugin: 'jacoco'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
@@ -25,6 +26,7 @@ ext {
 	lombokVersion = '1.18.2'
 	jstlVersion = '1.2'
 	gsonVersion = '2.8.5'
+	jacocoVersion = '0.8.1'
 }
 
 dependencies {
@@ -44,4 +46,15 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+}
+
+jacoco {
+	toolVersion = "${jacocoVersion}"
+}
+
+test {
+	ignoreFailures=true
+	jacoco {
+		destinationFile = file("$buildDir/jacoco/jacoco-overall.exec")
+	}
 }
