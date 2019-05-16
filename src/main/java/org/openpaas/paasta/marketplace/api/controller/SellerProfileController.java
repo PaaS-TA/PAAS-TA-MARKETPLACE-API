@@ -21,7 +21,7 @@ public class SellerProfileController {
     private SellerProfileService sellerProfileService;
 
     /**
-     * 프로필 등록
+     * 판매자 프로필 등록
      *
      * @param sellerProfile the seller profile
      * @return SellerProfile
@@ -32,7 +32,7 @@ public class SellerProfileController {
     }
 
     /**
-     * 프로필 상세 조회
+     * 판매자 프로필 상세 조회
      *
      * @param id the id
      * @return SellerProfile
@@ -40,5 +40,18 @@ public class SellerProfileController {
     @GetMapping("/{id}")
     public SellerProfile getProfile(@PathVariable Long id){
         return sellerProfileService.getProfile(id);
+    }
+
+
+    /**
+     * 판매자 프로필 수정
+     *
+     * @param sellerProfile the seller profile
+     * @return SellerProfile
+     */
+    @PutMapping("/{id}")
+    public SellerProfile updateProfile(@PathVariable Long id, @RequestBody SellerProfile sellerProfile) {
+        sellerProfile.setId(id);
+        return sellerProfileService.updateProfile(sellerProfile);
     }
 }

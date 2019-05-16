@@ -37,4 +37,15 @@ public class SellerProfileService {
     public SellerProfile getProfile(Long id) {
         return sellerProfileRepository.getOne(id);
     }
+
+
+    /**
+     * 판매자 프로필 수정
+     *
+     * @param sellerProfile the seller profile
+     * @return SellerProfile
+     */
+    public SellerProfile updateProfile(SellerProfile sellerProfile) {
+        return sellerProfileRepository.save(sellerProfile);
+    }
 }
