@@ -1,9 +1,8 @@
 package org.openpaas.paasta.marketplace.api.service;
 
-import org.openpaas.paasta.marketplace.api.BaseComponent;
 import org.springframework.web.client.RestTemplate;
 
-public abstract class AbstractService extends BaseComponent {
+public abstract class AbstractService {
 
 //	@Resource(name = "hubpopRest")
     protected RestTemplate hubpopRest;

@@ -14,8 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping(value = "/prototype/instances")
+@Slf4j
 public class SoftwareInstanceController extends AbstractController {
 
 	@Autowired
@@ -23,28 +26,28 @@ public class SoftwareInstanceController extends AbstractController {
 
     @GetMapping
     public List<SoftwareInstance> getSoftwareInstanceList(SoftwareInstanceSpecification spec) {
-        logger.info("getSoftwareList: spec={}", spec);
+        log.info("getSoftwareList: spec={}", spec);
 
         return softwareInstanceService.getSoftwareInstanceList(spec);
     }
 
     @GetMapping("/{id}")
     public SoftwareInstance getSoftwareInstance(@PathVariable("id") Long id) {
-        logger.info("getSoftwareInstance: id={}", id);
+        log.info("getSoftwareInstance: id={}", id);
 
         return softwareInstanceService.getSoftwareInstance(id);
     }
 
     @PostMapping
     public SoftwareInstance createSoftwareInstance(@RequestBody SoftwareInstance softwareInstance) {
-        logger.info("createSoftwareInstance: softwareInstance={}", softwareInstance);
+        log.info("createSoftwareInstance: softwareInstance={}", softwareInstance);
 
         return softwareInstanceService.createSoftwareInstance(softwareInstance);
     }
 
     @PutMapping("/{id}/provision")
     public SoftwareInstance provisionSoftwareInstance(@PathVariable("id") Long id) {
-        logger.info("provisionSoftwareInstance: id={}", id);
+        log.info("provisionSoftwareInstance: id={}", id);
         
         return softwareInstanceService.provision(id);
     }

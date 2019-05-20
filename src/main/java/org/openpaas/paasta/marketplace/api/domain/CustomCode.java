@@ -7,35 +7,38 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * Custom Code 모델
  *
- * @author peter
+ * @author hrjin
  * @version 1.0
  * @since 2019-05-08
  */
 @Data
 @Entity
-public class CustomCode extends CommonEntity{
+@EqualsAndHashCode(callSuper = true)
+public class CustomCode extends BaseEntity{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long codeId;
 
-    // ex) BUSINESS_CODE
+    // ex) BUSINESS_TYPE
     @NotNull
     private String groupCode;
 
-    // ex) 비즈니스 타입 코드
+    // ex) 업체유형
     @NotNull
     private String groupCodeName;
 
     // ex) GOVERNMENT, COMPANY, PERSON, ETC
     @NotNull
-    private String codeUnit;
+    private String unitCode;
 
     // ex) 공공기관, 기업, 개인, 기타
     @NotNull
-    private String codeUnitName;
+    private String unitCodeName;
+
 }

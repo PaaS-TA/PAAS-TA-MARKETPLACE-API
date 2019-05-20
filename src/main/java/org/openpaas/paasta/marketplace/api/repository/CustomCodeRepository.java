@@ -17,8 +17,9 @@ import java.util.List;
 @Repository
 public interface CustomCodeRepository extends JpaRepository<CustomCode, Long> {
 
-    // GroupTypeName 으로 Group Code 목록 조회
-    List<CustomCode> findByGroupCode(String groupTypeName);
+    // GroupCode로 코드그룹 목록 조회
+    List<CustomCode> findByGroupCode(String groupCode);
 
-    CustomCode findByGroupCodeAndCodeUnit(String groupTypeName, String codeUnit);
+    // GroupCode & UnitCode로 코드데이터 조회
+    CustomCode findByGroupCodeAndUnitCode(String groupCode, String unitCode);
 }

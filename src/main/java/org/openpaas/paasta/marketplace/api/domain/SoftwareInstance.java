@@ -14,14 +14,14 @@ import lombok.EqualsAndHashCode;
 @Data
 @Entity
 @EqualsAndHashCode(callSuper = true)
-public abstract class SoftwareInstance extends CommonEntity {
+public abstract class SoftwareInstance extends BaseEntity {
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    private Software software;
+    private Product product;
 
     private String name;
 

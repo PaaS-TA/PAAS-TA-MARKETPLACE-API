@@ -17,16 +17,14 @@ public class CategorySpecification implements Specification<Category> {
 
 	private static final long serialVersionUID = 1L;
 
-//    private UseYn useYn = UseYn.Y;
-
     @Override
     public Predicate toPredicate(Root<Category> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
         List<Predicate> restrictions = new ArrayList<>();
 //        if (useYn != null && useYn != UseYn.All) {
-//            restrictions.add(builder.equal(root.get("useYn"), useYn));
+//            restrictions.add(builder.equal(root.get("deletYn"), deleteYn));
 //        }
 
-        query.orderBy(builder.asc(root.get("seq")));
+//        query.orderBy(builder.asc(root.get("seq")));
 
         return builder.and(restrictions.toArray(new Predicate[] {}));
     }

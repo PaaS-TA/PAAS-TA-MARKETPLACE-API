@@ -1,16 +1,11 @@
 package org.openpaas.paasta.marketplace.api.domain;
 
-import java.util.List;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.PreRemove;
+import javax.persistence.PrePersist;
 import javax.validation.constraints.NotNull;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,30 +13,34 @@ import lombok.EqualsAndHashCode;
 @Data
 @Entity
 @EqualsAndHashCode(callSuper = true)
-public class Category extends CommonEntity {
+public class Category extends BaseEntity {
 
+	// 카테고리ID
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+	// 카테고리명
     @NotNull
-    private String name;
+    private String categoryName;
 
-    private Long seq;
+    @NotNull
+    private String deleteYn;
 
-    @OneToMany(mappedBy = "category")
-    @JsonIgnore
-    private List<Software> softwareList;
+//    @OneToMany(mappedBy = "category")
+//    @JsonIgnore
+//    private List<Product> productList;
+//
+//    @PreRemove
+//    private void preRemove() {
+//        for (Product product : productList) {
+//        	product.setCategory(null);
+//        }
+//    }
 
-    @PreRemove
-    private void preRemove() {
-        for (Software software : softwareList) {
-            software.setCategory(null);
-        }
-    }
-
-    public enum Direction {
-        Up, Down,
+    @PrePersist
+    public void prePersist() {
+    	deleteYn = "N";
     }
 
     @Override
@@ -50,10 +49,9 @@ public class Category extends CommonEntity {
         builder.append("Category [id=");
         builder.append(id);
         builder.append(", name=");
-        builder.append(name);
-        builder.append(", seq=");
-        builder.append(seq);
+        builder.append(categoryName);
         builder.append("]");
+
         return builder.toString();
     }
 

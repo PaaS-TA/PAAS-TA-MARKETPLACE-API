@@ -4,11 +4,11 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.openpaas.paasta.marketplace.api.domain.Software;
+import org.openpaas.paasta.marketplace.api.domain.Product;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareInstance;
-import org.openpaas.paasta.marketplace.api.domain.SoftwareInstanceSpecification;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareInstance.ProvisionStatus;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareInstance.Status;
+import org.openpaas.paasta.marketplace.api.domain.SoftwareInstanceSpecification;
 import org.openpaas.paasta.marketplace.api.repository.SoftwareInstanceRepository;
 import org.openpaas.paasta.marketplace.api.repository.SoftwareRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +25,8 @@ public class SoftwareInstanceService {
     private SoftwareInstanceRepository softwareInstanceRepository;
 
     public SoftwareInstance createSoftwareInstance(SoftwareInstance softwareInstance) {
-        Software software = softwareRepository.findById(softwareInstance.getSoftware().getId()).orElse(null);
-        softwareInstance.setSoftware(software);
+        Product software = softwareRepository.findById(softwareInstance.getProduct().getId()).orElse(null);
+        softwareInstance.setProduct(software);
         softwareInstance.setStatus(Status.Pending);
 
         SoftwareInstance saved = softwareInstanceRepository.save(softwareInstance);
@@ -35,8 +35,8 @@ public class SoftwareInstanceService {
     }
 
     public SoftwareInstance createSoftwareInstance(SoftwareInstance softwareInstance, Status status) {
-        Software software = softwareRepository.findById(softwareInstance.getSoftware().getId()).orElse(null);
-        softwareInstance.setSoftware(software);
+        Product software = softwareRepository.findById(softwareInstance.getProduct().getId()).orElse(null);
+        softwareInstance.setProduct(software);
         softwareInstance.setStatus(status);
 
         SoftwareInstance saved = softwareInstanceRepository.save(softwareInstance);

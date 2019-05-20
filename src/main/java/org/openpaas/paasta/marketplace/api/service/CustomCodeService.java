@@ -21,6 +21,27 @@ public class CustomCodeService {
     private CustomCodeRepository customCodeRepository;
 
     /**
+     * GroupCode 로 단위코드 목록 조회
+     *
+     * @param groupCode
+     * @return List<CustomCode>
+     */
+    public List<CustomCode> getUnitCodeListByGroupCode(String groupCode) {
+        return customCodeRepository.findByGroupCode(groupCode);
+    }
+
+    /**
+     * GroupCode 와 UnitCode 로 단위코드 데이터 조회
+     * 
+     * @param groupCode
+     * @param unitCode
+     * @return CustomCode
+     */
+    public CustomCode getUnitCode(String groupCode, String unitCode) {
+        return customCodeRepository.findByGroupCodeAndUnitCode(groupCode, unitCode);
+    }
+
+    /**
      * Custom Code 생성
      *
      * @param customCode the custom code
@@ -30,17 +51,4 @@ public class CustomCodeService {
         return customCodeRepository.save(customCode);
     }
 
-    /**
-     * Group Type Name 으로 Group Code 목록 조회
-     *
-     * @param groupTypeName the group type name
-     * @return List<CustomCode>
-     */
-    public List<CustomCode> getGroupCodeListByGroupName(String groupTypeName) {
-        return customCodeRepository.findByGroupCode(groupTypeName);
-    }
-
-    public CustomCode getCodeUnit(String groupTypeName, String codeUnit) {
-        return customCodeRepository.findByGroupCodeAndCodeUnit(groupTypeName, codeUnit);
-    }
 }

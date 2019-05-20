@@ -13,7 +13,7 @@ import org.springframework.data.jpa.domain.Specification;
 import lombok.Data;
 
 @Data
-public class SoftwareSpecification implements Specification<Software> {
+public class SoftwareSpecification implements Specification<Product> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -21,14 +21,14 @@ public class SoftwareSpecification implements Specification<Software> {
 
     private Long categoryId;
 
-    private Software.Type type;
+    private Product.Type type;
 
     private String createdId;
 
     private String nameLike;
 
     @Override
-    public Predicate toPredicate(Root<Software> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+    public Predicate toPredicate(Root<Product> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
         List<Predicate> restrictions = new ArrayList<>();
 //        if (useYn != null && useYn != UseYn.All) {
 //            restrictions.add(builder.equal(root.get("useYn"), useYn));
