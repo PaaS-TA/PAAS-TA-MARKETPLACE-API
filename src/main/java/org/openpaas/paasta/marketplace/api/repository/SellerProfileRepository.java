@@ -17,8 +17,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SellerProfileRepository extends JpaRepository<SellerProfile, String> {
 
-    SellerProfile findByUserId(String userId);
-
 	List<SellerProfile> findAllByDeleteYn(String deleteYn);
 
 	SellerProfile getOneByIdAndDeleteYn(String id, String deleteYn);

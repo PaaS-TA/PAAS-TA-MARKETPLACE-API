@@ -61,7 +61,4 @@ public class SellerProfileService {
         return sellerProfileRepository.save(sellerProfile);
     }
 
-    public SellerProfile getProfileByUserId(String userId) {
-        return sellerProfileRepository.findByUserId(userId);
-    }
 }

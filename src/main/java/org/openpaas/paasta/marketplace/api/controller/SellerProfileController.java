@@ -64,11 +64,6 @@ public class SellerProfileController {
         return sellerProfileService.createSellerProfile(sellerProfile);
     }
 
-    @GetMapping(value = "/user/{userId}")
-    private SellerProfile getProfileByUserId(@PathVariable String userId){
-        return sellerProfileService.getProfileByUserId(userId);
-    }
-
 
     /**
      * 판매자 프로필 수정
