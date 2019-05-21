@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.openpaas.paasta.marketplace.api.domain.SellerProfile;
 import org.openpaas.paasta.marketplace.api.service.SellerProfileService;
+import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,6 +62,8 @@ public class SellerProfileController {
     @PostMapping
     public SellerProfile createSellerProfile(@RequestBody SellerProfile sellerProfile) {
     	log.info("seller: " + sellerProfile.toString());
+    	log.info("user: " + SecurityUtils.getUserId());
+
         return sellerProfileService.createSellerProfile(sellerProfile);
     }
 
@@ -73,7 +76,7 @@ public class SellerProfileController {
      * @return SellerProfile
      */
     @PutMapping("/{id}")
-    public SellerProfile updateSellerProfile(@PathVariable String id, @RequestBody SellerProfile sellerProfile) {
+    public SellerProfile updateSellerProfile(@PathVariable Long id, @RequestBody SellerProfile sellerProfile) {
         sellerProfile.setId(id);
         return sellerProfileService.updateSellerProfile(sellerProfile);
     }

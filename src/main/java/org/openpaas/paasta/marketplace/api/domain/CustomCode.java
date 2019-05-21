@@ -23,7 +23,7 @@ public class CustomCode extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long codeId;
+    private Long id;
 
     // ex) BUSINESS_TYPE
     @NotNull

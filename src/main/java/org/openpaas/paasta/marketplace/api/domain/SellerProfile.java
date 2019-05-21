@@ -3,6 +3,8 @@ package org.openpaas.paasta.marketplace.api.domain;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Transient;
@@ -26,10 +28,15 @@ import lombok.EqualsAndHashCode;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class SellerProfile extends BaseEntity{
 
-	// 판매자ID
+	// ID
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    // 판매자 로그인ID
+    @NotNull
+    private String sellerId;
+    
     // 판매자명
     @NotNull
     private String sellerName;

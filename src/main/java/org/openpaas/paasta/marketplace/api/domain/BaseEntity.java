@@ -8,6 +8,8 @@ import javax.persistence.PreUpdate;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
 
 import lombok.Data;
 
@@ -26,12 +28,11 @@ public abstract class BaseEntity {
 	protected LocalDateTime createDate;
 
 //	@NotNull
-	@CreationTimestamp
+	@UpdateTimestamp
 	protected LocalDateTime updateDate;
 
     @PrePersist
     public void prePersist() {
-//        createId = SecurityUtils.getUserId();
 //        if (this.createDate == null) {
 //            this.createDate = LocalDateTime.now(ZoneId.of(Constants.STRING_TIME_ZONE_ID)).format(DateTimeFormatter.ofPattern(Constants.STRING_DATE_TYPE));
 //        }
@@ -39,16 +40,15 @@ public abstract class BaseEntity {
 //        if (this.updateDate == null) {
 //            this.updateDate = LocalDateTime.now(ZoneId.of(Constants.STRING_TIME_ZONE_ID)).format(DateTimeFormatter.ofPattern(Constants.STRING_DATE_TYPE));
 //        }
-        createDate = LocalDateTime.now();
+        updateDate = LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-//        updateId = SecurityUtils.getUserId();
 //        if (this.updateDate != null) {
 //            this.updatedDate = LocalDateTime.now(ZoneId.of(Constants.STRING_TIME_ZONE_ID)).format(DateTimeFormatter.ofPattern(Constants.STRING_DATE_TYPE));
 //        }
-        updateDate = LocalDateTime.now();
+        createDate = LocalDateTime.now();
     }
 
 }
