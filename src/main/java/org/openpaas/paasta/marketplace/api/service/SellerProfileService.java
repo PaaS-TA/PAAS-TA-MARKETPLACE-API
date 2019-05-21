@@ -19,13 +19,12 @@ public class SellerProfileService {
 
     @Autowired
     private SellerProfileRepository sellerProfileRepository;
-    
+
     private String deleteYn = "N";
 
     /**
      * 판매자 프로필 목록 조회
      *
-     * @param deleteYn
      * @return List
      */
     public List<SellerProfile> getSellerProfileList() {
@@ -35,7 +34,7 @@ public class SellerProfileService {
     /**
      * 판매자 프로필 상세 조회
      *
-     * @param id
+     * @param id the id
      * @return SellerProfile
      */
     public SellerProfile getSellerProfile(String id) {
@@ -45,7 +44,7 @@ public class SellerProfileService {
     /**
      * 판매자 프로필 등록
      *
-     * @param sellerProfile
+     * @param sellerProfile the seller profile
      * @return SellerProfile
      */
     public SellerProfile createSellerProfile(SellerProfile sellerProfile) {
@@ -55,11 +54,14 @@ public class SellerProfileService {
     /**
      * 판매자 프로필 수정
      *
-     * @param sellerProfile
+     * @param sellerProfile the seller profile
      * @return SellerProfile
      */
     public SellerProfile updateSellerProfile(SellerProfile sellerProfile) {
         return sellerProfileRepository.save(sellerProfile);
     }
-    
+
+    public SellerProfile getProfileByUserId(String userId) {
+        return sellerProfileRepository.findByUserId(userId);
+    }
 }

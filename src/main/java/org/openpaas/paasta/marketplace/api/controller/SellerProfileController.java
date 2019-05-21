@@ -34,7 +34,6 @@ public class SellerProfileController {
     /**
      * 판매자 프로필 목록 조회
      *
-     * @param
      * @return List
      */
     @GetMapping
@@ -45,7 +44,7 @@ public class SellerProfileController {
     /**
      * 판매자 프로필 상세 조회
      *
-     * @param id
+     * @param id the id
      * @return SellerProfile
      */
     @GetMapping("/{id}")
@@ -65,15 +64,22 @@ public class SellerProfileController {
         return sellerProfileService.createSellerProfile(sellerProfile);
     }
 
+    @GetMapping(value = "/user/{userId}")
+    private SellerProfile getProfileByUserId(@PathVariable String userId){
+        return sellerProfileService.getProfileByUserId(userId);
+    }
+
+
     /**
      * 판매자 프로필 수정
      *
-     * @param id, sellerProfile
+     * @param id the id
+     * @param sellerProfile the seller profile
      * @return SellerProfile
      */
-    @PutMapping
-    public SellerProfile updateSellerProfile(@RequestBody SellerProfile sellerProfile) {
+    @PutMapping("/{id}")
+    public SellerProfile updateSellerProfile(@PathVariable String id, @RequestBody SellerProfile sellerProfile) {
+        sellerProfile.setId(id);
         return sellerProfileService.updateSellerProfile(sellerProfile);
     }
-    
 }

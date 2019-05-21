@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
+ * 판매자 프로필 Repository
  *
  * @author hrjin
  * @version 1.0
@@ -15,9 +16,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SellerProfileRepository extends JpaRepository<SellerProfile, String> {
-	
+
+    SellerProfile findByUserId(String userId);
+
 	List<SellerProfile> findAllByDeleteYn(String deleteYn);
-	
+
 	SellerProfile getOneByIdAndDeleteYn(String id, String deleteYn);
-	
+
 }
