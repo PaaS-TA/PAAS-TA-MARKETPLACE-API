@@ -1,4 +1,4 @@
-package org.openpaas.paasta.marketplace.api.config;
+package org.openpaas.paasta.marketplace.api.common;
 
 import lombok.Data;
 import org.springframework.security.core.CredentialsContainer;

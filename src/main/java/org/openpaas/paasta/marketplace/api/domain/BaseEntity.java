@@ -1,13 +1,13 @@
 package org.openpaas.paasta.marketplace.api.domain;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.validation.constraints.NotNull;
 
-import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
+import org.hibernate.annotations.CreationTimestamp;
 
 import lombok.Data;
 
@@ -21,17 +21,17 @@ public abstract class BaseEntity {
 	@NotNull
     protected String updateId;
 
-	@NotNull
-//    @Column(nullable = false, updatable = false)
-    private Date createDate;
+//	@NotNull
+	@CreationTimestamp
+	protected LocalDateTime createDate;
 
-	@NotNull
-//    @Column(nullable = false)
-    private Date updateDate;
+//	@NotNull
+	@CreationTimestamp
+	protected LocalDateTime updateDate;
 
     @PrePersist
     public void prePersist() {
-        createId = SecurityUtils.getUserId();
+//        createId = SecurityUtils.getUserId();
 //        if (this.createDate == null) {
 //            this.createDate = LocalDateTime.now(ZoneId.of(Constants.STRING_TIME_ZONE_ID)).format(DateTimeFormatter.ofPattern(Constants.STRING_DATE_TYPE));
 //        }
@@ -39,16 +39,16 @@ public abstract class BaseEntity {
 //        if (this.updateDate == null) {
 //            this.updateDate = LocalDateTime.now(ZoneId.of(Constants.STRING_TIME_ZONE_ID)).format(DateTimeFormatter.ofPattern(Constants.STRING_DATE_TYPE));
 //        }
-        createDate = new Date();
+        createDate = LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-        updateId = SecurityUtils.getUserId();
+//        updateId = SecurityUtils.getUserId();
 //        if (this.updateDate != null) {
 //            this.updatedDate = LocalDateTime.now(ZoneId.of(Constants.STRING_TIME_ZONE_ID)).format(DateTimeFormatter.ofPattern(Constants.STRING_DATE_TYPE));
 //        }
-        updateDate = new Date();
+        updateDate = LocalDateTime.now();
     }
 
 }
