@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.openpaas.paasta.marketplace.api.domain.SellerProfile;
 import org.openpaas.paasta.marketplace.api.service.SellerProfileService;
-import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +30,7 @@ public class SellerProfileController {
 
     @Autowired
     private SellerProfileService sellerProfileService;
-
+    
     /**
      * 판매자 프로필 목록 조회
      *
@@ -62,7 +61,6 @@ public class SellerProfileController {
     @PostMapping
     public SellerProfile createSellerProfile(@RequestBody SellerProfile sellerProfile) {
     	log.info("seller: " + sellerProfile.toString());
-    	log.info("user: " + SecurityUtils.getUserId());
 
         return sellerProfileService.createSellerProfile(sellerProfile);
     }
