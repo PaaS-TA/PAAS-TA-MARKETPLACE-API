@@ -75,7 +75,13 @@ public class SellerProfileController {
      */
     @PutMapping("/{id}")
     public SellerProfile updateSellerProfile(@PathVariable Long id, @RequestBody SellerProfile sellerProfile) {
-        sellerProfile.setId(id);
-        return sellerProfileService.updateSellerProfile(sellerProfile);
+        SellerProfile profile = getSellerProfile(id);
+        profile.setSellerName(sellerProfile.getSellerName());
+        profile.setBusinessType(sellerProfile.getBusinessType());
+        profile.setManagerName(sellerProfile.getManagerName());
+        profile.setEmail(sellerProfile.getEmail());
+        profile.setHomepageUrl(sellerProfile.getHomepageUrl());
+
+        return sellerProfileService.updateSellerProfile(profile);
     }
 }

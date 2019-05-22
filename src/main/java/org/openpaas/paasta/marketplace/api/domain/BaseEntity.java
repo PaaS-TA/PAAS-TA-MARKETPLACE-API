@@ -40,6 +40,7 @@ public abstract class BaseEntity {
 //        if (this.updateDate == null) {
 //            this.updateDate = LocalDateTime.now(ZoneId.of(Constants.STRING_TIME_ZONE_ID)).format(DateTimeFormatter.ofPattern(Constants.STRING_DATE_TYPE));
 //        }
+        createDate = LocalDateTime.now();
         updateDate = LocalDateTime.now();
     }
 
@@ -48,7 +49,7 @@ public abstract class BaseEntity {
 //        if (this.updateDate != null) {
 //            this.updatedDate = LocalDateTime.now(ZoneId.of(Constants.STRING_TIME_ZONE_ID)).format(DateTimeFormatter.ofPattern(Constants.STRING_DATE_TYPE));
 //        }
-        createDate = LocalDateTime.now();
+        updateDate = LocalDateTime.now();
     }
 
 }
