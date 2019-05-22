@@ -37,7 +37,7 @@ public class SellerProfileService {
      * @param id the id
      * @return SellerProfile
      */
-    public SellerProfile getSellerProfile(String id) {
+    public SellerProfile getSellerProfile(Long id) {
         return sellerProfileRepository.getOneByIdAndDeleteYn(id, deleteYn);
     }
 

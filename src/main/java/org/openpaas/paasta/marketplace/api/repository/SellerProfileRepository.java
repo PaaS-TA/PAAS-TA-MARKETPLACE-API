@@ -15,10 +15,10 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface SellerProfileRepository extends JpaRepository<SellerProfile, String> {
+public interface SellerProfileRepository extends JpaRepository<SellerProfile, Long> {
 
 	List<SellerProfile> findAllByDeleteYn(String deleteYn);
 
-	SellerProfile getOneByIdAndDeleteYn(String id, String deleteYn);
+	SellerProfile getOneByIdAndDeleteYn(Long id, String deleteYn);
 
 }

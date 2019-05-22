@@ -49,7 +49,7 @@ public class SellerProfileController {
      * @return SellerProfile
      */
     @GetMapping("/{id}")
-    public SellerProfile getSellerProfile(@PathVariable String id) {
+    public SellerProfile getSellerProfile(@PathVariable Long id) {
         return sellerProfileService.getSellerProfile(id);
     }
 
