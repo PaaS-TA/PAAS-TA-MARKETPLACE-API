@@ -1,10 +1,7 @@
 package org.openpaas.paasta.marketplace.api.controller;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.openpaas.paasta.marketplace.api.common.ApiConstants;
 import org.openpaas.paasta.marketplace.api.domain.SellerProfile;
 import org.openpaas.paasta.marketplace.api.service.SellerProfileService;
 import org.openpaas.paasta.marketplace.api.util.ResponseUtils;
@@ -40,9 +37,13 @@ public class SellerProfileController {
      *
      * @return List
      */
+//    @GetMapping
+//    public List<SellerProfile> getSellerProfileList() {
+//        return sellerProfileService.getSellerProfileList();
+//    }
     @GetMapping
-    public List<SellerProfile> getSellerProfileList() {
-        return sellerProfileService.getSellerProfileList();
+    public Map<String, Object> getSellerProfileList() {
+        return ResponseUtils.apiResponse(sellerProfileService.getSellerProfileList());
     }
 
     /**
@@ -52,8 +53,8 @@ public class SellerProfileController {
      * @return SellerProfile
      */
     @GetMapping("/{id}")
-    public SellerProfile getSellerProfile(@PathVariable Long id) {
-        return sellerProfileService.getSellerProfile(id);
+    public Map<String, Object> getSellerProfile(@PathVariable Long id) {
+        return ResponseUtils.apiResponse(sellerProfileService.getSellerProfile(id));
     }
 
     /**
