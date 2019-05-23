@@ -2,53 +2,56 @@ package org.openpaas.paasta.marketplace.api.service;
 
 import java.util.List;
 
-import javax.transaction.Transactional;
-
+import org.openpaas.paasta.marketplace.api.common.ApiConstants;
 import org.openpaas.paasta.marketplace.api.domain.Category;
-import org.openpaas.paasta.marketplace.api.exception.NotFoundException;
 import org.openpaas.paasta.marketplace.api.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 @Service
-@Transactional
 public class CategoryService extends AbstractService {
 
 	@Autowired
     private CategoryRepository categoryRepository;
 
-	private String deleteYn = "N";
-	
+	/**
+	 * 카테고리 목록 조회
+	 * 
+	 * @return
+	 */
     public List<Category> getCategoryList() {
-        return categoryRepository.findAllByDeleteYn(deleteYn);
+        return categoryRepository.findAllByDeleteYn(ApiConstants.DELETE_YN_N);
     }
 
+    /**
+     * 카테고리 상세 조회
+     * 
+     * @param id
+     * @return
+     */
     public Category getCategory(Long id) {
-        return categoryRepository.getOneByIdAndDeleteYn(id, deleteYn);
+        return categoryRepository.getOneByIdAndDeleteYn(id, ApiConstants.DELETE_YN_N);
     }
 
+    /**
+     * 카테고리 등록
+     * 
+     * @param category
+     * @return
+     */
     public Category createCategory(Category category) {
-        category = categoryRepository.save(category);
-
-//        arrangeCategorySeq();
-
-        return category;
+        return categoryRepository.save(category);
     }
 
-    public Category updateCategory(Category category) {
-        Assert.notNull(category, "category can't be null.");
-        Assert.notNull(category.getId(), "category id can't be null.");
-        Assert.notNull(category.getCategoryName(), "category_name can't be null.");
-        Assert.notNull(category.getDeleteYn(), "delete_yn can't be null.");
-
-        Category saved = categoryRepository.findById(category.getId())
-                .orElseThrow(() -> new NotFoundException("saved category can't be null."));
-
-        saved.setCategoryName(category.getCategoryName());
-        saved.setDeleteYn(category.getDeleteYn());
-
-        return categoryRepository.save(saved);
+    /**
+     * 카테고리 수정
+     * 
+     * @param id
+     * @param category
+     * @return
+     */
+    public Category updateCategory(Long id, Category category) {
+        return categoryRepository.save(category);
     }
 
 //    public Category updateCategoryName(Category category) {

@@ -1,9 +1,13 @@
 package org.openpaas.paasta.marketplace.api.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.openpaas.paasta.marketplace.api.common.ApiConstants;
 import org.openpaas.paasta.marketplace.api.domain.SellerProfile;
 import org.openpaas.paasta.marketplace.api.service.SellerProfileService;
+import org.openpaas.paasta.marketplace.api.util.ResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,10 +63,9 @@ public class SellerProfileController {
      * @return SellerProfile
      */
     @PostMapping
-    public SellerProfile createSellerProfile(@RequestBody SellerProfile sellerProfile) {
+    public Map<String, Object> createSellerProfile(@RequestBody SellerProfile sellerProfile) {
     	log.info("seller: " + sellerProfile.toString());
-
-        return sellerProfileService.createSellerProfile(sellerProfile);
+    	return ResponseUtils.apiResponse(sellerProfileService.createSellerProfile(sellerProfile));
     }
 
 
@@ -74,14 +77,8 @@ public class SellerProfileController {
      * @return SellerProfile
      */
     @PutMapping("/{id}")
-    public SellerProfile updateSellerProfile(@PathVariable Long id, @RequestBody SellerProfile sellerProfile) {
-        SellerProfile profile = getSellerProfile(id);
-        profile.setSellerName(sellerProfile.getSellerName());
-        profile.setBusinessType(sellerProfile.getBusinessType());
-        profile.setManagerName(sellerProfile.getManagerName());
-        profile.setEmail(sellerProfile.getEmail());
-        profile.setHomepageUrl(sellerProfile.getHomepageUrl());
-
-        return sellerProfileService.updateSellerProfile(profile);
+    public Map<String, Object> updateSellerProfile(@PathVariable Long id, @RequestBody SellerProfile sellerProfile) {
+    	log.info("seller: " + sellerProfile.toString());
+        return ResponseUtils.apiResponse(sellerProfileService.updateSellerProfile(id, sellerProfile));
     }
 }

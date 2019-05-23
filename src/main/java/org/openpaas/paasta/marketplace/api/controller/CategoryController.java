@@ -67,9 +67,7 @@ public class CategoryController extends AbstractController {
      */
     @PutMapping("/{id}")
     public Category updateCategory(@PathVariable Long id, @RequestBody Category category) {
-        category.setId(id);
-
-        return categoryService.updateCategory(category);
+        return categoryService.updateCategory(id, category);
     }
 
 //    @PutMapping("/{id}/name")

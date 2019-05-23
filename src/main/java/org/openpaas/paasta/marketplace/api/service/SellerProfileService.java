@@ -7,6 +7,8 @@ import org.openpaas.paasta.marketplace.api.repository.SellerProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 판매자 프로필 Service
  *
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
  * @since 2019-05-07
  */
 @Service
+@Slf4j
 public class SellerProfileService {
 
     @Autowired
@@ -57,8 +60,16 @@ public class SellerProfileService {
      * @param sellerProfile the seller profile
      * @return SellerProfile
      */
-    public SellerProfile updateSellerProfile(SellerProfile sellerProfile) {
-        return sellerProfileRepository.save(sellerProfile);
+    public SellerProfile updateSellerProfile(Long id, SellerProfile sellerProfile) {
+        SellerProfile profile = getSellerProfile(id);
+        profile.setSellerName(sellerProfile.getSellerName());
+        profile.setBusinessType(sellerProfile.getBusinessType());
+        profile.setManagerName(sellerProfile.getManagerName());
+        profile.setEmail(sellerProfile.getEmail());
+        profile.setHomepageUrl(sellerProfile.getHomepageUrl());
+    	log.info("seller: " + profile.toString());
+
+        return sellerProfileRepository.save(profile);
     }
 
 }

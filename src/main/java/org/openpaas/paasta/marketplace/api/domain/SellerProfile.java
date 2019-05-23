@@ -2,6 +2,7 @@ package org.openpaas.paasta.marketplace.api.domain;
 
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -34,6 +35,7 @@ public class SellerProfile extends BaseEntity{
     private Long id;
 
     // 판매자 로그인ID
+    @Column(name="sellerId", unique=true)
     @NotNull
     private String sellerId;
     
