@@ -22,7 +22,7 @@ import lombok.EqualsAndHashCode;
 public class CustomCode extends BaseEntity{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     // ex) BUSINESS_TYPE

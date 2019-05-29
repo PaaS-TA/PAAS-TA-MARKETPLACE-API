@@ -1,10 +1,9 @@
 package org.openpaas.paasta.marketplace.api.controller;
 
-import java.util.Map;
-
+import org.openpaas.paasta.marketplace.api.common.ApiConstants;
 import org.openpaas.paasta.marketplace.api.domain.SellerProfile;
+import org.openpaas.paasta.marketplace.api.domain.SellerProfileList;
 import org.openpaas.paasta.marketplace.api.service.SellerProfileService;
-import org.openpaas.paasta.marketplace.api.util.ResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 @RestController
-@RequestMapping(value = "/profile")
+@RequestMapping(value = ApiConstants.URI_API_SELLER_PROFILE)
 @Slf4j
 public class SellerProfileController {
 
@@ -42,8 +41,8 @@ public class SellerProfileController {
 //        return sellerProfileService.getSellerProfileList();
 //    }
     @GetMapping
-    public Map<String, Object> getSellerProfileList() {
-        return ResponseUtils.apiResponse(sellerProfileService.getSellerProfileList());
+    public SellerProfileList getSellerProfileList() {
+        return sellerProfileService.getSellerProfileList();
     }
 
     /**
@@ -53,8 +52,8 @@ public class SellerProfileController {
      * @return SellerProfile
      */
     @GetMapping("/{id}")
-    public Map<String, Object> getSellerProfile(@PathVariable Long id) {
-        return ResponseUtils.apiResponse(sellerProfileService.getSellerProfile(id));
+    public SellerProfile getSellerProfile(@PathVariable Long id) {
+        return sellerProfileService.getSellerProfile(id);
     }
 
     /**
@@ -64,9 +63,9 @@ public class SellerProfileController {
      * @return SellerProfile
      */
     @PostMapping
-    public Map<String, Object> createSellerProfile(@RequestBody SellerProfile sellerProfile) {
+    public SellerProfile createSellerProfile(@RequestBody SellerProfile sellerProfile) {
     	log.info("seller: " + sellerProfile.toString());
-    	return ResponseUtils.apiResponse(sellerProfileService.createSellerProfile(sellerProfile));
+    	return sellerProfileService.createSellerProfile(sellerProfile);
     }
 
 
@@ -78,8 +77,8 @@ public class SellerProfileController {
      * @return SellerProfile
      */
     @PutMapping("/{id}")
-    public Map<String, Object> updateSellerProfile(@PathVariable Long id, @RequestBody SellerProfile sellerProfile) {
+    public SellerProfile updateSellerProfile(@PathVariable Long id, @RequestBody SellerProfile sellerProfile) {
     	log.info("seller: " + sellerProfile.toString());
-        return ResponseUtils.apiResponse(sellerProfileService.updateSellerProfile(id, sellerProfile));
+        return sellerProfileService.updateSellerProfile(id, sellerProfile);
     }
 }

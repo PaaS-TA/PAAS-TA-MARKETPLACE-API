@@ -14,11 +14,11 @@ import org.springframework.transaction.interceptor.RollbackRuleAttribute;
 import org.springframework.transaction.interceptor.RuleBasedTransactionAttribute;
 import org.springframework.transaction.interceptor.TransactionInterceptor;
 
-@Configuration
+//@Configuration
 public class TransactionAspect {
 
 	private static final String AOP_TRANSACTION_METHOD_NAME = "*";
-	private static final String AOP_TRANSACTION_EXPRESSION = "execution(* api..*service.*(..))"; 
+	private static final String AOP_TRANSACTION_EXPRESSION = "execution(* api..*service.*(..)) or execution(* resource..*sql.*(..))"; 
 	
 	@Autowired
 	private PlatformTransactionManager transactionManager;

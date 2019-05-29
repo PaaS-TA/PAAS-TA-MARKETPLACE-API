@@ -2,13 +2,20 @@ package org.openpaas.paasta.marketplace.api.service;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.openpaas.paasta.marketplace.api.common.ApiConstants;
 import org.openpaas.paasta.marketplace.api.domain.Category;
+import org.openpaas.paasta.marketplace.api.domain.CategoryList;
 import org.openpaas.paasta.marketplace.api.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
+@Transactional
 public class CategoryService extends AbstractService {
 
 	@Autowired
@@ -19,8 +26,13 @@ public class CategoryService extends AbstractService {
 	 * 
 	 * @return
 	 */
-    public List<Category> getCategoryList() {
-        return categoryRepository.findAllByDeleteYn(ApiConstants.DELETE_YN_N);
+    public CategoryList getCategoryList() {
+        List<Category> categories = categoryRepository.findAllByDeleteYn(ApiConstants.DELETE_YN_N);
+        CategoryList categoryList = new CategoryList();
+        categoryList.setResultCode(ApiConstants.RESULT_STATUS_SUCCESS);
+        categoryList.setItems(categories);
+
+        return categoryList;
     }
 
     /**
@@ -51,7 +63,12 @@ public class CategoryService extends AbstractService {
      * @return
      */
     public Category updateCategory(Long id, Category category) {
-        return categoryRepository.save(category);
+    	Category updCategory = getCategory(id);
+    	updCategory.setCategoryName(category.getCategoryName());
+    	updCategory.setDeleteYn(category.getDeleteYn());
+    	log.info("category: " + updCategory.toString());
+
+    	return categoryRepository.save(category);
     }
 
 //    public Category updateCategoryName(Category category) {

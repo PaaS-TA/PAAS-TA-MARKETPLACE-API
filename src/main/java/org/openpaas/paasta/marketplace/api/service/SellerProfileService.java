@@ -2,7 +2,11 @@ package org.openpaas.paasta.marketplace.api.service;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
+import org.openpaas.paasta.marketplace.api.common.ApiConstants;
 import org.openpaas.paasta.marketplace.api.domain.SellerProfile;
+import org.openpaas.paasta.marketplace.api.domain.SellerProfileList;
 import org.openpaas.paasta.marketplace.api.repository.SellerProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,20 +22,25 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Service
 @Slf4j
+@Transactional
 public class SellerProfileService {
 
     @Autowired
     private SellerProfileRepository sellerProfileRepository;
-
-    private String deleteYn = "N";
 
     /**
      * 판매자 프로필 목록 조회
      *
      * @return List
      */
-    public List<SellerProfile> getSellerProfileList() {
-        return sellerProfileRepository.findAllByDeleteYn(deleteYn);
+    public SellerProfileList getSellerProfileList() {
+        List<SellerProfile> profiles = sellerProfileRepository.findAllByDeleteYn(ApiConstants.DELETE_YN_N);
+
+        SellerProfileList profileList = new SellerProfileList();
+        profileList.setResultCode(ApiConstants.RESULT_STATUS_SUCCESS);
+        profileList.setItems(profiles);
+        
+        return profileList;
     }
 
     /**
@@ -41,7 +50,7 @@ public class SellerProfileService {
      * @return SellerProfile
      */
     public SellerProfile getSellerProfile(Long id) {
-        return sellerProfileRepository.getOneByIdAndDeleteYn(id, deleteYn);
+        return sellerProfileRepository.getOneByIdAndDeleteYn(id, ApiConstants.DELETE_YN_N);
     }
 
     /**

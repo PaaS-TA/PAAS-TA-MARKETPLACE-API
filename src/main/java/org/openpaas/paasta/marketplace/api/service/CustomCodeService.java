@@ -1,11 +1,13 @@
 package org.openpaas.paasta.marketplace.api.service;
 
+import java.util.List;
+
+import org.openpaas.paasta.marketplace.api.common.ApiConstants;
 import org.openpaas.paasta.marketplace.api.domain.CustomCode;
+import org.openpaas.paasta.marketplace.api.domain.CustomCodeList;
 import org.openpaas.paasta.marketplace.api.repository.CustomCodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * Custom Code 관리 Service
@@ -26,8 +28,13 @@ public class CustomCodeService {
      * @param groupCode
      * @return List<CustomCode>
      */
-    public List<CustomCode> getUnitCodeListByGroupCode(String groupCode) {
-        return customCodeRepository.findByGroupCode(groupCode);
+    public CustomCodeList getUnitCodeListByGroupCode(String groupCode) {
+        List<CustomCode> codes = customCodeRepository.findAllByGroupCode(groupCode);
+        CustomCodeList codeList = new CustomCodeList();
+        codeList.setResultCode(ApiConstants.RESULT_STATUS_SUCCESS);
+        codeList.setItems(codes);
+        
+        return codeList;
     }
 
     /**

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -30,8 +31,14 @@ public abstract class BaseEntity {
 	@UpdateTimestamp
 	protected LocalDateTime updateDate;
 
+	@Transient
+	private String resultCode;
+
+	@Transient
+	private String resultMessage;
+
     @PrePersist
-    public void prePersist() {
+    public void preInsert() {
 //        if (this.createDate == null) {
 //            this.createDate = LocalDateTime.now(ZoneId.of(Constants.STRING_TIME_ZONE_ID)).format(DateTimeFormatter.ofPattern(Constants.STRING_DATE_TYPE));
 //        }

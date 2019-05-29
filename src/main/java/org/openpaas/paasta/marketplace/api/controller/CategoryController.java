@@ -1,8 +1,8 @@
 package org.openpaas.paasta.marketplace.api.controller;
 
-import java.util.List;
-
+import org.openpaas.paasta.marketplace.api.common.ApiConstants;
 import org.openpaas.paasta.marketplace.api.domain.Category;
+import org.openpaas.paasta.marketplace.api.domain.CategoryList;
 import org.openpaas.paasta.marketplace.api.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping(value = "/category")
+@RequestMapping(value = ApiConstants.URI_API_CATEGORY)
 @Slf4j
 public class CategoryController extends AbstractController {
 
@@ -30,7 +30,7 @@ public class CategoryController extends AbstractController {
 	 * @return
 	 */
     @GetMapping
-    public List<Category> getCategoryList() {
+    public CategoryList getCategoryList() {
         return categoryService.getCategoryList();
     }
 
