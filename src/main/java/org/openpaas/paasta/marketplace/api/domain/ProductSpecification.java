@@ -12,27 +12,36 @@ import org.springframework.data.jpa.domain.Specification;
 
 import lombok.Data;
 
+/**
+ * 상품 Specification
+ *
+ * @author hrjin
+ * @version 1.0
+ * @since 2019-06-03
+ */
 @Data
 public class ProductSpecification implements Specification<Product> {
 
 	private static final long serialVersionUID = 1L;
-
-//  private UseYn useYn = UseYn.Y;
 
 	private Long categoryId;
 	
 	private Product.Type type;
 	
 	private String createId;
-	
-	private String nameLike;
+
+	private Product.DisplayYn displayYn;
+
+	private Product.Status approvalStatus;
+
+	private String productName;
+
+	private String sellerName;
 	
 	@Override
 	public Predicate toPredicate(Root<Product> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
 		List<Predicate> restrictions = new ArrayList<>();
-	//      if (useYn != null && useYn != UseYn.All) {
-	//          restrictions.add(builder.equal(root.get("useYn"), useYn));
-	//      }
+
 		if (categoryId != null) {
 			restrictions.add(builder.equal(root.get("category").get("id"), categoryId));
 		}
@@ -42,11 +51,20 @@ public class ProductSpecification implements Specification<Product> {
 		if (createId != null) {
 			restrictions.add(builder.equal(root.get("createdId"), createId));
 		}
-		if (nameLike != null) {
-			restrictions.add(builder.like(root.get("name"), "%" + nameLike + "%"));
+		if (productName != null) {
+			restrictions.add(builder.like(root.get("productName"), "%" + productName + "%"));
+		}
+		if (sellerName != null) {
+			restrictions.add(builder.like(root.get("sellerName"), "%" + sellerName + "%"));
+		}
+		if (displayYn != null && !displayYn.equals(Product.DisplayYn.ALL)) {
+			restrictions.add(builder.equal(root.get("displayYn"), displayYn));
+		}
+		if (approvalStatus != null) {
+			restrictions.add(builder.equal(root.get("approvalStatus"), approvalStatus));
 		}
 	
-		query.orderBy(builder.asc(root.get("name")));
+		query.orderBy(builder.asc(root.get("productName")));
 	
 		return builder.and(restrictions.toArray(new Predicate[] {}));
 	}
