@@ -51,7 +51,7 @@ public class Product extends BaseEntity {
     // 상품유형
     @NotNull
     @Enumerated(EnumType.STRING)
-    private Type productType;
+    private SwType productType;
 
     // 파일경로
     @NotNull
@@ -82,13 +82,15 @@ public class Product extends BaseEntity {
 
     // 전시여부
     @NotNull
-    @Enumerated(EnumType.STRING)
-    protected DisplayYn displayYn;
+//    @Enumerated(EnumType.STRING)
+//    protected DisplayYn displayYn;
+    private String displayYn;
 
     // 승인상태
     @NotNull
-    @Enumerated(EnumType.STRING)
-    protected Status approvalStatus;
+//    @Enumerated(EnumType.STRING)
+//    protected Status approvalStatus;
+    private String approvalStatus;
 
     // 반려 사유
     private String rejectReason;
@@ -105,16 +107,16 @@ public class Product extends BaseEntity {
     	meteringType = "DAY";
     }
 
-    public enum Type {
+    public enum SwType {
         WEB, API,
     };
 
-    public enum Status {
-        READY, APPROVED, REJECTED,
-    };
+//    public enum Status {
+//        READY, APPROVED, REJECTED,
+//    };
 
-    public enum DisplayYn{
-        Y, N, ALL,
-    }
+//    public enum DisplayYn{
+//        Y, N, ALL,
+//    }
 
 }

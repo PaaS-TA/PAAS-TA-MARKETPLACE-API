@@ -26,13 +26,13 @@ public class ProductSpecification implements Specification<Product> {
 
 	private Long categoryId;
 	
-	private Product.Type type;
+	private Product.SwType productType;
 	
 	private String createId;
 
-	private Product.DisplayYn displayYn;
+	private String displayYn;
 
-	private Product.Status approvalStatus;
+	private String approvalStatus;
 
 	private String productName;
 
@@ -45,8 +45,8 @@ public class ProductSpecification implements Specification<Product> {
 		if (categoryId != null) {
 			restrictions.add(builder.equal(root.get("category").get("id"), categoryId));
 		}
-		if (type != null) {
-			restrictions.add(builder.equal(root.get("type"), type));
+		if (productType != null) {
+			restrictions.add(builder.equal(root.get("productType"), productType));
 		}
 		if (createId != null) {
 			restrictions.add(builder.equal(root.get("createdId"), createId));
@@ -57,7 +57,7 @@ public class ProductSpecification implements Specification<Product> {
 		if (sellerName != null) {
 			restrictions.add(builder.like(root.get("sellerName"), "%" + sellerName + "%"));
 		}
-		if (displayYn != null && !displayYn.equals(Product.DisplayYn.ALL)) {
+		if (displayYn != null) {
 			restrictions.add(builder.equal(root.get("displayYn"), displayYn));
 		}
 		if (approvalStatus != null) {

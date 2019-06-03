@@ -21,7 +21,7 @@ public class SoftwareSpecification implements Specification<Product> {
 
     private Long categoryId;
 
-    private Product.Type type;
+    private Product.SwType type;
 
     private String createdId;
 
