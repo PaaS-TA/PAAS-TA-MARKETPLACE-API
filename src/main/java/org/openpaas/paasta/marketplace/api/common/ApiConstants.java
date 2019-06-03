@@ -28,6 +28,7 @@ public class ApiConstants {
     // api web uri
     public static final String URI_API_CATEGORY = "/api/category";
     public static final String URI_API_SELLER_PROFILE = "/api/seller/profile";
+    public static final String URI_API_PRODUCT = "/api/seller/product";
     
     private ApiConstants() {
         throw new IllegalStateException();
