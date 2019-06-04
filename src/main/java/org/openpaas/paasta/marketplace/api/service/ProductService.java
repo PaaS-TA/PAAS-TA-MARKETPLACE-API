@@ -1,7 +1,9 @@
 package org.openpaas.paasta.marketplace.api.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.openpaas.paasta.marketplace.api.common.CommonService;
 import org.openpaas.paasta.marketplace.api.domain.Product;
+import org.openpaas.paasta.marketplace.api.domain.ProductList;
 import org.openpaas.paasta.marketplace.api.domain.ProductSpecification;
 import org.openpaas.paasta.marketplace.api.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private CommonService commonService;
+
     /**
      * 상품 목록 검색 조회
      *
@@ -30,7 +35,7 @@ public class ProductService {
      * @param pageable the pageable object
      * @return Page
      */
-    public Page<Product> getProductList(ProductSpecification spec, Pageable pageable) {
+    public ProductList getProductList(ProductSpecification spec, Pageable pageable) {
         log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         log.info("  - PageNumber :: {}", pageable.getPageNumber());
         log.info("  - PageSize :: {}", pageable.getPageSize());
@@ -39,6 +44,14 @@ public class ProductService {
         log.info("  - HasPrevious :: {}", pageable.hasPrevious());
         log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 
-        return productRepository.findAll(spec, pageable);
+        ProductList productList;
+        Page<Product> productListPage;
+
+        productListPage = productRepository.findAll(spec, pageable);
+
+        productList = (ProductList) commonService.setPageInfo(productListPage, new ProductList());
+        productList.setItems(productListPage.getContent());
+
+        return productList;
     }
 }

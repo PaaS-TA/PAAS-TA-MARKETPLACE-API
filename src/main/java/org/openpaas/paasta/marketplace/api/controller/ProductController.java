@@ -2,11 +2,10 @@ package org.openpaas.paasta.marketplace.api.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.openpaas.paasta.marketplace.api.common.ApiConstants;
-import org.openpaas.paasta.marketplace.api.domain.Product;
+import org.openpaas.paasta.marketplace.api.domain.ProductList;
 import org.openpaas.paasta.marketplace.api.domain.ProductSpecification;
 import org.openpaas.paasta.marketplace.api.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,10 +40,10 @@ public class ProductController {
      * @return Page
      */
     @GetMapping
-    public Page<Product> getProductList(@RequestParam(value = "categoryId", required = false) Long categoryId,
-                                        @RequestParam(value = "productName", required = false) String productName,
-                                        ProductSpecification spec,
-                                        @PageableDefault(size = PAGE_SIZE) Pageable pageable){
+    public ProductList getProductList(@RequestParam(value = "categoryId", required = false) Long categoryId,
+                                      @RequestParam(value = "productName", required = false) String productName,
+                                      ProductSpecification spec,
+                                      @PageableDefault(size = PAGE_SIZE) Pageable pageable){
         log.info("getProductList: spec={}, pageable={}", spec, pageable);
 
         spec.setCategoryId((categoryId));
