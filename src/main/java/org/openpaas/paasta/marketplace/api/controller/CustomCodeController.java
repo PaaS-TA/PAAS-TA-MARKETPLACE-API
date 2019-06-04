@@ -1,6 +1,7 @@
 package org.openpaas.paasta.marketplace.api.controller;
 
 import org.openpaas.paasta.marketplace.api.common.ApiConstants;
+import org.openpaas.paasta.marketplace.api.domain.Category;
 import org.openpaas.paasta.marketplace.api.domain.CustomCode;
 import org.openpaas.paasta.marketplace.api.domain.CustomCodeList;
 import org.openpaas.paasta.marketplace.api.service.CustomCodeService;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -58,6 +60,18 @@ public class CustomCodeController {
     @PostMapping
     public CustomCode createCustomCode(@RequestBody CustomCode customCode){
     	return customCodeService.createCustomCode(customCode);
+    }
+
+    /**
+     * Custom Code 수정
+     * 
+     * @param id
+     * @param customcode
+     * @return
+     */
+    @PutMapping("/{id}")
+    public CustomCode updateCustomCode(@PathVariable Long id, @RequestBody CustomCode customCode) {
+        return customCodeService.updateCustomCode(id, customCode);
     }
 
 }

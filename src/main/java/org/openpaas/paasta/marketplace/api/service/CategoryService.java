@@ -68,7 +68,7 @@ public class CategoryService extends AbstractService {
     	updCategory.setDeleteYn(category.getDeleteYn());
     	log.info("category: " + updCategory.toString());
 
-    	return categoryRepository.save(category);
+    	return categoryRepository.save(updCategory);
     }
 
 //    public Category updateCategoryName(Category category) {

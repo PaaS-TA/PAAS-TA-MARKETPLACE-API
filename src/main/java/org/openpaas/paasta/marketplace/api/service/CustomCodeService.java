@@ -3,6 +3,7 @@ package org.openpaas.paasta.marketplace.api.service;
 import java.util.List;
 
 import org.openpaas.paasta.marketplace.api.common.ApiConstants;
+import org.openpaas.paasta.marketplace.api.domain.Category;
 import org.openpaas.paasta.marketplace.api.domain.CustomCode;
 import org.openpaas.paasta.marketplace.api.domain.CustomCodeList;
 import org.openpaas.paasta.marketplace.api.repository.CustomCodeRepository;
@@ -56,6 +57,24 @@ public class CustomCodeService {
      */
     public CustomCode createCustomCode(CustomCode customCode) {
         return customCodeRepository.save(customCode);
+    }
+
+    /**
+     * Custom Code 수정
+     * 
+     * @param id
+     * @param category
+     * @return
+     */
+    public CustomCode updateCustomCode(Long id, CustomCode code) {
+    	CustomCode updCode = customCodeRepository.getOne(id);
+    	updCode.setGroupCode(code.getGroupCode());
+    	updCode.setGroupCodeName(code.getGroupCodeName());
+    	updCode.setUnitCode(code.getUnitCode());
+    	updCode.setUnitCodeName(code.getUnitCodeName());
+//    	updCode.setDeleteYn(code.getDeleteYn());
+
+    	return customCodeRepository.save(updCode);
     }
 
 }

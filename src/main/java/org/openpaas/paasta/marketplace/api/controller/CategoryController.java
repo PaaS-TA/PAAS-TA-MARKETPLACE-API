@@ -35,7 +35,7 @@ public class CategoryController extends AbstractController {
     }
 
     /**
-     * 카테고리 조회
+     * 카테고리 상세조회
      * 
      * @param id
      * @return
