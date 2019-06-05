@@ -2,8 +2,9 @@ package org.openpaas.paasta.marketplace.api.service;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.openpaas.paasta.marketplace.api.common.ApiConstants;
-import org.openpaas.paasta.marketplace.api.domain.Category;
 import org.openpaas.paasta.marketplace.api.domain.CustomCode;
 import org.openpaas.paasta.marketplace.api.domain.CustomCodeList;
 import org.openpaas.paasta.marketplace.api.repository.CustomCodeRepository;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
  * @since 2019-05-08
  */
 @Service
+@Transactional
 public class CustomCodeService {
 
     @Autowired

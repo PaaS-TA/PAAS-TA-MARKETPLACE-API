@@ -17,22 +17,26 @@ public class UserProductSpecification implements Specification<UserProduct> {
 
 	private static final long serialVersionUID = 1L;
 
-    private String createId;
-
-    private String nameLike;
+	private String userId;
+	private String provisionStatus;
+	private String nameLike;
 
     @Override
     public Predicate toPredicate(Root<UserProduct> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
         List<Predicate> restrictions = new ArrayList<>();
 
-        restrictions.add(builder.equal(root.get("deleteYn"), "N"));
+        if (userId != null) {
+        	restrictions.add(builder.equal(root.get("userId"), userId));
+        }
 
-        if (createId != null) {
-            restrictions.add(builder.equal(root.get("createId"), createId));
-        }
         if (nameLike != null) {
-            restrictions.add(builder.like(root.get("productName"), "%" + nameLike + "%"));
+        	restrictions.add(builder.like(root.get("productName"), "%" + nameLike + "%"));
         }
+
+        if (provisionStatus != null) {
+        	restrictions.add(builder.equal(root.get("provisionStatus"), provisionStatus));
+        }
+
 
         query.orderBy(builder.asc(root.get("productName")));
 

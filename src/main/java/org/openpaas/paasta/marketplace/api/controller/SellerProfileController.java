@@ -3,6 +3,7 @@ package org.openpaas.paasta.marketplace.api.controller;
 import org.openpaas.paasta.marketplace.api.common.ApiConstants;
 import org.openpaas.paasta.marketplace.api.domain.SellerProfile;
 import org.openpaas.paasta.marketplace.api.domain.SellerProfileList;
+import org.openpaas.paasta.marketplace.api.domain.SellerProfileSpecification;
 import org.openpaas.paasta.marketplace.api.service.SellerProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,13 +37,9 @@ public class SellerProfileController {
      *
      * @return List
      */
-//    @GetMapping
-//    public List<SellerProfile> getSellerProfileList() {
-//        return sellerProfileService.getSellerProfileList();
-//    }
     @GetMapping
-    public SellerProfileList getSellerProfileList() {
-        return sellerProfileService.getSellerProfileList();
+    public SellerProfileList getSellerProfileList(SellerProfileSpecification spec) {
+        return sellerProfileService.getSellerProfileList(spec);
     }
 
     /**

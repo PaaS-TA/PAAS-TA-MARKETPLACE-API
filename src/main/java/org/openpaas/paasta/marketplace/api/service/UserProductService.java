@@ -9,6 +9,7 @@ import javax.transaction.Transactional;
 import org.openpaas.paasta.marketplace.api.common.ApiConstants;
 import org.openpaas.paasta.marketplace.api.domain.Product;
 import org.openpaas.paasta.marketplace.api.domain.UserProduct;
+import org.openpaas.paasta.marketplace.api.domain.UserProductList;
 import org.openpaas.paasta.marketplace.api.domain.UserProductSpecification;
 import org.openpaas.paasta.marketplace.api.repository.ProductRepository;
 import org.openpaas.paasta.marketplace.api.repository.UserProductRepository;
@@ -26,8 +27,14 @@ public class UserProductService {
     @Autowired
     private UserProductRepository userProductRepository;
 
-    public List<UserProduct> getUserProductList(UserProductSpecification spec) {
-    	return userProductRepository.findAll(spec);
+    public UserProductList getUserProductList(UserProductSpecification spec) {
+    	List<UserProduct> userProducts = userProductRepository.findAll(spec);
+
+    	UserProductList userProductList = new UserProductList();
+    	userProductList.setResultCode(ApiConstants.RESULT_STATUS_SUCCESS);
+    	userProductList.setItems(userProducts);
+
+        return userProductList;
     }
     
     public UserProduct getUserProduct(Long id) {

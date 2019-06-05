@@ -8,8 +8,8 @@
 --insert into custom_code values (8, now(), 'SYSTEM', now(), 'SYSTEM', 'APPROVAL_STATUS', '승인상태', 'READY', '대기');
 --insert into custom_code values (9, now(), 'SYSTEM', now(), 'SYSTEM', 'APPROVAL_STATUS', '승인상태', 'APPROVED', '승인');
 --insert into custom_code values (10, now(), 'SYSTEM', now(), 'SYSTEM', 'APPROVAL_STATUS', '승인상태', 'REJECTED', '거절');
-insert into custom_code values (11, now(), 'SYSTEM', now(), 'SYSTEM', 'PROVISION_STATUS', '구매상태', 'READY', '대기중');
-insert into custom_code values (12, now(), 'SYSTEM', now(), 'SYSTEM', 'PROVISION_STATUS', '구매상태', 'INPROGRESS', '진행중');
-insert into custom_code values (13, now(), 'SYSTEM', now(), 'SYSTEM', 'PROVISION_STATUS', '구매상태', 'SUCCESS', '성공');
-insert into custom_code values (14, now(), 'SYSTEM', now(), 'SYSTEM', 'PROVISION_STATUS', '구매상태', 'FAIL', '실패');
-insert into custom_code values (14, now(), 'SYSTEM', now(), 'SYSTEM', 'PROVISION_STATUS', '구매상태', 'STOP', '정지');
+--insert into custom_code values (11, now(), 'SYSTEM', now(), 'SYSTEM', 'PROVISION_STATUS', '구매상태', 'READY', '대기중');
+--insert into custom_code values (12, now(), 'SYSTEM', now(), 'SYSTEM', 'PROVISION_STATUS', '구매상태', 'INPROGRESS', '진행중');
+--insert into custom_code values (13, now(), 'SYSTEM', now(), 'SYSTEM', 'PROVISION_STATUS', '구매상태', 'SUCCESS', '성공');
+--insert into custom_code values (14, now(), 'SYSTEM', now(), 'SYSTEM', 'PROVISION_STATUS', '구매상태', 'FAIL', '실패');
+--insert into custom_code values (15, now(), 'SYSTEM', now(), 'SYSTEM', 'PROVISION_STATUS', '구매상태', 'STOP', '정지');

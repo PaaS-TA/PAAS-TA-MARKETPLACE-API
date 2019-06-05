@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 import org.openpaas.paasta.marketplace.api.common.ApiConstants;
 import org.openpaas.paasta.marketplace.api.domain.SellerProfile;
 import org.openpaas.paasta.marketplace.api.domain.SellerProfileList;
+import org.openpaas.paasta.marketplace.api.domain.SellerProfileSpecification;
 import org.openpaas.paasta.marketplace.api.repository.SellerProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,8 +22,8 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2019-05-07
  */
 @Service
-@Slf4j
 @Transactional
+@Slf4j
 public class SellerProfileService {
 
     @Autowired
@@ -33,8 +34,8 @@ public class SellerProfileService {
      *
      * @return List
      */
-    public SellerProfileList getSellerProfileList() {
-        List<SellerProfile> profiles = sellerProfileRepository.findAllByDeleteYn(ApiConstants.DELETE_YN_N);
+    public SellerProfileList getSellerProfileList(SellerProfileSpecification spec) {
+        List<SellerProfile> profiles = sellerProfileRepository.findAll(spec);
 
         SellerProfileList profileList = new SellerProfileList();
         profileList.setResultCode(ApiConstants.RESULT_STATUS_SUCCESS);

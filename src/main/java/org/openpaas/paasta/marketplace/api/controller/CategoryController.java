@@ -3,6 +3,7 @@ package org.openpaas.paasta.marketplace.api.controller;
 import org.openpaas.paasta.marketplace.api.common.ApiConstants;
 import org.openpaas.paasta.marketplace.api.domain.Category;
 import org.openpaas.paasta.marketplace.api.domain.CategoryList;
+import org.openpaas.paasta.marketplace.api.domain.CategorySpecification;
 import org.openpaas.paasta.marketplace.api.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,8 +31,8 @@ public class CategoryController extends AbstractController {
 	 * @return
 	 */
     @GetMapping
-    public CategoryList getCategoryList() {
-        return categoryService.getCategoryList();
+    public CategoryList getCategoryList(CategorySpecification spec) {
+        return categoryService.getCategoryList(spec);
     }
 
     /**

@@ -1,6 +1,7 @@
 package org.openpaas.paasta.marketplace.api.service;
 
-import lombok.extern.slf4j.Slf4j;
+import javax.transaction.Transactional;
+
 import org.openpaas.paasta.marketplace.api.common.CommonService;
 import org.openpaas.paasta.marketplace.api.domain.Product;
 import org.openpaas.paasta.marketplace.api.domain.ProductList;
@@ -11,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 상품 Service
  *
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
  * @since 2019-06-03
  */
 @Service
+@Transactional
 @Slf4j
 public class ProductService {
 

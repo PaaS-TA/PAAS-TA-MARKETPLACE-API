@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 import org.openpaas.paasta.marketplace.api.common.ApiConstants;
 import org.openpaas.paasta.marketplace.api.domain.Category;
 import org.openpaas.paasta.marketplace.api.domain.CategoryList;
+import org.openpaas.paasta.marketplace.api.domain.CategorySpecification;
 import org.openpaas.paasta.marketplace.api.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,8 +15,8 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Slf4j
 @Transactional
+@Slf4j
 public class CategoryService extends AbstractService {
 
 	@Autowired
@@ -26,8 +27,9 @@ public class CategoryService extends AbstractService {
 	 * 
 	 * @return
 	 */
-    public CategoryList getCategoryList() {
-        List<Category> categories = categoryRepository.findAllByDeleteYn(ApiConstants.DELETE_YN_N);
+    public CategoryList getCategoryList(CategorySpecification spec) {
+        List<Category> categories = categoryRepository.findAll(spec);
+
         CategoryList categoryList = new CategoryList();
         categoryList.setResultCode(ApiConstants.RESULT_STATUS_SUCCESS);
         categoryList.setItems(categories);

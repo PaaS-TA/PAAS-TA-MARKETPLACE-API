@@ -1,9 +1,8 @@
 package org.openpaas.paasta.marketplace.api.repository;
 
-import java.util.List;
-
 import org.openpaas.paasta.marketplace.api.domain.SellerProfile;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -15,9 +14,7 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface SellerProfileRepository extends JpaRepository<SellerProfile, Long> {
-
-	List<SellerProfile> findAllByDeleteYn(String deleteYn);
+public interface SellerProfileRepository extends JpaRepository<SellerProfile, Long>, JpaSpecificationExecutor<SellerProfile> {
 
 	SellerProfile getOneByIdAndDeleteYn(Long id, String deleteYn);
 

@@ -1,9 +1,8 @@
 package org.openpaas.paasta.marketplace.api.controller;
 
-import java.util.List;
-
 import org.openpaas.paasta.marketplace.api.domain.Product;
 import org.openpaas.paasta.marketplace.api.domain.UserProduct;
+import org.openpaas.paasta.marketplace.api.domain.UserProductList;
 import org.openpaas.paasta.marketplace.api.domain.UserProductSpecification;
 import org.openpaas.paasta.marketplace.api.service.UserProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +31,8 @@ public class UserProductController extends AbstractController {
 	 * @return
 	 */
     @GetMapping
-    public List<UserProduct> getUserProductList(UserProductSpecification spec) {
-        log.info("getSoftwareList: spec={}", spec);
+    public UserProductList getUserProductList(UserProductSpecification spec) {
+        log.info("getUserProductList: spec={}", spec);
 
         return userProductService.getUserProductList(spec);
     }
@@ -45,7 +44,7 @@ public class UserProductController extends AbstractController {
      */
     @GetMapping("/{id}")
     public UserProduct getUserProduct(@PathVariable("id") Long id) {
-        log.info("getSoftwareInstance: id={}", id);
+        log.info("getUserProduct: id={}", id);
 
         return userProductService.getUserProduct(id);
     }
