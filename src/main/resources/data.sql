@@ -12,3 +12,4 @@ insert into custom_code values (11, now(), 'SYSTEM', now(), 'SYSTEM', 'PROVISION
 insert into custom_code values (12, now(), 'SYSTEM', now(), 'SYSTEM', 'PROVISION_STATUS', '구매상태', 'INPROGRESS', '진행중');
 insert into custom_code values (13, now(), 'SYSTEM', now(), 'SYSTEM', 'PROVISION_STATUS', '구매상태', 'SUCCESS', '성공');
 insert into custom_code values (14, now(), 'SYSTEM', now(), 'SYSTEM', 'PROVISION_STATUS', '구매상태', 'FAIL', '실패');
+insert into custom_code values (14, now(), 'SYSTEM', now(), 'SYSTEM', 'PROVISION_STATUS', '구매상태', 'STOP', '정지');
