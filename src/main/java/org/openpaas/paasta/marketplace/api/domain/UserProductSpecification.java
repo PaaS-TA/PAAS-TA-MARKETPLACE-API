@@ -13,30 +13,28 @@ import org.springframework.data.jpa.domain.Specification;
 import lombok.Data;
 
 @Data
-public class SoftwareInstanceSpecification implements Specification<SoftwareInstance> {
+public class UserProductSpecification implements Specification<UserProduct> {
 
 	private static final long serialVersionUID = 1L;
 
-//    private UseYn useYn = UseYn.Y;
-
-    private String createdId;
+    private String createId;
 
     private String nameLike;
 
     @Override
-    public Predicate toPredicate(Root<SoftwareInstance> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+    public Predicate toPredicate(Root<UserProduct> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
         List<Predicate> restrictions = new ArrayList<>();
-//        if (useYn != null && useYn != UseYn.All) {
-//            restrictions.add(builder.equal(root.get("useYn"), useYn));
-//        }
-        if (createdId != null) {
-            restrictions.add(builder.equal(root.get("createdId"), createdId));
+
+        restrictions.add(builder.equal(root.get("deleteYn"), "N"));
+
+        if (createId != null) {
+            restrictions.add(builder.equal(root.get("createId"), createId));
         }
         if (nameLike != null) {
-            restrictions.add(builder.like(root.get("name"), "%" + nameLike + "%"));
+            restrictions.add(builder.like(root.get("productName"), "%" + nameLike + "%"));
         }
 
-        query.orderBy(builder.asc(root.get("name")));
+        query.orderBy(builder.asc(root.get("productName")));
 
         return builder.and(restrictions.toArray(new Predicate[] {}));
     }

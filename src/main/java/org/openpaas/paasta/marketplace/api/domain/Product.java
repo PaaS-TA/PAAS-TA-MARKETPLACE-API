@@ -27,7 +27,7 @@ public class Product extends BaseEntity {
 
     @OneToMany
     @JoinColumn(name="productId")
-    private List<Screenshot> screenshotList;
+    private List<Screenshot> screenshots;
 
 //    @OneToMany(mappedBy = "software")
 //    @JsonIgnore
