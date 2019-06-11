@@ -58,4 +58,15 @@ public class ProductService {
 
         return productList;
     }
+
+
+    /**
+     * 상품 상세 조회
+     *
+     * @param id the id
+     * @return Product
+     */
+    public Product getProduct(Long id) {
+        return productRepository.getOne(id);
+    }
 }
