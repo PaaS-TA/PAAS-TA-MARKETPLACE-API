@@ -28,8 +28,8 @@ public class CustomCodeService {
     /**
      * GroupCode 로 단위코드 목록 조회
      *
-     * @param groupCode
-     * @return List<CustomCode>
+     * @param groupCode the group code
+     * @return CustomCodeList
      */
     public CustomCodeList getUnitCodeListByGroupCode(String groupCode) {
         List<CustomCode> codes = customCodeRepository.findAllByGroupCode(groupCode);
@@ -43,8 +43,8 @@ public class CustomCodeService {
     /**
      * GroupCode 와 UnitCode 로 단위코드 데이터 조회
      * 
-     * @param groupCode
-     * @param unitCode
+     * @param groupCode the group code
+     * @param unitCode the unit code
      * @return CustomCode
      */
     public CustomCode getUnitCode(String groupCode, String unitCode) {
@@ -63,10 +63,10 @@ public class CustomCodeService {
 
     /**
      * Custom Code 수정
-     * 
-     * @param id
-     * @param category
-     * @return
+     *
+     * @param id the id
+     * @param code the code
+     * @return CustomCode
      */
     public CustomCode updateCustomCode(Long id, CustomCode code) {
     	CustomCode updCode = customCodeRepository.getOne(id);

@@ -32,7 +32,7 @@ public class CustomCodeController {
      * GroupCode 로 단위코드 목록 조회
      *
      * @param groupCode
-     * @return List<CustomCode>
+     * @return CustomCodeList
      */
     @GetMapping(value = "/{groupCode}")
     public CustomCodeList getUnitCodeListByGroupCode(@PathVariable String groupCode) {
@@ -62,12 +62,13 @@ public class CustomCodeController {
     	return customCodeService.createCustomCode(customCode);
     }
 
+
     /**
      * Custom Code 수정
-     * 
-     * @param id
-     * @param customcode
-     * @return
+     *
+     * @param id the id
+     * @param customCode the custom code
+     * @return CustomCode
      */
     @PutMapping("/{id}")
     public CustomCode updateCustomCode(@PathVariable Long id, @RequestBody CustomCode customCode) {
