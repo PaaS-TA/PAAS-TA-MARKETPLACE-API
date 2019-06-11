@@ -2,6 +2,7 @@ package org.openpaas.paasta.marketplace.api.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.openpaas.paasta.marketplace.api.common.ApiConstants;
+import org.openpaas.paasta.marketplace.api.domain.Category;
 import org.openpaas.paasta.marketplace.api.domain.Product;
 import org.openpaas.paasta.marketplace.api.domain.ProductList;
 import org.openpaas.paasta.marketplace.api.domain.ProductSpecification;
@@ -61,4 +62,12 @@ public class ProductController {
     public Product getProduct(@PathVariable(value = "id") Long id){
         return productService.getProduct(id);
     }
+    
+    @PostMapping
+    public Product createProduct(@RequestBody Product product) {
+        log.info("product={}", product);
+
+        return productService.createProduct(product);
+    }
+
 }

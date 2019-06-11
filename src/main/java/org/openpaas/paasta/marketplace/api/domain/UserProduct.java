@@ -3,6 +3,7 @@ package org.openpaas.paasta.marketplace.api.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -30,11 +31,12 @@ public class UserProduct extends BaseEntity {
 	@NotNull
 	private String userId;
 	
-    @OneToMany
-    @JoinColumn(name="productId")
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name="userId")
     private List<Product> products;
 
     // 사용자명
+    @NotNull
     private String userName;
     
     // 상품명

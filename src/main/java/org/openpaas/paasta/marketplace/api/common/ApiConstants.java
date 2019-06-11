@@ -15,6 +15,8 @@ public class ApiConstants {
 
     public static final String STRING_TIME_ZONE_ID = "Asia/Seoul";
     public static final String STRING_DATE_TYPE = "yyyy-MM-dd HH:mm:ss";
+    
+    public static final int MAX_FILE_SIZE = 5;
 
     // code
     public static final String DELETE_YN_Y = "Y";

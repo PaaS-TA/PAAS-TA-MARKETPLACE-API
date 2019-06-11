@@ -3,6 +3,7 @@ package org.openpaas.paasta.marketplace.api.service;
 import javax.transaction.Transactional;
 
 import org.openpaas.paasta.marketplace.api.common.CommonService;
+import org.openpaas.paasta.marketplace.api.domain.Category;
 import org.openpaas.paasta.marketplace.api.domain.Product;
 import org.openpaas.paasta.marketplace.api.domain.ProductList;
 import org.openpaas.paasta.marketplace.api.domain.ProductSpecification;
@@ -69,4 +70,9 @@ public class ProductService {
     public Product getProduct(Long id) {
         return productRepository.getOne(id);
     }
+    
+    public Product createProduct(Product product) {
+        return productRepository.save(product);
+    }
+
 }

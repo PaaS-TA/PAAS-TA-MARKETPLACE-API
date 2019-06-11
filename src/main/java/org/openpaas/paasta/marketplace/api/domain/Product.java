@@ -3,8 +3,20 @@ package org.openpaas.paasta.marketplace.api.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -25,13 +37,11 @@ public class Product extends BaseEntity {
     @ManyToOne
     private SellerProfile seller;
 
-    @OneToMany
-    @JoinColumn(name="productId")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Screenshot> screenshots;
-
-//    @OneToMany(mappedBy = "software")
-//    @JsonIgnore
-//    private List<SoftwareInstance> softwareInstanceList;
+    
+    @Transient
+    private List<MultipartFile> screenshotFiles;
 
     // 상품명
     @NotNull
@@ -63,6 +73,9 @@ public class Product extends BaseEntity {
     // 아이콘 파일 이름
     @NotNull
     private String iconFileName;
+    
+    @Transient
+    private MultipartFile iconFile;
 
     // 상품 파일 이름
     @NotNull
