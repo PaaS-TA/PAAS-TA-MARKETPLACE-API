@@ -52,6 +52,17 @@ public class CustomCodeController {
     }
 
     /**
+     * 단위코드 상세 조회(only by unit code)
+     *
+     * @param unitCode the unit code
+     * @return CustomCode
+     */
+    @GetMapping(value = "/unitCode/{unitCode}")
+    public CustomCode getCodeByUnitCode(@PathVariable String unitCode){
+        return customCodeService.getCodeByUnitCode(unitCode.toUpperCase());
+    }
+
+    /**
      * Custom Code 생성
      *
      * @param customCode the custom code

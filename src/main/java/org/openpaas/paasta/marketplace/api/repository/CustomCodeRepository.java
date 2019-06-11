@@ -17,9 +17,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CustomCodeRepository extends JpaRepository<CustomCode, Long> {
 
-    // GroupCode로 코드그룹 목록 조회
+    // GroupCode 로 코드그룹 목록 조회
     List<CustomCode> findAllByGroupCode(String groupCode);
 
-    // GroupCode & UnitCode로 코드데이터 조회
+    // GroupCode & UnitCode 로 코드데이터 조회
     CustomCode findByGroupCodeAndUnitCode(String groupCode, String unitCode);
+
+    // UnitCode 로 코드데이터 조회
+    CustomCode findByUnitCode(String unitCode);
 }

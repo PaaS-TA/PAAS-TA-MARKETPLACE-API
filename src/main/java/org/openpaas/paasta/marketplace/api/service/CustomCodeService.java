@@ -79,4 +79,13 @@ public class CustomCodeService {
     	return customCodeRepository.save(updCode);
     }
 
+    /**
+     * UnitCode 로 단위코드 데이터 조회
+     *
+     * @param unitCode the unit code
+     * @return CustomCode
+     */
+    public CustomCode getCodeByUnitCode(String unitCode) {
+        return customCodeRepository.findByUnitCode(unitCode);
+    }
 }
