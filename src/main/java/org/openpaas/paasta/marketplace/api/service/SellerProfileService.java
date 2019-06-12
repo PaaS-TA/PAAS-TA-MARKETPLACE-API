@@ -9,6 +9,7 @@ import org.openpaas.paasta.marketplace.api.domain.SellerProfile;
 import org.openpaas.paasta.marketplace.api.domain.SellerProfileList;
 import org.openpaas.paasta.marketplace.api.domain.SellerProfileSpecification;
 import org.openpaas.paasta.marketplace.api.repository.SellerProfileRepository;
+import org.openpaas.paasta.marketplace.api.util.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Transactional
 @Slf4j
-public class SellerProfileService {
+public class SellerProfileService extends CommonUtils {
 
     @Autowired
     private SellerProfileRepository sellerProfileRepository;
@@ -61,7 +62,7 @@ public class SellerProfileService {
      * @return SellerProfile
      */
     public SellerProfile createSellerProfile(SellerProfile sellerProfile) {
-    	return sellerProfileRepository.save(sellerProfile);
+        return (SellerProfile) setResultModel(sellerProfileRepository.save(sellerProfile), ApiConstants.RESULT_STATUS_SUCCESS);
     }
 
     /**
