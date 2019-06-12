@@ -3,17 +3,7 @@ package org.openpaas.paasta.marketplace.api.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
@@ -30,18 +20,21 @@ public class Product extends BaseEntity {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "category_id")
     private Category category;
     
     @Transient
     private Long categoryId;
 
     @ManyToOne
+    @JoinColumn(name = "seller_profile_id")
     private SellerProfile seller;
     
     @Transient
     private String sellerId;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "product_id")
     private List<Screenshot> screenshots;
     
     @Transient
