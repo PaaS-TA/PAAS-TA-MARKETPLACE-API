@@ -16,8 +16,6 @@ import javax.persistence.PrePersist;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -33,15 +31,21 @@ public class Product extends BaseEntity {
 
     @ManyToOne
     private Category category;
+    
+    @Transient
+    private Long categoryId;
 
     @ManyToOne
     private SellerProfile seller;
+    
+    @Transient
+    private String sellerId;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Screenshot> screenshots;
     
     @Transient
-    private List<MultipartFile> screenshotFiles;
+    private List<String> screenshotFileNames;
 
     // 상품명
     @NotNull
@@ -67,23 +71,26 @@ public class Product extends BaseEntity {
     @NotNull
     private String filePath;
     
-//    @Transient: 데이터를 디스크에 저장하거나 디비에 저장하거나 http request를 통해 보내거나 할때 민감한 데이터(개인정보등)은 제외하고 싶을 때 사용
-//    private File appIcon;
-
     // 아이콘 파일 이름
     @NotNull
     private String iconFileName;
     
-    @Transient
-    private MultipartFile iconFile;
+//    @Transient
+//    private MultipartFile iconFile;
 
     // 상품 파일 이름
     @NotNull
     private String productFileName;
     
+//    @Transient
+//    private MultipartFile productFile;
+    
     // 환경 파일 이름
     @NotNull
     private String envFileName;
+    
+//    @Transient
+//    private MultipartFile envFile;
 
     // 미터링 유형
     @NotNull
@@ -118,6 +125,7 @@ public class Product extends BaseEntity {
     public void prePersist() {
     	deleteYn = "N";
     	meteringType = "DAY";
+    	approvalStatus = "READY";
     }
 
     public enum SwType {

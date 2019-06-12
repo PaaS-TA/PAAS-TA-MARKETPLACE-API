@@ -22,9 +22,6 @@ public class Screenshot extends BaseEntity {
     private Long id;
 
 	@NotNull
-	private String screenshotFilePath;
-	
-	@NotNull
     private String screenshotFileName;
     
     @NotNull
