@@ -35,7 +35,7 @@ public class SellerProfile extends BaseEntity{
     private List<Product> products;
 
     // 판매자 로그인ID
-    @Column(name="sellerId", unique=true)
+    @Column(name = "seller_id", unique = true)
     @NotNull
     private String sellerId;
     

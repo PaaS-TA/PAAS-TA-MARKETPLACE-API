@@ -13,7 +13,6 @@ import lombok.EqualsAndHashCode;
 @Entity
 @EqualsAndHashCode(callSuper=false)
 public class Product extends BaseEntity {
-
 	// 상품ID
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +31,10 @@ public class Product extends BaseEntity {
     
     @Transient
     private String sellerId;
+    
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "product_id")
+    private List<UserProduct> userProducts;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id")
