@@ -75,7 +75,7 @@ public class SellerProfileController {
      */
     @PutMapping("/{id}")
     public SellerProfile updateSellerProfile(@PathVariable Long id, @RequestBody SellerProfile sellerProfile) {
-    	log.info("seller: " + sellerProfile.toString());
+    	log.info("id: {}, seller: {}", id, sellerProfile.toString());
         return sellerProfileService.updateSellerProfile(id, sellerProfile);
     }
 }

@@ -1,10 +1,9 @@
 package org.openpaas.paasta.marketplace.api.service;
 
-import java.util.List;
-
 import javax.transaction.Transactional;
 
 import org.openpaas.paasta.marketplace.api.common.ApiConstants;
+import org.openpaas.paasta.marketplace.api.common.CommonService;
 import org.openpaas.paasta.marketplace.api.domain.Category;
 import org.openpaas.paasta.marketplace.api.domain.CategoryList;
 import org.openpaas.paasta.marketplace.api.domain.CategorySpecification;
@@ -20,6 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 public class CategoryService extends AbstractService {
 
 	@Autowired
+	private CommonService commonService;
+
+	@Autowired
     private CategoryRepository categoryRepository;
 
 	/**
@@ -28,13 +30,7 @@ public class CategoryService extends AbstractService {
 	 * @return
 	 */
     public CategoryList getCategoryList(CategorySpecification spec) {
-        List<Category> categories = categoryRepository.findAll(spec);
-
-        CategoryList categoryList = new CategoryList();
-        categoryList.setResultCode(ApiConstants.RESULT_STATUS_SUCCESS);
-        categoryList.setItems(categories);
-
-        return categoryList;
+        return (CategoryList) commonService.setResultModel(categoryRepository.findAll(spec), ApiConstants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -44,7 +40,7 @@ public class CategoryService extends AbstractService {
      * @return
      */
     public Category getCategory(Long id) {
-        return categoryRepository.getOneByIdAndDeleteYn(id, ApiConstants.DELETE_YN_N);
+        return (Category) commonService.setResultModel(categoryRepository.getOneByIdAndDeleteYn(id, ApiConstants.DELETE_YN_N), ApiConstants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -54,7 +50,7 @@ public class CategoryService extends AbstractService {
      * @return
      */
     public Category createCategory(Category category) {
-        return categoryRepository.save(category);
+        return (Category) commonService.setResultModel(categoryRepository.save(category), ApiConstants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -70,7 +66,7 @@ public class CategoryService extends AbstractService {
     	updCategory.setDeleteYn(category.getDeleteYn());
     	log.info("category: " + updCategory.toString());
 
-    	return categoryRepository.save(updCategory);
+    	return (Category) commonService.setResultModel(categoryRepository.save(updCategory), ApiConstants.RESULT_STATUS_SUCCESS);
     }
 
 //    public Category updateCategoryName(Category category) {

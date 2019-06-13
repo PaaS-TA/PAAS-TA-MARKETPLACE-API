@@ -82,9 +82,14 @@ public class ProductService {
      * @return Product
      */
     public Product getProduct(Long id) {
-        return productRepository.getOne(id);
+        return (Product) commonService.setResultModel(productRepository.getOne(id), ApiConstants.RESULT_STATUS_SUCCESS);
     }
     
+    /**
+     * 상품 등록
+     * @param product
+     * @return Product
+     */
     public Product createProduct(Product product) {
     	String userId = product.getCreateId();
     	// 카테고리
@@ -104,7 +109,7 @@ public class ProductService {
 		}
 		product.setScreenshots(screenshots);
 
-		return productRepository.save(product);
+		return (Product) commonService.setResultModel(productRepository.save(product), ApiConstants.RESULT_STATUS_SUCCESS);
     }
 
 }

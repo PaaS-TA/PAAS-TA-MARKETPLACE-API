@@ -5,11 +5,11 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.openpaas.paasta.marketplace.api.common.ApiConstants;
+import org.openpaas.paasta.marketplace.api.common.CommonService;
 import org.openpaas.paasta.marketplace.api.domain.SellerProfile;
 import org.openpaas.paasta.marketplace.api.domain.SellerProfileList;
 import org.openpaas.paasta.marketplace.api.domain.SellerProfileSpecification;
 import org.openpaas.paasta.marketplace.api.repository.SellerProfileRepository;
-import org.openpaas.paasta.marketplace.api.util.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +25,10 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Transactional
 @Slf4j
-public class SellerProfileService extends CommonUtils {
+public class SellerProfileService {
+
+	@Autowired
+	private CommonService commonService;
 
     @Autowired
     private SellerProfileRepository sellerProfileRepository;
@@ -36,13 +39,7 @@ public class SellerProfileService extends CommonUtils {
      * @return List
      */
     public SellerProfileList getSellerProfileList(SellerProfileSpecification spec) {
-        List<SellerProfile> profiles = sellerProfileRepository.findAll(spec);
-
-        SellerProfileList profileList = new SellerProfileList();
-        profileList.setResultCode(ApiConstants.RESULT_STATUS_SUCCESS);
-        profileList.setItems(profiles);
-        
-        return profileList;
+        return (SellerProfileList) commonService.setResultModel(sellerProfileRepository.findAll(spec), ApiConstants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -52,7 +49,7 @@ public class SellerProfileService extends CommonUtils {
      * @return SellerProfile
      */
     public SellerProfile getSellerProfile(Long id) {
-        return sellerProfileRepository.getOneByIdAndDeleteYn(id, ApiConstants.DELETE_YN_N);
+        return (SellerProfile) commonService.setResultModel(sellerProfileRepository.getOneByIdAndDeleteYn(id, ApiConstants.DELETE_YN_N), ApiConstants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -62,7 +59,7 @@ public class SellerProfileService extends CommonUtils {
      * @return SellerProfile
      */
     public SellerProfile createSellerProfile(SellerProfile sellerProfile) {
-        return (SellerProfile) setResultModel(sellerProfileRepository.save(sellerProfile), ApiConstants.RESULT_STATUS_SUCCESS);
+        return (SellerProfile) commonService.setResultModel(sellerProfileRepository.save(sellerProfile), ApiConstants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -80,7 +77,7 @@ public class SellerProfileService extends CommonUtils {
         profile.setHomepageUrl(sellerProfile.getHomepageUrl());
     	log.info("seller: " + profile.toString());
 
-        return sellerProfileRepository.save(profile);
+        return (SellerProfile) commonService.setResultModel(sellerProfileRepository.save(profile), ApiConstants.RESULT_STATUS_SUCCESS);
     }
 
 }

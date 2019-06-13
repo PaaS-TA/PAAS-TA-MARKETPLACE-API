@@ -5,6 +5,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.openpaas.paasta.marketplace.api.common.ApiConstants;
+import org.openpaas.paasta.marketplace.api.common.CommonService;
 import org.openpaas.paasta.marketplace.api.domain.CustomCode;
 import org.openpaas.paasta.marketplace.api.domain.CustomCodeList;
 import org.openpaas.paasta.marketplace.api.repository.CustomCodeRepository;
@@ -22,6 +23,9 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class CustomCodeService {
 
+	@Autowired
+	private CommonService commonService;
+
     @Autowired
     private CustomCodeRepository customCodeRepository;
 
@@ -31,13 +35,8 @@ public class CustomCodeService {
      * @param groupCode the group code
      * @return CustomCodeList
      */
-    public CustomCodeList getUnitCodeListByGroupCode(String groupCode) {
-        List<CustomCode> codes = customCodeRepository.findAllByGroupCode(groupCode);
-        CustomCodeList codeList = new CustomCodeList();
-        codeList.setResultCode(ApiConstants.RESULT_STATUS_SUCCESS);
-        codeList.setItems(codes);
-        
-        return codeList;
+    public CustomCodeList getCodeListByGroupCode(String groupCode) {
+        return (CustomCodeList) commonService.setResultModel(customCodeRepository.findAllByGroupCode(groupCode), ApiConstants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -47,8 +46,27 @@ public class CustomCodeService {
      * @param unitCode the unit code
      * @return CustomCode
      */
-    public CustomCode getUnitCode(String groupCode, String unitCode) {
-        return customCodeRepository.findByGroupCodeAndUnitCode(groupCode, unitCode);
+    public CustomCode getCodeByGroupCodeAndUnitCode(String groupCode, String unitCode) {
+        return (CustomCode) commonService.setResultModel(customCodeRepository.findByGroupCodeAndUnitCode(groupCode, unitCode), ApiConstants.RESULT_STATUS_SUCCESS);
+    }
+    
+    /**
+     * UnitCode 로 단위코드 데이터 조회
+     *
+     * @param unitCode the unit code
+     * @return CustomCode
+     */
+    public CustomCode getCodeByUnitCode(String unitCode) {
+    	return (CustomCode) commonService.setResultModel(customCodeRepository.findByUnitCode(unitCode), ApiConstants.RESULT_STATUS_SUCCESS);
+    }
+
+    /**
+     * ID로 단위코드 데이터 조회
+     * @param id
+     * @return CustomCode
+     */
+    public CustomCode getCodeById(Long id) {
+    	return (CustomCode) commonService.setResultModel(customCodeRepository.findById(id), ApiConstants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -58,7 +76,7 @@ public class CustomCodeService {
      * @return the CustomCode
      */
     public CustomCode createCustomCode(CustomCode customCode) {
-        return customCodeRepository.save(customCode);
+        return (CustomCode) commonService.setResultModel(customCodeRepository.save(customCode), ApiConstants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -74,18 +92,8 @@ public class CustomCodeService {
     	updCode.setGroupCodeName(code.getGroupCodeName());
     	updCode.setUnitCode(code.getUnitCode());
     	updCode.setUnitCodeName(code.getUnitCodeName());
-//    	updCode.setDeleteYn(code.getDeleteYn());
 
-    	return customCodeRepository.save(updCode);
+    	return (CustomCode) commonService.setResultModel(customCodeRepository.save(updCode), ApiConstants.RESULT_STATUS_SUCCESS);
     }
 
-    /**
-     * UnitCode 로 단위코드 데이터 조회
-     *
-     * @param unitCode the unit code
-     * @return CustomCode
-     */
-    public CustomCode getCodeByUnitCode(String unitCode) {
-        return customCodeRepository.findByUnitCode(unitCode);
-    }
 }

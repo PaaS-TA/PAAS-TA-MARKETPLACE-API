@@ -1,7 +1,6 @@
 package org.openpaas.paasta.marketplace.api.controller;
 
 import org.openpaas.paasta.marketplace.api.common.ApiConstants;
-import org.openpaas.paasta.marketplace.api.domain.Category;
 import org.openpaas.paasta.marketplace.api.domain.CustomCode;
 import org.openpaas.paasta.marketplace.api.domain.CustomCodeList;
 import org.openpaas.paasta.marketplace.api.service.CustomCodeService;
@@ -24,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = ApiConstants.URI_API_CUSTOM_CODE)
 public class CustomCodeController {
-	
+
     @Autowired
     private CustomCodeService customCodeService;
 
@@ -35,8 +34,8 @@ public class CustomCodeController {
      * @return CustomCodeList
      */
     @GetMapping(value = "/{groupCode}")
-    public CustomCodeList getUnitCodeListByGroupCode(@PathVariable String groupCode) {
-        return customCodeService.getUnitCodeListByGroupCode(groupCode.toUpperCase());
+    public CustomCodeList getCodeListByGroupCode(@PathVariable String groupCode) {
+        return customCodeService.getCodeListByGroupCode(groupCode.toUpperCase());
     }
 
     /**
@@ -47,8 +46,8 @@ public class CustomCodeController {
      * @return CustomCode
      */
     @GetMapping(value = "/{groupCode}/{unitCode}")
-    public CustomCode getUnitCode(@PathVariable String groupCode, @PathVariable String unitCode){
-        return customCodeService.getUnitCode(groupCode.toUpperCase(), unitCode.toUpperCase());
+    public CustomCode getCodeByGroupCodeAndUnitCode(@PathVariable String groupCode, @PathVariable String unitCode){
+        return customCodeService.getCodeByGroupCodeAndUnitCode(groupCode.toUpperCase(), unitCode.toUpperCase());
     }
 
     /**
@@ -60,6 +59,16 @@ public class CustomCodeController {
     @GetMapping(value = "/unitCode/{unitCode}")
     public CustomCode getCodeByUnitCode(@PathVariable String unitCode){
         return customCodeService.getCodeByUnitCode(unitCode.toUpperCase());
+    }
+
+    /**
+     * 단위코드 상세 조회(only by ID)
+     * @param id
+     * @return CustomCode
+     */
+    @GetMapping(value = "/{id}")
+    public CustomCode getCodeById(@PathVariable Long id){
+        return customCodeService.getCodeById(id);
     }
 
     /**
