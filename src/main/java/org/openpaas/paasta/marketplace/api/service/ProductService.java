@@ -105,7 +105,6 @@ public class ProductService {
 			screenshot.setCreateId(userId);
 			screenshot.setUpdateId(userId);
 			screenshots.add(screenshot);
-	//				screenshotRepository.save(screenshot);
 		}
 		product.setScreenshots(screenshots);
 
