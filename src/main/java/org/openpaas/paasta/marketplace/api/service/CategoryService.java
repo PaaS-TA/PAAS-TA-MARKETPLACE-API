@@ -1,17 +1,15 @@
 package org.openpaas.paasta.marketplace.api.service;
 
-import javax.transaction.Transactional;
-
+import lombok.extern.slf4j.Slf4j;
 import org.openpaas.paasta.marketplace.api.common.ApiConstants;
 import org.openpaas.paasta.marketplace.api.common.CommonService;
 import org.openpaas.paasta.marketplace.api.domain.Category;
 import org.openpaas.paasta.marketplace.api.domain.CategoryList;
-import org.openpaas.paasta.marketplace.api.domain.CategorySpecification;
 import org.openpaas.paasta.marketplace.api.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
+import javax.transaction.Transactional;
 
 @Service
 @Transactional
@@ -27,10 +25,13 @@ public class CategoryService extends AbstractService {
 	/**
 	 * 카테고리 목록 조회
 	 * 
-	 * @return
+	 * @return CategoryList
 	 */
-    public CategoryList getCategoryList(CategorySpecification spec) {
-        return (CategoryList) commonService.setResultModel(categoryRepository.findAll(spec), ApiConstants.RESULT_STATUS_SUCCESS);
+    public CategoryList getCategoryList() {
+        CategoryList categoryList = new CategoryList();
+        categoryList.setItems(categoryRepository.findAll());
+
+        return (CategoryList) commonService.setResultModel(categoryList, ApiConstants.RESULT_STATUS_SUCCESS);
     }
 
     /**

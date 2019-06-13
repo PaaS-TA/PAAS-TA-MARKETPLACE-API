@@ -1,20 +1,12 @@
 package org.openpaas.paasta.marketplace.api.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.openpaas.paasta.marketplace.api.common.ApiConstants;
 import org.openpaas.paasta.marketplace.api.domain.Category;
 import org.openpaas.paasta.marketplace.api.domain.CategoryList;
-import org.openpaas.paasta.marketplace.api.domain.CategorySpecification;
 import org.openpaas.paasta.marketplace.api.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = ApiConstants.URI_API_CATEGORY)
@@ -24,15 +16,14 @@ public class CategoryController extends AbstractController {
 	@Autowired
     private CategoryService categoryService;
 
-	/**
-	 * 카테고리 목록조회
-	 * 
-	 * @param
-	 * @return
-	 */
+    /**
+     * 카테고리 목록 조회
+     *
+     * @return CategoryList
+     */
     @GetMapping
-    public CategoryList getCategoryList(CategorySpecification spec) {
-        return categoryService.getCategoryList(spec);
+    public CategoryList getCategoryList() {
+        return categoryService.getCategoryList();
     }
 
     /**
