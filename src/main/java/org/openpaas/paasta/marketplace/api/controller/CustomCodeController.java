@@ -30,10 +30,10 @@ public class CustomCodeController {
     /**
      * GroupCode 로 단위코드 목록 조회
      *
-     * @param groupCode
+     * @param groupCode the group code
      * @return CustomCodeList
      */
-    @GetMapping(value = "/{groupCode}")
+    @GetMapping(value = "/groupCode/{groupCode}")
     public CustomCodeList getCodeListByGroupCode(@PathVariable String groupCode) {
         return customCodeService.getCodeListByGroupCode(groupCode.toUpperCase());
     }
@@ -41,8 +41,8 @@ public class CustomCodeController {
     /**
      * 단위코드 상세 조회
      * 
-     * @param groupCode
-     * @param unitCode
+     * @param groupCode the group code
+     * @param unitCode the unit code
      * @return CustomCode
      */
     @GetMapping(value = "/{groupCode}/{unitCode}")
@@ -63,7 +63,7 @@ public class CustomCodeController {
 
     /**
      * 단위코드 상세 조회(only by ID)
-     * @param id
+     * @param id the id
      * @return CustomCode
      */
     @GetMapping(value = "/{id}")

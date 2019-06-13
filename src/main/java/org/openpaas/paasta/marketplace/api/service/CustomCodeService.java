@@ -1,9 +1,5 @@
 package org.openpaas.paasta.marketplace.api.service;
 
-import java.util.List;
-
-import javax.transaction.Transactional;
-
 import org.openpaas.paasta.marketplace.api.common.ApiConstants;
 import org.openpaas.paasta.marketplace.api.common.CommonService;
 import org.openpaas.paasta.marketplace.api.domain.CustomCode;
@@ -11,6 +7,8 @@ import org.openpaas.paasta.marketplace.api.domain.CustomCodeList;
 import org.openpaas.paasta.marketplace.api.repository.CustomCodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 
 /**
  * Custom Code 관리 Service
@@ -36,7 +34,10 @@ public class CustomCodeService {
      * @return CustomCodeList
      */
     public CustomCodeList getCodeListByGroupCode(String groupCode) {
-        return (CustomCodeList) commonService.setResultModel(customCodeRepository.findAllByGroupCode(groupCode), ApiConstants.RESULT_STATUS_SUCCESS);
+        CustomCodeList customCodeList = new CustomCodeList();
+        customCodeList.setItems(customCodeRepository.findAllByGroupCode(groupCode));
+
+        return (CustomCodeList) commonService.setResultModel(customCodeList, ApiConstants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -62,7 +63,7 @@ public class CustomCodeService {
 
     /**
      * ID로 단위코드 데이터 조회
-     * @param id
+     * @param id the id
      * @return CustomCode
      */
     public CustomCode getCodeById(Long id) {
