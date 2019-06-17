@@ -13,6 +13,12 @@ public class ApiConstants {
 	public static final String RESULT_STATUS_SUCCESS = "SUCCESS";
     public static final String RESULT_STATUS_FAIL = "FAIL";
 
+    public static final String AUTHORIZATION_HEADER_KEY = "Authorization";
+    public static final String CF_AUTHORIZATION_HEADER_KEY = "cf-Authorization";
+    public static final String CONTENT_TYPE = "Content-Type";
+
+    public static final String TARGET_API_CF = "cfApi";
+
     public static final String STRING_TIME_ZONE_ID = "Asia/Seoul";
     public static final String STRING_DATE_TYPE = "yyyy-MM-dd HH:mm:ss";
     
