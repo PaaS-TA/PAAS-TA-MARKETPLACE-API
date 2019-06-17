@@ -14,7 +14,7 @@ import javax.transaction.Transactional;
 @Service
 @Transactional
 @Slf4j
-public class CategoryService extends AbstractService {
+public class CategoryService {
 
 	@Autowired
 	private CommonService commonService;
