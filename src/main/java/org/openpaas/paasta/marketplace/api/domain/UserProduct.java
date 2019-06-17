@@ -68,6 +68,8 @@ public class UserProduct extends BaseEntity {
 
     private Integer deprovisionTryCount = 0;
 
+    private String uuid;
+
     @PrePersist
     public void prePersist() {
     	provisionStatus = "READY";

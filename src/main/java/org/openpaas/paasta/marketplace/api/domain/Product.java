@@ -31,8 +31,7 @@ public class Product extends BaseEntity {
     @Transient
     private String sellerId;
     
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "product_id")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "product")
     private List<UserProduct> userProducts;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
