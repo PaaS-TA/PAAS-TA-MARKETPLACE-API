@@ -1,13 +1,12 @@
 package org.openpaas.paasta.marketplace.api.domain;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity

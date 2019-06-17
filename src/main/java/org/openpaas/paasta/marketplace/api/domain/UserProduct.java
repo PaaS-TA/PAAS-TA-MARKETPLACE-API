@@ -1,23 +1,13 @@
 package org.openpaas.paasta.marketplace.api.domain;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.annotations.CreationTimestamp;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.CreationTimestamp;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -32,9 +22,17 @@ public class UserProduct extends BaseEntity {
 	@NotNull
 	private String userId;
 	
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_product_id")
-    private List<Product> products;
+//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JoinColumn(name = "user_product_id")
+//    private List<Product> products;
+
+    @Transient
+    private Long productId;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    @JsonIgnore
+    private Product product;
 
     // 사용자명
     @NotNull
@@ -65,6 +63,10 @@ public class UserProduct extends BaseEntity {
     
     // 접속URL
     private String accessUrl;
+
+    private Integer provisionTryCount = 0;
+
+    private Integer deprovisionTryCount = 0;
 
     @PrePersist
     public void prePersist() {

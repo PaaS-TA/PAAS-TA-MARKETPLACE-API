@@ -49,17 +49,30 @@ public class UserProductController extends AbstractController {
         return userProductService.getUserProduct(id);
     }
 
+    @PostMapping("/{id}")
+    public UserProduct provisionUserProduct(@PathVariable(value = "id") Long id){
+        UserProduct result = null;
+
+        try {
+            //result = userProductService.provision(id).get();
+        } catch (Exception e) {
+            // ignore
+        }
+
+        return result;
+    }
+
     /**
      * 사용자 구매상품 등록
-     * 
-     * @param userProduct
-     * @return
+     *
+     * @param userProduct the user product
+     * @return UserProduct
      */
     @PostMapping
-    public UserProduct createUserProduct(@RequestBody Product product) {
-        log.info("createUserProduct: softwareInstance={}", product);
+    public UserProduct createUserProduct(@RequestBody UserProduct userProduct) {
+        log.info("createUserProduct: productInstance={}", userProduct);
 
-        return userProductService.createUserProduct(product);
+        return userProductService.createUserProduct(userProduct);
     }
 
     /**
