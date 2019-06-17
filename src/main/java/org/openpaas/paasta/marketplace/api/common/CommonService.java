@@ -2,8 +2,13 @@ package org.openpaas.paasta.marketplace.api.common;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
@@ -21,7 +26,33 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CommonService {
 
+    @Value("${cf.admin.name}")
+    private String cfAdminName;
+
+    @Value("${cf.admin.password}")
+    private String cfAdminPassword;
+
+    @Autowired
+    private RestTemplateService cfApiRest;
+
 	private final Gson gson = new Gson();
+
+    /**
+     * CF admin token 받아오는 로직
+     *
+     * @return String
+     */
+    public String getAdminToken(){
+        Map<String, Object> cfAdminInfo = new HashMap<>();
+        cfAdminInfo.put("id", cfAdminName);
+        cfAdminInfo.put("password", cfAdminPassword);
+
+        Map result = cfApiRest.send(ApiConstants.TARGET_API_CF, "/login", null, HttpMethod.POST, cfAdminInfo, Map.class);
+
+        log.info("admin token ::: {}", result.get("token"));
+
+        return (String) result.get("token");
+    }
 
 	/**
      * Sets result model.
