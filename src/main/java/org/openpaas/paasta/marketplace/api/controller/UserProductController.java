@@ -1,23 +1,16 @@
 package org.openpaas.paasta.marketplace.api.controller;
 
-import org.openpaas.paasta.marketplace.api.domain.Product;
+import lombok.extern.slf4j.Slf4j;
+import org.openpaas.paasta.marketplace.api.common.ApiConstants;
 import org.openpaas.paasta.marketplace.api.domain.UserProduct;
 import org.openpaas.paasta.marketplace.api.domain.UserProductList;
 import org.openpaas.paasta.marketplace.api.domain.UserProductSpecification;
 import org.openpaas.paasta.marketplace.api.service.UserProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/user/product")
+@RequestMapping(value = ApiConstants.URI_API_USER_PRODUCT)
 @Slf4j
 public class UserProductController extends AbstractController {
 

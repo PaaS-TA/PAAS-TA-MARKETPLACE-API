@@ -76,26 +76,16 @@ public class UserProductService {
         // 2. 구매한 상품 정보 저장해야 함.
         // 3. CF API 호출해서 app push 해야 함.
 
-    	//UserProduct userProduct = new UserProduct();
-
     	Product buyProduct = productRepository.findById(userProduct.getProductId()).orElse(null);
-    	String originName = buyProduct.getProductName();
 
+        // 구매 후 생성할 application 의 새 이름
+        String uuid = NameUtils.makeUniqueName();
 
-        // product(app) name must not be duplicated.
-        List<UserProduct> userProductList = userProductRepository.findAll();
-        List<String> existingNames = userProductList.stream().map(UserProduct::getProductName)
-                .collect(Collectors.toList());
-
-        String userProductName = NameUtils.makeUniqueName(originName, existingNames);
-
-    	userProduct.setProductName(userProductName);
+    	userProduct.setProductName(buyProduct.getProductName());
+    	userProduct.setUuid(uuid);
     	userProduct.setProduct(buyProduct);
-        // TODO ::: String userId = SecurityUtils.getUserId(); 의 userId 넣을 예정.
-    	userProduct.setUserId("admin");
-    	userProduct.setUserName("admin");
-    	userProduct.setCreateId("admin");
-    	userProduct.setUpdateId("admin");
+    	userProduct.setCreateId(userProduct.getUserId());
+    	userProduct.setUpdateId(userProduct.getUserId());
     	userProduct.setMeteringType(buyProduct.getMeteringType());
     	userProduct.setUnitPrice(buyProduct.getUnitPrice());
     	userProduct.setUseEnddate(LocalDateTime.now());
