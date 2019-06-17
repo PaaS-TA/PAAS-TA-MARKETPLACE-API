@@ -13,3 +13,8 @@ insert into custom_code values (12, now(), 'SYSTEM', now(), 'SYSTEM', 'PROVISION
 insert into custom_code values (13, now(), 'SYSTEM', now(), 'SYSTEM', 'PROVISION_STATUS', '구매상태', 'SUCCESS', '성공');
 insert into custom_code values (14, now(), 'SYSTEM', now(), 'SYSTEM', 'PROVISION_STATUS', '구매상태', 'FAIL', '실패');
 insert into custom_code values (15, now(), 'SYSTEM', now(), 'SYSTEM', 'PROVISION_STATUS', '구매상태', 'STOP', '정지');
+insert into category values (1, now(), 'SYSTEM', now(), 'SYSTEM', '의료', 'N');
+insert into category values (2, now(), 'SYSTEM', now(), 'SYSTEM', '보안', 'N');
+insert into category values (3, now(), 'SYSTEM', now(), 'SYSTEM', '커머스', 'N');
+insert into category values (4, now(), 'SYSTEM', now(), 'SYSTEM', 'CRM', 'N');
+insert into category values (5, now(), 'SYSTEM', now(), 'SYSTEM', 'ERP', 'N');
