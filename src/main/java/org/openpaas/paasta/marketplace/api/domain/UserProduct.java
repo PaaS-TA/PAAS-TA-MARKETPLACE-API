@@ -31,7 +31,6 @@ public class UserProduct extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "product_id")
-    @JsonIgnore
     private Product product;
 
     // 사용자명

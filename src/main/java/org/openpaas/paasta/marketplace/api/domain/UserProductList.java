@@ -16,4 +16,12 @@ public class UserProductList extends BaseEntity {
 	@ElementCollection(targetClass = String.class)
 	private List<UserProduct> items;
 
+	int total;
+	int start;
+	int display;
+	int page;
+	int size;
+	int totalPages;
+	long totalElements;
+	boolean isLast;
 }

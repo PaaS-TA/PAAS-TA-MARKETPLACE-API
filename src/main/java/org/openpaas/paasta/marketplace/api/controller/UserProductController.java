@@ -7,6 +7,8 @@ import org.openpaas.paasta.marketplace.api.domain.UserProductList;
 import org.openpaas.paasta.marketplace.api.domain.UserProductSpecification;
 import org.openpaas.paasta.marketplace.api.service.UserProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,20 +16,34 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class UserProductController extends AbstractController {
 
+    private static final int PAGE_SIZE = 8;
+
 	@Autowired
     UserProductService userProductService;
 
-	/**
-	 * 사용자 구매상품 목록 조회
-	 * 
-	 * @param spec
-	 * @return
-	 */
-    @GetMapping
-    public UserProductList getUserProductList(UserProductSpecification spec) {
-        log.info("getUserProductList: spec={}", spec);
 
-        return userProductService.getUserProductList(spec);
+    /**
+     * 사용자 구매상품 목록 검색 조회
+     *
+     * @param categoryId the category id
+     * @param productName the product name
+     * @param spec the user product specification object
+     * @param pageable the pageable object
+     * @return UserProductList
+     */
+    @GetMapping
+    public UserProductList getUserProductList(@RequestParam(value = "userId", defaultValue = "") String userId,
+                                              @RequestParam(value = "categoryId", required = false) Long categoryId,
+                                              @RequestParam(value = "productName", required = false) String productName,
+                                              UserProductSpecification spec,
+                                              @PageableDefault(size = PAGE_SIZE) Pageable pageable) {
+        log.info("getUserProductList: spec={}, pageable={}", spec, pageable);
+
+        spec.setUserId(userId);
+        spec.setCategoryId(categoryId);
+        spec.setProductName(productName);
+
+        return userProductService.getUserProductList(spec, pageable);
     }
 
     /**

@@ -2,6 +2,7 @@ package org.openpaas.paasta.marketplace.api.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.openpaas.paasta.marketplace.api.common.ApiConstants;
+import org.openpaas.paasta.marketplace.api.common.CommonService;
 import org.openpaas.paasta.marketplace.api.common.RestTemplateService;
 import org.openpaas.paasta.marketplace.api.domain.Product;
 import org.openpaas.paasta.marketplace.api.domain.UserProduct;
@@ -9,20 +10,15 @@ import org.openpaas.paasta.marketplace.api.domain.UserProductList;
 import org.openpaas.paasta.marketplace.api.domain.UserProductSpecification;
 import org.openpaas.paasta.marketplace.api.repository.ProductRepository;
 import org.openpaas.paasta.marketplace.api.repository.UserProductRepository;
-import org.openpaas.paasta.marketplace.api.util.DateUtils;
 import org.openpaas.paasta.marketplace.api.util.NameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -40,6 +36,9 @@ public class UserProductService {
     @Value("${deprovisioning.timeout}")
     private long deprovisioningTimeout;
 
+    @Autowired
+    private CommonService commonService;
+
 	@Autowired
     private ProductRepository productRepository;
 
@@ -49,14 +48,24 @@ public class UserProductService {
     @Autowired
     private RestTemplateService restTemplateService;
 
-    public UserProductList getUserProductList(UserProductSpecification spec) {
-    	List<UserProduct> userProducts = userProductRepository.findAll(spec);
 
-    	UserProductList userProductList = new UserProductList();
-    	userProductList.setResultCode(ApiConstants.RESULT_STATUS_SUCCESS);
-    	userProductList.setItems(userProducts);
+    /**
+     * 사용자 구매상품 목록 검색 조회
+     *
+     * @param spec the user product specification object
+     * @param pageable the pageable object
+     * @return UserProductList
+     */
+    public UserProductList getUserProductList(UserProductSpecification spec, Pageable pageable) {
+        UserProductList userProductList;
+        Page<UserProduct> userProductListPage;
 
-        return userProductList;
+        userProductListPage = userProductRepository.findAll(spec, pageable);
+
+        userProductList = (UserProductList) commonService.setPageInfo(userProductListPage, new UserProductList());
+        userProductList.setItems(userProductListPage.getContent());
+
+        return (UserProductList) commonService.setResultModel(userProductList, ApiConstants.RESULT_STATUS_SUCCESS);
     }
     
     public UserProduct getUserProduct(Long id) {
