@@ -1,5 +1,6 @@
 package org.openpaas.paasta.marketplace.api.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.openpaas.paasta.marketplace.api.common.ApiConstants;
 import org.openpaas.paasta.marketplace.api.domain.Product;
 import org.openpaas.paasta.marketplace.api.domain.ProductList;
@@ -8,15 +9,7 @@ import org.openpaas.paasta.marketplace.api.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 상품 Controller
@@ -42,7 +35,7 @@ public class ProductController {
      * @param productName the product name
      * @param spec the product specification object
      * @param pageable the pageable object
-     * @return Page
+     * @return ProductList
      */
     @GetMapping
     public ProductList getProductList(@RequestParam(value = "categoryId", required = false) Long categoryId,
@@ -68,7 +61,14 @@ public class ProductController {
     public Product getProduct(@PathVariable(value = "id") Long id){
         return productService.getProduct(id);
     }
-    
+
+
+    /**
+     * 상품 등록
+     *
+     * @param product the product
+     * @return Product
+     */
     @PostMapping
     public Product createProduct(@RequestBody Product product) {
         log.info("product={}", product);

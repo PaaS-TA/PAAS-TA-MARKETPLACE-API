@@ -1,5 +1,6 @@
 package org.openpaas.paasta.marketplace.api.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -32,6 +33,7 @@ public class Product extends BaseEntity {
     private String sellerId;
     
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "product")
+    @JsonIgnore
     private List<UserProduct> userProducts;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
