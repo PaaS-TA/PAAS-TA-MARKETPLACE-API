@@ -23,7 +23,7 @@ public class UserProductController extends AbstractController {
 
 
     /**
-     * 사용자 구매상품 목록 검색 조회
+     * 사용자 구매 상품 목록 검색 조회
      *
      * @param categoryId the category id
      * @param productName the product name
@@ -47,9 +47,9 @@ public class UserProductController extends AbstractController {
     }
 
     /**
-     * 사용자 구매상품 상세 조회
-     * @param id
-     * @return
+     * 사용자 구매 상품 상세 조회
+     * @param id the id
+     * @return UserProduct
      */
     @GetMapping("/{id}")
     public UserProduct getUserProduct(@PathVariable("id") Long id) {

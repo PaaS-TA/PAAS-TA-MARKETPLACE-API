@@ -50,7 +50,7 @@ public class UserProductService {
 
 
     /**
-     * 사용자 구매상품 목록 검색 조회
+     * 사용자 구매 상품 목록 검색 조회
      *
      * @param spec the user product specification object
      * @param pageable the pageable object
@@ -67,9 +67,16 @@ public class UserProductService {
 
         return (UserProductList) commonService.setResultModel(userProductList, ApiConstants.RESULT_STATUS_SUCCESS);
     }
-    
+
+
+    /**
+     * 사용자 구매 상품 상세 조회
+     *
+     * @param id the id
+     * @return UserProduct
+     */
     public UserProduct getUserProduct(Long id) {
-    	return userProductRepository.findById(id).orElse(null);
+    	return (UserProduct) commonService.setResultModel(userProductRepository.findById(id).orElse(null), ApiConstants.RESULT_STATUS_SUCCESS);
     }
 
 
