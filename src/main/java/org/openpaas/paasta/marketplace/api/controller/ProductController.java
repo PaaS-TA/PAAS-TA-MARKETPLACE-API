@@ -59,6 +59,7 @@ public class ProductController {
      */
     @GetMapping(value = "/{id}")
     public Product getProduct(@PathVariable(value = "id") Long id){
+    	log.info("id: {}", id);
         return productService.getProduct(id);
     }
 
@@ -72,8 +73,19 @@ public class ProductController {
     @PostMapping
     public Product createProduct(@RequestBody Product product) {
         log.info("product={}", product);
-
         return productService.createProduct(product);
+    }
+
+    /**
+     * 상품 수정
+     * @param id
+     * @param product
+     * @return Product
+     */
+    @PutMapping("/{id}")
+    public Product updateProduct(@PathVariable Long id, @RequestBody Product product) {
+    	log.info("id: {}, product: {}", id, product);
+        return productService.updateProduct(id, product);
     }
 
 }

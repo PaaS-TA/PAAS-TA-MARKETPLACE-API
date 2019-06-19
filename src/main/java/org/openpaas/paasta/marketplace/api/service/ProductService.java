@@ -2,6 +2,7 @@ package org.openpaas.paasta.marketplace.api.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -44,9 +45,6 @@ public class ProductService {
 
 	@Autowired
     private ProductRepository productRepository;
-	
-//	@Autowired
-//	private ScreenshotRepository screenshotRepository;
 
     /**
      * 상품 목록 검색 조회
@@ -82,7 +80,15 @@ public class ProductService {
      * @return Product
      */
     public Product getProduct(Long id) {
-        return (Product) commonService.setResultModel(productRepository.getOne(id), ApiConstants.RESULT_STATUS_SUCCESS);
+    	Product product = new Product();
+    	Optional<Product> result = productRepository.findById(id);
+    	if (result.isPresent()) {
+    		product = (Product) commonService.setResultModel(result.get(), ApiConstants.RESULT_STATUS_SUCCESS);
+    	} else {
+    		product.setResultCode(ApiConstants.RESULT_STATUS_FAIL);
+    		product.setResultMessage("Product Not Found");
+    	}
+    	return product;
     }
     
     /**
@@ -107,6 +113,65 @@ public class ProductService {
 			screenshots.add(screenshot);
 		}
 		product.setScreenshots(screenshots);
+
+		return (Product) commonService.setResultModel(productRepository.save(product), ApiConstants.RESULT_STATUS_SUCCESS);
+    }
+    
+    /**
+     * 상품 수정
+     * @param product
+     * @return
+     */
+    public Product updateProduct(Long id, Product updProduct) {
+    	String userId = updProduct.getUpdateId();
+    	// 상품데이터 조회
+    	Product product = getProduct(id);
+
+    	// 카테고리
+    	if (null != updProduct.getCategoryId() && updProduct.getCategoryId() > 0L) {
+    		product.setCategory(categoryRepository.getOneByIdAndDeleteYn(updProduct.getCategoryId(), ApiConstants.DELETE_YN_N));
+    	}
+    	// 상품 개요
+    	if (null != updProduct.getSimpleDescription()) {
+    		product.setSimpleDescription(updProduct.getSimpleDescription());
+    	}
+    	// 상품 상세
+    	if (null != updProduct.getDetailDescription()) {
+    		product.setDetailDescription(updProduct.getDetailDescription());
+    	}
+    	// 미터링 금액
+    	if (updProduct.getUnitPrice() > 0) {
+    		product.setUnitPrice(updProduct.getUnitPrice());
+    	}
+    	// 전시여부
+    	if (null != updProduct.getDisplayYn()) {
+    		product.setDisplayYn(updProduct.getDisplayYn());
+    	}
+    	// 아이콘파일
+    	if (null != updProduct.getIconFileName()) {
+    		product.setIconFileName(updProduct.getIconFileName());
+    	}
+		// 스크린샷파일
+    	if (null != updProduct.getScreenshotFileNames() && updProduct.getScreenshotFileNames().size() > 0) {
+	    	//=> 기존 데이터 모두 삭제
+    		List<Screenshot> list = product.getScreenshots();
+    		for (Screenshot item : list) {
+    			item.setDeleteYn(ApiConstants.DELETE_YN_Y);
+    		}
+    		product.setScreenshots(list);
+	    	productRepository.save(product);
+	    	//=> 신규 데이터 등록
+			List<String> screenshotFileNames = updProduct.getScreenshotFileNames();
+			List<Screenshot> screenshots = new ArrayList<Screenshot>();
+			for (String screenshotFileName : screenshotFileNames) {
+				Screenshot screenshot = new Screenshot();
+				screenshot.setScreenshotFileName(screenshotFileName);
+				screenshot.setCreateId(userId);
+				screenshot.setUpdateId(userId);
+				screenshots.add(screenshot);
+			}
+			product.setScreenshots(screenshots);
+    	}
 
 		return (Product) commonService.setResultModel(productRepository.save(product), ApiConstants.RESULT_STATUS_SUCCESS);
     }

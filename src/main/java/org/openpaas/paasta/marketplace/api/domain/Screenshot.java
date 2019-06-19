@@ -25,10 +25,6 @@ public class Screenshot extends BaseEntity {
     @NotNull
     private String deleteYn;
 
-//    @ManyToOne
-//    @JoinColumn(name="product_Id")
-//    private Product product;
-
     @PrePersist
     public void prePersist() {
     	deleteYn = "N";
