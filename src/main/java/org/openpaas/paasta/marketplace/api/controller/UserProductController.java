@@ -11,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping(value = ApiConstants.URI_API_USER_PRODUCT)
 @Slf4j
@@ -58,18 +60,18 @@ public class UserProductController extends AbstractController {
         return userProductService.getUserProduct(id);
     }
 
-    @PostMapping("/{id}")
-    public UserProduct provisionUserProduct(@PathVariable(value = "id") Long id){
-        UserProduct result = null;
-
-        try {
-            //result = userProductService.provision(id).get();
-        } catch (Exception e) {
-            // ignore
-        }
-
-        return result;
-    }
+//    @PostMapping("/{id}")
+//    public UserProduct provisionUserProduct(@PathVariable(value = "id") Long id){
+//        UserProduct result = null;
+//
+//        try {
+//            //result = userProductService.provision(id).get();
+//        } catch (Exception e) {
+//            // ignore
+//        }
+//
+//        return result;
+//    }
 
     /**
      * 사용자 구매상품 등록
@@ -81,7 +83,14 @@ public class UserProductController extends AbstractController {
     public UserProduct createUserProduct(@RequestBody UserProduct userProduct) {
         log.info("createUserProduct: productInstance={}", userProduct);
 
-        return userProductService.createUserProduct(userProduct);
+        // DB 에 구매 상품 등록
+        UserProduct createdProduct = userProductService.createUserProduct(userProduct);
+
+        // CF market-space 에 앱 푸시 테스트 중
+        Map<String, Object> resultMap = userProductService.provisionUserProduct(createdProduct);
+        log.info("앱 푸시 결과 ::: " + resultMap.toString());
+
+        return createdProduct;
     }
 
     /**
