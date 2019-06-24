@@ -86,11 +86,19 @@ public class UserProductController extends AbstractController {
         // DB 에 구매 상품 등록
         UserProduct createdProduct = userProductService.createUserProduct(userProduct);
 
-        // CF market-space 에 앱 푸시 테스트 중
-        Map<String, Object> resultMap = userProductService.provisionUserProduct(createdProduct);
-        log.info("앱 푸시 결과 ::: " + resultMap.toString());
+        if(createdProduct.getResultCode().equals(ApiConstants.RESULT_STATUS_SUCCESS)) {
+            // CF market-space 에 앱 푸시 테스트 중
+            Map<String, Object> resultMap = userProductService.provisionUserProduct(createdProduct);
+            log.info("앱 푸시 결과 ::: " + resultMap.toString());
 
-        return createdProduct;
+            if(resultMap.get("RESULT").equals(ApiConstants.RESULT_STATUS_SUCCESS)) {
+                return createdProduct;
+            }else {
+                return null;
+            }
+        }else{
+            return null;
+        }
     }
 
     /**

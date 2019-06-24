@@ -109,7 +109,7 @@ public class UserProductService {
     	userProduct.setUnitPrice(buyProduct.getUnitPrice());
     	userProduct.setUseEnddate(LocalDateTime.now());
 
-        return userProductRepository.save(userProduct);
+        return (UserProduct) commonService.setResultModel(userProductRepository.save(userProduct), ApiConstants.RESULT_STATUS_SUCCESS);
 
     }
 
