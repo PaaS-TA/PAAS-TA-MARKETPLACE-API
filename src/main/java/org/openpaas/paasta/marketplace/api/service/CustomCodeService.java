@@ -1,5 +1,7 @@
 package org.openpaas.paasta.marketplace.api.service;
 
+import javax.transaction.Transactional;
+
 import org.openpaas.paasta.marketplace.api.common.ApiConstants;
 import org.openpaas.paasta.marketplace.api.common.CommonService;
 import org.openpaas.paasta.marketplace.api.domain.CustomCode;
@@ -7,8 +9,6 @@ import org.openpaas.paasta.marketplace.api.domain.CustomCodeList;
 import org.openpaas.paasta.marketplace.api.repository.CustomCodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
 
 /**
  * Custom Code 관리 Service
@@ -23,7 +23,7 @@ public class CustomCodeService {
 
 	@Autowired
 	private CommonService commonService;
-
+	
     @Autowired
     private CustomCodeRepository customCodeRepository;
 
@@ -67,7 +67,7 @@ public class CustomCodeService {
      * @return CustomCode
      */
     public CustomCode getCodeById(Long id) {
-    	return (CustomCode) commonService.setResultModel(customCodeRepository.findById(id), ApiConstants.RESULT_STATUS_SUCCESS);
+    	return (CustomCode) commonService.setResultModel(customCodeRepository.getOne(id), ApiConstants.RESULT_STATUS_SUCCESS);
     }
 
     /**
