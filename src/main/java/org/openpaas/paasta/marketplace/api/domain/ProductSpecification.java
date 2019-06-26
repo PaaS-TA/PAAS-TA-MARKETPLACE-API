@@ -8,6 +8,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.openpaas.paasta.marketplace.api.common.ApiConstants;
 import org.springframework.data.jpa.domain.Specification;
 
 import lombok.Data;
@@ -30,7 +31,7 @@ public class ProductSpecification implements Specification<Product> {
 	
 	private String createId;
 
-	private String displayYn;
+	private String displayYn = ApiConstants.DISPLAY_YN_Y;
 
 	private String approvalStatus;
 
@@ -57,7 +58,7 @@ public class ProductSpecification implements Specification<Product> {
 		if (sellerName != null) {
 			restrictions.add(builder.like(root.get("sellerName"), "%" + sellerName + "%"));
 		}
-		if (displayYn != null) {
+		if (displayYn != null && !"ALL".equals(displayYn)) {
 			restrictions.add(builder.equal(root.get("displayYn"), displayYn));
 		}
 		if (approvalStatus != null) {
