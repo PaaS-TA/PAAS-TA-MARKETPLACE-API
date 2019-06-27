@@ -1,14 +1,20 @@
 package org.openpaas.paasta.marketplace.api.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.PrePersist;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  * 판매자 프로필 모델
@@ -18,7 +24,6 @@ import java.util.List;
  * @since 2019-05-07
  */
 @Data
-@ToString(exclude="products")
 @Entity
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -29,10 +34,10 @@ public class SellerProfile extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "seller_profile_id", referencedColumnName = "id")
-    @JsonIgnore
-    private List<Product> products;
+//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JoinColumn(name = "seller_profile_id", referencedColumnName = "id")
+//    @JsonIgnore
+//    private List<Product> products;
 
     // 판매자 로그인ID
     @Column(name = "seller_id", unique = true)

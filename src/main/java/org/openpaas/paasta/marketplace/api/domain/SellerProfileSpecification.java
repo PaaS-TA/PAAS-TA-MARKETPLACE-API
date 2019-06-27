@@ -8,6 +8,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.openpaas.paasta.marketplace.api.common.ApiConstants;
 import org.springframework.data.jpa.domain.Specification;
 
 import lombok.Data;
@@ -21,9 +22,8 @@ public class SellerProfileSpecification implements Specification<SellerProfile> 
 	public Predicate toPredicate(Root<SellerProfile> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
 		List<Predicate> restrictions = new ArrayList<>();
 
-        restrictions.add(builder.equal(root.get("deleteYn"), "N"));
+        restrictions.add(builder.equal(root.get("deleteYn"), ApiConstants.DELETE_YN_N));
 
-        
         query.orderBy(builder.asc(root.get("id")));
 
         return builder.and(restrictions.toArray(new Predicate[] {}));

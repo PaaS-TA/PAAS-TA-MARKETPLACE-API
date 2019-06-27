@@ -43,13 +43,14 @@ public class SellerProfileController {
     }
 
     /**
-     * 판매자 프로필 상세 조회
+     * 판매자 프로필 상세 조회 by id
      *
      * @param id the id
      * @return SellerProfile
      */
     @GetMapping("/{id}")
     public SellerProfile getSellerProfile(@PathVariable Long id) {
+    	log.info("id!!!");
         return sellerProfileService.getSellerProfile(id);
     }
 
@@ -64,7 +65,6 @@ public class SellerProfileController {
     	log.info("seller: " + sellerProfile.toString());
     	return sellerProfileService.createSellerProfile(sellerProfile);
     }
-
 
     /**
      * 판매자 프로필 수정

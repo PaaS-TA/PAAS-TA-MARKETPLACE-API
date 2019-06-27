@@ -1,7 +1,5 @@
 package org.openpaas.paasta.marketplace.api.service;
 
-import java.util.List;
-
 import javax.transaction.Transactional;
 
 import org.openpaas.paasta.marketplace.api.common.ApiConstants;
@@ -43,13 +41,13 @@ public class SellerProfileService {
     }
 
     /**
-     * 판매자 프로필 상세 조회
+     * 판매자 프로필 상세 조회 by id
      *
      * @param id the id
      * @return SellerProfile
      */
     public SellerProfile getSellerProfile(Long id) {
-        return (SellerProfile) commonService.setResultModel(sellerProfileRepository.getOneByIdAndDeleteYn(id, ApiConstants.DELETE_YN_N), ApiConstants.RESULT_STATUS_SUCCESS);
+   		return (SellerProfile) commonService.setResultModel(sellerProfileRepository.getOneByIdAndDeleteYn(id, ApiConstants.DELETE_YN_N), ApiConstants.RESULT_STATUS_SUCCESS);
     }
 
     /**
