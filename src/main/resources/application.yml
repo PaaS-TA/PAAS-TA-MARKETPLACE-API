@@ -1,14 +1,11 @@
-server:
-  port: 8777
-
 spring:
   application:
-    name: marketplace-api
+    name: kepri-saas-api
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/market_place?characterEncoding=utf8
+    url: jdbc:mysql://localhost:3306/marketplace?characterEncoding=utf8
     username: xxxx
-    password: xxxxxxxxx
+    password: xxxx
   jpa:
     hibernate:
       ddl-auto: update
@@ -19,19 +16,10 @@ spring:
     serialization:
       fail-on-empty-beans: false
     default-property-inclusion: NON_NULL
-#  batch:
-#    initialize-schema: always
-  servlet:
-    multipart:
-      max-file-size: 100MB
-      max-request-size: 100MB
-
+      
 logging:
   level:
-    org.springframework.web: DEBUG
     org.springframework.web.client.RestTemplate: TRACE
-    org.openpaas.paasta.marketplace.api.config.LoggingInterceptor: DEBUG
 
-# local test
-local:
-  uploadPath: D:/home/ubuntu/saas/
+server:
+  port: 8000

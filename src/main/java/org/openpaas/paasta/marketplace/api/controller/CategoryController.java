@@ -1,77 +1,32 @@
 package org.openpaas.paasta.marketplace.api.controller;
 
-import lombok.extern.slf4j.Slf4j;
-import org.openpaas.paasta.marketplace.api.common.ApiConstants;
+import java.util.List;
+
 import org.openpaas.paasta.marketplace.api.domain.Category;
-import org.openpaas.paasta.marketplace.api.domain.CategoryList;
+import org.openpaas.paasta.marketplace.api.domain.CategorySpecification;
 import org.openpaas.paasta.marketplace.api.service.CategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping(value = ApiConstants.URI_API_CATEGORY)
-@Slf4j
-public class CategoryController extends AbstractController {
+@RequestMapping(value = "/categories")
+@RequiredArgsConstructor
+public class CategoryController {
 
-	@Autowired
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
-    /**
-     * 카테고리 목록 조회
-     *
-     * @return CategoryList
-     */
     @GetMapping
-    public CategoryList getCategoryList() {
-        return categoryService.getCategoryList();
+    public List<Category> getList(CategorySpecification spec) {
+        return categoryService.getList(spec);
     }
 
-    /**
-     * 카테고리 상세조회
-     * 
-     * @param id
-     * @return
-     */
     @GetMapping("/{id}")
-    public Category getCategory(@PathVariable Long id) {
-        return categoryService.getCategory(id);
+    public Category get(@PathVariable Long id) {
+        return categoryService.get(id);
     }
-
-    /**
-     * 카테고리 등록
-     * 
-     * @param category
-     * @return
-     */
-    @PostMapping
-    public Category createCategory(@RequestBody Category category) {
-        log.info("category={}", category);
-
-        return categoryService.createCategory(category);
-    }
-
-    /**
-     * 카테고리 수정
-     * 
-     * @param id
-     * @param category
-     * @return
-     */
-    @PutMapping("/{id}")
-    public Category updateCategory(@PathVariable Long id, @RequestBody Category category) {
-        return categoryService.updateCategory(id, category);
-    }
-
-//    @PutMapping("/{id}/name")
-//    public Category updateCategoryName(@PathVariable Long id, @RequestBody Category category) {
-//        category.setId(id);
-//
-//        return categoryService.updateCategoryName(category);
-//    }
-
-//    @DeleteMapping("/{id}")
-//    public void deleteCategory(@PathVariable Long id) {
-//        categoryService.deleteCategory(id);
-//    }
 
 }

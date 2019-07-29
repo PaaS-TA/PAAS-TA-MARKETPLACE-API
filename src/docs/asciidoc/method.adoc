@@ -1,0 +1,19 @@
+===== request
+====== parameters
+include::{snippets}/{role-name}/{class-name}/{method-name}/path-parameters.adoc[]
+====== http
+include::{snippets}/{role-name}/{class-name}/{method-name}/http-request.adoc[]
+====== curl
+include::{snippets}/{role-name}/{class-name}/{method-name}/curl-request.adoc[]
+====== httpie
+include::{snippets}/{role-name}/{class-name}/{method-name}/httpie-request.adoc[]
+====== payload
+include::{snippets}/{role-name}/{class-name}/{method-name}/request-body.adoc[]
+include::{snippets}/{role-name}/{class-name}/{method-name}/request-fields.adoc[]
+
+===== response
+====== http
+include::{snippets}/{role-name}/{class-name}/{method-name}/http-response.adoc[]
+====== payload
+include::{snippets}/{role-name}/{class-name}/{method-name}/response-body.adoc[]
+include::{snippets}/{role-name}/{class-name}/{method-name}/response-fields.adoc[]

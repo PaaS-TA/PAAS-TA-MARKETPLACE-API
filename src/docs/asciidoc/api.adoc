@@ -1,0 +1,33 @@
+= PaaS-TA Marketplace API
+:toc: left
+:toclevels: 4
+:sectnums:
+
+== User API
+:role-name: user
+
+=== Software
+:class-name: software
+
+==== get
+:method-name: get
+
+include::method.adoc[]
+
+==== create
+:method-name: create
+
+include::method.adoc[]
+
+==== update
+:method-name: update
+
+include::method.adoc[]
+
+==== update in-use
+:method-name: updateInUse
+
+include::method.adoc[]
+
+== Admin API
+:role-name: admin
