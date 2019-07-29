@@ -427,28 +427,34 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_software">1.1. Software</a>
 <ul class="sectlevel3">
-<li><a href="#_get">1.1.1. get</a>
+<li><a href="#_page">1.1.1. page</a>
 <ul class="sectlevel4">
 <li><a href="#_request">request</a></li>
 <li><a href="#_response">response</a></li>
 </ul>
 </li>
-<li><a href="#_create">1.1.2. create</a>
+<li><a href="#_get">1.1.2. get</a>
 <ul class="sectlevel4">
 <li><a href="#_request_2">request</a></li>
 <li><a href="#_response_2">response</a></li>
 </ul>
 </li>
-<li><a href="#_update">1.1.3. update</a>
+<li><a href="#_create">1.1.3. create</a>
 <ul class="sectlevel4">
 <li><a href="#_request_3">request</a></li>
 <li><a href="#_response_3">response</a></li>
 </ul>
 </li>
-<li><a href="#_update_in_use">1.1.4. update in-use</a>
+<li><a href="#_update">1.1.4. update</a>
 <ul class="sectlevel4">
 <li><a href="#_request_4">request</a></li>
 <li><a href="#_response_4">response</a></li>
+</ul>
+</li>
+<li><a href="#_update_in_use">1.1.5. update in-use</a>
+<ul class="sectlevel4">
+<li><a href="#_request_5">request</a></li>
+<li><a href="#_response_5">response</a></li>
 </ul>
 </li>
 </ul>
@@ -466,13 +472,346 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_software">1.1. Software</h3>
 <div class="sect3">
-<h4 id="_get">1.1.1. get</h4>
+<h4 id="_page">1.1.1. page</h4>
 <div class="sect4">
 <h5 id="_request">request</h5>
 <div class="sect5">
 <h6 id="_parameters">parameters</h6>
 <table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 1. /softwares/{id}</caption>
+<caption class="title">Table 1. /softwares/page</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_http">http</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /softwares/page?page=0&amp;size=10&amp;sort=id%2Casc&amp;categoryId=1&amp;nameLike=software HTTP/1.1
+Accept: application/json
+Authorization: foo
+Content-Type: application/json;charset=utf-8
+Host: marketplace.yourdomain.com</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_curl">curl</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://marketplace.yourdomain.com/softwares/page?page=0&amp;size=10&amp;sort=id%2Casc&amp;categoryId=1&amp;nameLike=software' -i -X GET \
+    -H 'Accept: application/json' \
+    -H 'Authorization: foo' \
+    -H 'Content-Type: application/json;charset=utf-8'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_httpie">httpie</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ http GET 'http://marketplace.yourdomain.com/softwares/page?page=0&amp;size=10&amp;sort=id%2Casc&amp;categoryId=1&amp;nameLike=software' \
+    'Accept:application/json' \
+    'Authorization:foo' \
+    'Content-Type:application/json;charset=utf-8'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_payload">payload</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Unresolved directive in method.adoc - include::..\..\..\build\generated-snippets/user/software/page/request-fields.adoc[]</p>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_response">response</h5>
+<div class="sect5">
+<h6 id="_http_2">http</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Pragma: no-cache
+Content-Length: 3030
+X-XSS-Protection: 1; mode=block
+Expires: 0
+X-Frame-Options: DENY
+X-Content-Type-Options: nosniff
+Content-Type: application/json;charset=UTF-8
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+
+{
+  "content" : [ {
+    "inUse" : "Y",
+    "createdBy" : "foo",
+    "createdDate" : "2019-07-29T17:30:49.359",
+    "lastModifiedBy" : "foo",
+    "lastModifiedDate" : "2019-07-29T17:30:49.359",
+    "id" : 1,
+    "name" : "software-01",
+    "category" : {
+      "createdBy" : "admin",
+      "createdDate" : "2019-07-29T17:30:49.359",
+      "lastModifiedBy" : "admin",
+      "lastModifiedDate" : "2019-07-29T17:30:49.359",
+      "id" : 1,
+      "name" : "category-01"
+    },
+    "status" : "Approval",
+    "app" : "app-9d3faee6-1723-4a0b-bad7-4dbc37a28d51.jar",
+    "manifest" : "manifest-035994a9-aa03-4375-990f-060a73ced0fc.yml",
+    "icon" : "icon-b70a3cf0-0e31-472f-a4fd-708e5baad964.png",
+    "screenshotList" : [ {
+      "id" : 1,
+      "fileName" : "screenshot-c2eb97e8-5ebb-49d6-b3dd-f75550ef4c56.jpg",
+      "seq" : 1
+    }, {
+      "id" : 2,
+      "fileName" : "screenshot-ef02a3aa-f339-41cf-a721-b82514075d3b.jpg",
+      "seq" : 2
+    }, {
+      "id" : 3,
+      "fileName" : "screenshot-7813b450-c63d-4a9f-9bf5-4f66741bdcc1.jpg",
+      "seq" : 3
+    } ],
+    "summary" : "category-01's summary.",
+    "description" : "description of this software. create by foo",
+    "type" : "Web",
+    "pricePerDay" : 1000,
+    "version" : "1.0"
+  }, {
+    "inUse" : "Y",
+    "createdBy" : "foo",
+    "createdDate" : "2019-07-29T17:30:49.359",
+    "lastModifiedBy" : "foo",
+    "lastModifiedDate" : "2019-07-29T17:30:49.359",
+    "id" : 1,
+    "name" : "software-02",
+    "category" : {
+      "createdBy" : "admin",
+      "createdDate" : "2019-07-29T17:30:49.359",
+      "lastModifiedBy" : "admin",
+      "lastModifiedDate" : "2019-07-29T17:30:49.359",
+      "id" : 1,
+      "name" : "category-01"
+    },
+    "status" : "Approval",
+    "app" : "app-31d11468-9bc3-433c-9240-015418941d0e.jar",
+    "manifest" : "manifest-17e29c96-c9ba-4bd3-93f3-f254d8a6da5b.yml",
+    "icon" : "icon-4ce22355-e2bf-49aa-bea8-86a8c55476b7.png",
+    "screenshotList" : [ {
+      "id" : 1,
+      "fileName" : "screenshot-45c86829-ec3b-4245-a092-d00223cecf46.jpg",
+      "seq" : 1
+    }, {
+      "id" : 2,
+      "fileName" : "screenshot-c9bf93e6-7f1f-4f1e-b277-eaabe6c6447f.jpg",
+      "seq" : 2
+    }, {
+      "id" : 3,
+      "fileName" : "screenshot-772e8562-4830-45ac-a102-bbefdb255405.jpg",
+      "seq" : 3
+    } ],
+    "summary" : "category-01's summary.",
+    "description" : "description of this software. create by foo",
+    "type" : "Web",
+    "pricePerDay" : 1000,
+    "version" : "1.0"
+  } ],
+  "pageable" : {
+    "sort" : {
+      "sorted" : false,
+      "unsorted" : true,
+      "empty" : true
+    },
+    "offset" : 0,
+    "pageNumber" : 0,
+    "pageSize" : 10,
+    "paged" : true,
+    "unpaged" : false
+  },
+  "last" : true,
+  "totalElements" : 2,
+  "totalPages" : 1,
+  "number" : 0,
+  "size" : 10,
+  "sort" : {
+    "sorted" : false,
+    "unsorted" : true,
+    "empty" : true
+  },
+  "numberOfElements" : 2,
+  "first" : true,
+  "empty" : false
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_payload_2">payload</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code>{
+  "content" : [ {
+    "inUse" : "Y",
+    "createdBy" : "foo",
+    "createdDate" : "2019-07-29T17:30:49.359",
+    "lastModifiedBy" : "foo",
+    "lastModifiedDate" : "2019-07-29T17:30:49.359",
+    "id" : 1,
+    "name" : "software-01",
+    "category" : {
+      "createdBy" : "admin",
+      "createdDate" : "2019-07-29T17:30:49.359",
+      "lastModifiedBy" : "admin",
+      "lastModifiedDate" : "2019-07-29T17:30:49.359",
+      "id" : 1,
+      "name" : "category-01"
+    },
+    "status" : "Approval",
+    "app" : "app-9d3faee6-1723-4a0b-bad7-4dbc37a28d51.jar",
+    "manifest" : "manifest-035994a9-aa03-4375-990f-060a73ced0fc.yml",
+    "icon" : "icon-b70a3cf0-0e31-472f-a4fd-708e5baad964.png",
+    "screenshotList" : [ {
+      "id" : 1,
+      "fileName" : "screenshot-c2eb97e8-5ebb-49d6-b3dd-f75550ef4c56.jpg",
+      "seq" : 1
+    }, {
+      "id" : 2,
+      "fileName" : "screenshot-ef02a3aa-f339-41cf-a721-b82514075d3b.jpg",
+      "seq" : 2
+    }, {
+      "id" : 3,
+      "fileName" : "screenshot-7813b450-c63d-4a9f-9bf5-4f66741bdcc1.jpg",
+      "seq" : 3
+    } ],
+    "summary" : "category-01's summary.",
+    "description" : "description of this software. create by foo",
+    "type" : "Web",
+    "pricePerDay" : 1000,
+    "version" : "1.0"
+  }, {
+    "inUse" : "Y",
+    "createdBy" : "foo",
+    "createdDate" : "2019-07-29T17:30:49.359",
+    "lastModifiedBy" : "foo",
+    "lastModifiedDate" : "2019-07-29T17:30:49.359",
+    "id" : 1,
+    "name" : "software-02",
+    "category" : {
+      "createdBy" : "admin",
+      "createdDate" : "2019-07-29T17:30:49.359",
+      "lastModifiedBy" : "admin",
+      "lastModifiedDate" : "2019-07-29T17:30:49.359",
+      "id" : 1,
+      "name" : "category-01"
+    },
+    "status" : "Approval",
+    "app" : "app-31d11468-9bc3-433c-9240-015418941d0e.jar",
+    "manifest" : "manifest-17e29c96-c9ba-4bd3-93f3-f254d8a6da5b.yml",
+    "icon" : "icon-4ce22355-e2bf-49aa-bea8-86a8c55476b7.png",
+    "screenshotList" : [ {
+      "id" : 1,
+      "fileName" : "screenshot-45c86829-ec3b-4245-a092-d00223cecf46.jpg",
+      "seq" : 1
+    }, {
+      "id" : 2,
+      "fileName" : "screenshot-c9bf93e6-7f1f-4f1e-b277-eaabe6c6447f.jpg",
+      "seq" : 2
+    }, {
+      "id" : 3,
+      "fileName" : "screenshot-772e8562-4830-45ac-a102-bbefdb255405.jpg",
+      "seq" : 3
+    } ],
+    "summary" : "category-01's summary.",
+    "description" : "description of this software. create by foo",
+    "type" : "Web",
+    "pricePerDay" : 1000,
+    "version" : "1.0"
+  } ],
+  "pageable" : {
+    "sort" : {
+      "sorted" : false,
+      "unsorted" : true,
+      "empty" : true
+    },
+    "offset" : 0,
+    "pageNumber" : 0,
+    "pageSize" : 10,
+    "paged" : true,
+    "unpaged" : false
+  },
+  "last" : true,
+  "totalElements" : 2,
+  "totalPages" : 1,
+  "number" : 0,
+  "size" : 10,
+  "sort" : {
+    "sorted" : false,
+    "unsorted" : true,
+    "empty" : true
+  },
+  "numberOfElements" : 2,
+  "first" : true,
+  "empty" : false
+}</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33%;">
+<col style="width: 33%;">
+<col style="width: 33%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>content</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">content of page</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pageable</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">request pageable</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>numberOfElements</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">total count of elements</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_get">1.1.2. get</h4>
+<div class="sect4">
+<h5 id="_request_2">request</h5>
+<div class="sect5">
+<h6 id="_parameters_2">parameters</h6>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 2. /softwares/{id}</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -492,7 +831,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </table>
 </div>
 <div class="sect5">
-<h6 id="_http">http</h6>
+<h6 id="_http_3">http</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /softwares/1 HTTP/1.1
@@ -504,7 +843,7 @@ Host: marketplace.yourdomain.com</code></pre>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_curl">curl</h6>
+<h6 id="_curl_2">curl</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://marketplace.yourdomain.com/softwares/1' -i -X GET \
@@ -515,7 +854,7 @@ Host: marketplace.yourdomain.com</code></pre>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_httpie">httpie</h6>
+<h6 id="_httpie_2">httpie</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ http GET 'http://marketplace.yourdomain.com/softwares/1' \
@@ -526,7 +865,7 @@ Host: marketplace.yourdomain.com</code></pre>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_payload">payload</h6>
+<h6 id="_payload_3">payload</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code></code></pre>
@@ -538,9 +877,9 @@ Host: marketplace.yourdomain.com</code></pre>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_response">response</h5>
+<h5 id="_response_2">response</h5>
 <div class="sect5">
-<h6 id="_http_2">http</h6>
+<h6 id="_http_4">http</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
@@ -556,423 +895,34 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 {
   "inUse" : "Y",
   "createdBy" : "foo",
-  "createdDate" : "2019-07-29T16:55:54.912",
+  "createdDate" : "2019-07-29T17:30:49.542",
   "lastModifiedBy" : "foo",
-  "lastModifiedDate" : "2019-07-29T16:55:54.912",
+  "lastModifiedDate" : "2019-07-29T17:30:49.542",
   "id" : 1,
   "name" : "software-01",
   "category" : {
     "createdBy" : "admin",
-    "createdDate" : "2019-07-29T16:55:54.912",
+    "createdDate" : "2019-07-29T17:30:49.542",
     "lastModifiedBy" : "admin",
-    "lastModifiedDate" : "2019-07-29T16:55:54.912",
+    "lastModifiedDate" : "2019-07-29T17:30:49.542",
     "id" : 1,
     "name" : "category-01"
   },
   "status" : "Approval",
-  "app" : "app-d176c28b-ce8b-4d87-b85f-f29f6932b263.jar",
-  "manifest" : "manifest-56c7f6ab-f772-4d58-80fc-ecd66cec3400.yml",
-  "icon" : "icon-7d2dba4d-2f73-44cb-a601-a56456834929.png",
+  "app" : "app-7272fc01-ac14-41b2-8c64-a460b9a75d04.jar",
+  "manifest" : "manifest-ad10cc46-e0d9-4773-b926-b6d15bcec091.yml",
+  "icon" : "icon-a743d8d6-ec99-45c5-a952-4d7975fc1b9f.png",
   "screenshotList" : [ {
     "id" : 1,
-    "fileName" : "screenshot-f8a31389-39fe-403e-99e8-8dbbd460799a.jpg",
+    "fileName" : "screenshot-037facba-9691-49d2-ac8d-70864c4a27a0.jpg",
     "seq" : 1
   }, {
     "id" : 2,
-    "fileName" : "screenshot-0af0a5ed-1133-40e6-afc0-4ac2e025d028.jpg",
+    "fileName" : "screenshot-161d4edf-857e-45e1-8610-fa08542b7a07.jpg",
     "seq" : 2
   }, {
     "id" : 3,
-    "fileName" : "screenshot-ce008084-584b-4313-a081-089719aee524.jpg",
-    "seq" : 3
-  } ],
-  "summary" : "category-01's summary.",
-  "description" : "description of this software. create by foo",
-  "type" : "Web",
-  "pricePerDay" : 1000,
-  "version" : "1.0"
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_payload_2">payload</h6>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code>{
-  "inUse" : "Y",
-  "createdBy" : "foo",
-  "createdDate" : "2019-07-29T16:55:54.912",
-  "lastModifiedBy" : "foo",
-  "lastModifiedDate" : "2019-07-29T16:55:54.912",
-  "id" : 1,
-  "name" : "software-01",
-  "category" : {
-    "createdBy" : "admin",
-    "createdDate" : "2019-07-29T16:55:54.912",
-    "lastModifiedBy" : "admin",
-    "lastModifiedDate" : "2019-07-29T16:55:54.912",
-    "id" : 1,
-    "name" : "category-01"
-  },
-  "status" : "Approval",
-  "app" : "app-d176c28b-ce8b-4d87-b85f-f29f6932b263.jar",
-  "manifest" : "manifest-56c7f6ab-f772-4d58-80fc-ecd66cec3400.yml",
-  "icon" : "icon-7d2dba4d-2f73-44cb-a601-a56456834929.png",
-  "screenshotList" : [ {
-    "id" : 1,
-    "fileName" : "screenshot-f8a31389-39fe-403e-99e8-8dbbd460799a.jpg",
-    "seq" : 1
-  }, {
-    "id" : 2,
-    "fileName" : "screenshot-0af0a5ed-1133-40e6-afc0-4ac2e025d028.jpg",
-    "seq" : 2
-  }, {
-    "id" : 3,
-    "fileName" : "screenshot-ce008084-584b-4313-a081-089719aee524.jpg",
-    "seq" : 3
-  } ],
-  "summary" : "category-01's summary.",
-  "description" : "description of this software. create by foo",
-  "type" : "Web",
-  "pricePerDay" : 1000,
-  "version" : "1.0"
-}</code></pre>
-</div>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 33%;">
-<col style="width: 33%;">
-<col style="width: 33%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">id (PK)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">name</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">status (Pending,Approval,Rejected)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>category</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">category</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>app</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">app file</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>manifest</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">manifest file</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>icon</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">icon file</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>screenshotList</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">screenshot files</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>summary</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">brief description</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">detailed description</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pricePerDay</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">price per day</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>version</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">version</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_create">1.1.2. create</h4>
-<div class="sect4">
-<h5 id="_request_2">request</h5>
-<div class="sect5">
-<h6 id="_parameters_2">parameters</h6>
-<table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 2. /softwares</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-</table>
-</div>
-<div class="sect5">
-<h6 id="_http_3">http</h6>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /softwares HTTP/1.1
-Accept: application/json
-Authorization: foo
-Content-Type: application/json;charset=utf-8
-Content-Length: 789
-Host: marketplace.yourdomain.com
-
-{
-  "name" : "software-01",
-  "category" : {
-    "id" : 1
-  },
-  "app" : "app-b5b57def-ebb2-42bf-b453-b092387f23e3.jar",
-  "manifest" : "manifest-60e9127f-f8d5-4f88-bbd7-1d86322fbbf4.yml",
-  "icon" : "icon-6b52d778-7353-4de8-bd1c-2734d3c87ab7.png",
-  "screenshotList" : [ {
-    "id" : 1,
-    "fileName" : "screenshot-0820335e-bdab-447e-868e-c20527005999.jpg",
-    "seq" : 1
-  }, {
-    "id" : 2,
-    "fileName" : "screenshot-e4e541f5-595d-40df-b655-2900da2684be.jpg",
-    "seq" : 2
-  }, {
-    "id" : 3,
-    "fileName" : "screenshot-aa9e3bae-7395-49ca-bf95-b2724a793329.jpg",
-    "seq" : 3
-  } ],
-  "summary" : "category-01's summary.",
-  "description" : "description of this software. create by foo",
-  "type" : "Web",
-  "pricePerDay" : 1000,
-  "version" : "1.0"
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_curl_2">curl</h6>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://marketplace.yourdomain.com/softwares' -i -X POST \
-    -H 'Accept: application/json' \
-    -H 'Authorization: foo' \
-    -H 'Content-Type: application/json;charset=utf-8' \
-    -d '{
-  "name" : "software-01",
-  "category" : {
-    "id" : 1
-  },
-  "app" : "app-b5b57def-ebb2-42bf-b453-b092387f23e3.jar",
-  "manifest" : "manifest-60e9127f-f8d5-4f88-bbd7-1d86322fbbf4.yml",
-  "icon" : "icon-6b52d778-7353-4de8-bd1c-2734d3c87ab7.png",
-  "screenshotList" : [ {
-    "id" : 1,
-    "fileName" : "screenshot-0820335e-bdab-447e-868e-c20527005999.jpg",
-    "seq" : 1
-  }, {
-    "id" : 2,
-    "fileName" : "screenshot-e4e541f5-595d-40df-b655-2900da2684be.jpg",
-    "seq" : 2
-  }, {
-    "id" : 3,
-    "fileName" : "screenshot-aa9e3bae-7395-49ca-bf95-b2724a793329.jpg",
-    "seq" : 3
-  } ],
-  "summary" : "category-01's summary.",
-  "description" : "description of this software. create by foo",
-  "type" : "Web",
-  "pricePerDay" : 1000,
-  "version" : "1.0"
-}'</code></pre>
-</div>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_httpie_2">httpie</h6>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ echo '{
-  "name" : "software-01",
-  "category" : {
-    "id" : 1
-  },
-  "app" : "app-b5b57def-ebb2-42bf-b453-b092387f23e3.jar",
-  "manifest" : "manifest-60e9127f-f8d5-4f88-bbd7-1d86322fbbf4.yml",
-  "icon" : "icon-6b52d778-7353-4de8-bd1c-2734d3c87ab7.png",
-  "screenshotList" : [ {
-    "id" : 1,
-    "fileName" : "screenshot-0820335e-bdab-447e-868e-c20527005999.jpg",
-    "seq" : 1
-  }, {
-    "id" : 2,
-    "fileName" : "screenshot-e4e541f5-595d-40df-b655-2900da2684be.jpg",
-    "seq" : 2
-  }, {
-    "id" : 3,
-    "fileName" : "screenshot-aa9e3bae-7395-49ca-bf95-b2724a793329.jpg",
-    "seq" : 3
-  } ],
-  "summary" : "category-01's summary.",
-  "description" : "description of this software. create by foo",
-  "type" : "Web",
-  "pricePerDay" : 1000,
-  "version" : "1.0"
-}' | http POST 'http://marketplace.yourdomain.com/softwares' \
-    'Accept:application/json' \
-    'Authorization:foo' \
-    'Content-Type:application/json;charset=utf-8'</code></pre>
-</div>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_payload_3">payload</h6>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code>{
-  "name" : "software-01",
-  "category" : {
-    "id" : 1
-  },
-  "app" : "app-b5b57def-ebb2-42bf-b453-b092387f23e3.jar",
-  "manifest" : "manifest-60e9127f-f8d5-4f88-bbd7-1d86322fbbf4.yml",
-  "icon" : "icon-6b52d778-7353-4de8-bd1c-2734d3c87ab7.png",
-  "screenshotList" : [ {
-    "id" : 1,
-    "fileName" : "screenshot-0820335e-bdab-447e-868e-c20527005999.jpg",
-    "seq" : 1
-  }, {
-    "id" : 2,
-    "fileName" : "screenshot-e4e541f5-595d-40df-b655-2900da2684be.jpg",
-    "seq" : 2
-  }, {
-    "id" : 3,
-    "fileName" : "screenshot-aa9e3bae-7395-49ca-bf95-b2724a793329.jpg",
-    "seq" : 3
-  } ],
-  "summary" : "category-01's summary.",
-  "description" : "description of this software. create by foo",
-  "type" : "Web",
-  "pricePerDay" : 1000,
-  "version" : "1.0"
-}</code></pre>
-</div>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 33%;">
-<col style="width: 33%;">
-<col style="width: 33%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">name</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>category</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">category</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>summary</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">brief description</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">detailed description</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_response_2">response</h5>
-<div class="sect5">
-<h6 id="_http_4">http</h6>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Pragma: no-cache
-Content-Length: 1182
-X-XSS-Protection: 1; mode=block
-Expires: 0
-X-Frame-Options: DENY
-X-Content-Type-Options: nosniff
-Content-Type: application/json;charset=UTF-8
-Cache-Control: no-cache, no-store, max-age=0, must-revalidate
-
-{
-  "inUse" : "Y",
-  "createdBy" : "foo",
-  "createdDate" : "2019-07-29T16:55:53.22",
-  "lastModifiedBy" : "foo",
-  "lastModifiedDate" : "2019-07-29T16:55:53.22",
-  "id" : 1,
-  "name" : "software-01",
-  "category" : {
-    "createdBy" : "admin",
-    "createdDate" : "2019-07-29T16:55:53.22",
-    "lastModifiedBy" : "admin",
-    "lastModifiedDate" : "2019-07-29T16:55:53.22",
-    "id" : 1,
-    "name" : "category-01"
-  },
-  "status" : "Pending",
-  "app" : "app-b5b57def-ebb2-42bf-b453-b092387f23e3.jar",
-  "manifest" : "manifest-60e9127f-f8d5-4f88-bbd7-1d86322fbbf4.yml",
-  "icon" : "icon-6b52d778-7353-4de8-bd1c-2734d3c87ab7.png",
-  "screenshotList" : [ {
-    "id" : 1,
-    "fileName" : "screenshot-0820335e-bdab-447e-868e-c20527005999.jpg",
-    "seq" : 1
-  }, {
-    "id" : 2,
-    "fileName" : "screenshot-e4e541f5-595d-40df-b655-2900da2684be.jpg",
-    "seq" : 2
-  }, {
-    "id" : 3,
-    "fileName" : "screenshot-aa9e3bae-7395-49ca-bf95-b2724a793329.jpg",
+    "fileName" : "screenshot-6f84398b-bcb6-4f98-9a9e-0e784976318c.jpg",
     "seq" : 3
   } ],
   "summary" : "category-01's summary.",
@@ -991,34 +941,34 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 <pre class="highlight nowrap"><code>{
   "inUse" : "Y",
   "createdBy" : "foo",
-  "createdDate" : "2019-07-29T16:55:53.22",
+  "createdDate" : "2019-07-29T17:30:49.542",
   "lastModifiedBy" : "foo",
-  "lastModifiedDate" : "2019-07-29T16:55:53.22",
+  "lastModifiedDate" : "2019-07-29T17:30:49.542",
   "id" : 1,
   "name" : "software-01",
   "category" : {
     "createdBy" : "admin",
-    "createdDate" : "2019-07-29T16:55:53.22",
+    "createdDate" : "2019-07-29T17:30:49.542",
     "lastModifiedBy" : "admin",
-    "lastModifiedDate" : "2019-07-29T16:55:53.22",
+    "lastModifiedDate" : "2019-07-29T17:30:49.542",
     "id" : 1,
     "name" : "category-01"
   },
-  "status" : "Pending",
-  "app" : "app-b5b57def-ebb2-42bf-b453-b092387f23e3.jar",
-  "manifest" : "manifest-60e9127f-f8d5-4f88-bbd7-1d86322fbbf4.yml",
-  "icon" : "icon-6b52d778-7353-4de8-bd1c-2734d3c87ab7.png",
+  "status" : "Approval",
+  "app" : "app-7272fc01-ac14-41b2-8c64-a460b9a75d04.jar",
+  "manifest" : "manifest-ad10cc46-e0d9-4773-b926-b6d15bcec091.yml",
+  "icon" : "icon-a743d8d6-ec99-45c5-a952-4d7975fc1b9f.png",
   "screenshotList" : [ {
     "id" : 1,
-    "fileName" : "screenshot-0820335e-bdab-447e-868e-c20527005999.jpg",
+    "fileName" : "screenshot-037facba-9691-49d2-ac8d-70864c4a27a0.jpg",
     "seq" : 1
   }, {
     "id" : 2,
-    "fileName" : "screenshot-e4e541f5-595d-40df-b655-2900da2684be.jpg",
+    "fileName" : "screenshot-161d4edf-857e-45e1-8610-fa08542b7a07.jpg",
     "seq" : 2
   }, {
     "id" : 3,
-    "fileName" : "screenshot-aa9e3bae-7395-49ca-bf95-b2724a793329.jpg",
+    "fileName" : "screenshot-6f84398b-bcb6-4f98-9a9e-0e784976318c.jpg",
     "seq" : 3
   } ],
   "summary" : "category-01's summary.",
@@ -1057,11 +1007,6 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">status (Pending,Approval,Rejected)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>inUse</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">usage status (Y,N)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>category</code></p></td>
@@ -1114,13 +1059,13 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 </div>
 </div>
 <div class="sect3">
-<h4 id="_update">1.1.3. update</h4>
+<h4 id="_create">1.1.3. create</h4>
 <div class="sect4">
 <h5 id="_request_3">request</h5>
 <div class="sect5">
 <h6 id="_parameters_3">parameters</h6>
 <table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 3. /softwares/{id}</caption>
+<caption class="title">Table 3. /softwares</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -1131,52 +1076,45 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 <th class="tableblock halign-left valign-top">Description</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Software&#8217;s id</p></td>
-</tr>
-</tbody>
 </table>
 </div>
 <div class="sect5">
 <h6 id="_http_5">http</h6>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">PUT /softwares/1 HTTP/1.1
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /softwares HTTP/1.1
 Accept: application/json
 Authorization: foo
 Content-Type: application/json;charset=utf-8
-Content-Length: 809
+Content-Length: 789
 Host: marketplace.yourdomain.com
 
 {
-  "id" : 1,
-  "name" : "software-rename-01",
+  "name" : "software-01",
   "category" : {
     "id" : 1
   },
-  "app" : "app-cf50a92b-a12f-4cfe-8569-1dbecd2c6b6d.jar",
-  "manifest" : "manifest-7b50ad97-84ba-4e14-8ef0-7aa6c67f3aea.yml",
-  "icon" : "icon-0e6103d4-8c64-474e-bc29-e43099bb52ec.png",
+  "app" : "app-fa4e6b09-6344-4f5d-b253-db46c80ca2f2.jar",
+  "manifest" : "manifest-8e014203-d768-4db4-9f83-7ed232ae3f6a.yml",
+  "icon" : "icon-106461cb-59a8-4a6c-97ff-8fa2987a408f.png",
   "screenshotList" : [ {
     "id" : 1,
-    "fileName" : "screenshot-e8dcbcbb-a8cb-4160-93b8-e3b3413fc6e8.jpg",
+    "fileName" : "screenshot-07d1796d-9d67-446c-87cf-d31b040867a9.jpg",
     "seq" : 1
   }, {
     "id" : 2,
-    "fileName" : "screenshot-b0d8aa7f-9211-4c60-84dd-d92e4f010f16.jpg",
+    "fileName" : "screenshot-7c1cdde9-6b62-412b-876a-fc72d4c0d6d5.jpg",
     "seq" : 2
   }, {
     "id" : 3,
-    "fileName" : "screenshot-ab29de78-294d-42b9-b887-0f500b107497.jpg",
+    "fileName" : "screenshot-6039476f-be79-4cf1-9d87-abdd233dbe39.jpg",
     "seq" : 3
   } ],
   "summary" : "category-01's summary.",
   "description" : "description of this software. create by foo",
   "type" : "Web",
-  "pricePerDay" : 1500,
-  "version" : "2.0"
+  "pricePerDay" : 1000,
+  "version" : "1.0"
 }</code></pre>
 </div>
 </div>
@@ -1185,37 +1123,36 @@ Host: marketplace.yourdomain.com
 <h6 id="_curl_3">curl</h6>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://marketplace.yourdomain.com/softwares/1' -i -X PUT \
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://marketplace.yourdomain.com/softwares' -i -X POST \
     -H 'Accept: application/json' \
     -H 'Authorization: foo' \
     -H 'Content-Type: application/json;charset=utf-8' \
     -d '{
-  "id" : 1,
-  "name" : "software-rename-01",
+  "name" : "software-01",
   "category" : {
     "id" : 1
   },
-  "app" : "app-cf50a92b-a12f-4cfe-8569-1dbecd2c6b6d.jar",
-  "manifest" : "manifest-7b50ad97-84ba-4e14-8ef0-7aa6c67f3aea.yml",
-  "icon" : "icon-0e6103d4-8c64-474e-bc29-e43099bb52ec.png",
+  "app" : "app-fa4e6b09-6344-4f5d-b253-db46c80ca2f2.jar",
+  "manifest" : "manifest-8e014203-d768-4db4-9f83-7ed232ae3f6a.yml",
+  "icon" : "icon-106461cb-59a8-4a6c-97ff-8fa2987a408f.png",
   "screenshotList" : [ {
     "id" : 1,
-    "fileName" : "screenshot-e8dcbcbb-a8cb-4160-93b8-e3b3413fc6e8.jpg",
+    "fileName" : "screenshot-07d1796d-9d67-446c-87cf-d31b040867a9.jpg",
     "seq" : 1
   }, {
     "id" : 2,
-    "fileName" : "screenshot-b0d8aa7f-9211-4c60-84dd-d92e4f010f16.jpg",
+    "fileName" : "screenshot-7c1cdde9-6b62-412b-876a-fc72d4c0d6d5.jpg",
     "seq" : 2
   }, {
     "id" : 3,
-    "fileName" : "screenshot-ab29de78-294d-42b9-b887-0f500b107497.jpg",
+    "fileName" : "screenshot-6039476f-be79-4cf1-9d87-abdd233dbe39.jpg",
     "seq" : 3
   } ],
   "summary" : "category-01's summary.",
   "description" : "description of this software. create by foo",
   "type" : "Web",
-  "pricePerDay" : 1500,
-  "version" : "2.0"
+  "pricePerDay" : 1000,
+  "version" : "1.0"
 }'</code></pre>
 </div>
 </div>
@@ -1225,33 +1162,32 @@ Host: marketplace.yourdomain.com
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ echo '{
-  "id" : 1,
-  "name" : "software-rename-01",
+  "name" : "software-01",
   "category" : {
     "id" : 1
   },
-  "app" : "app-cf50a92b-a12f-4cfe-8569-1dbecd2c6b6d.jar",
-  "manifest" : "manifest-7b50ad97-84ba-4e14-8ef0-7aa6c67f3aea.yml",
-  "icon" : "icon-0e6103d4-8c64-474e-bc29-e43099bb52ec.png",
+  "app" : "app-fa4e6b09-6344-4f5d-b253-db46c80ca2f2.jar",
+  "manifest" : "manifest-8e014203-d768-4db4-9f83-7ed232ae3f6a.yml",
+  "icon" : "icon-106461cb-59a8-4a6c-97ff-8fa2987a408f.png",
   "screenshotList" : [ {
     "id" : 1,
-    "fileName" : "screenshot-e8dcbcbb-a8cb-4160-93b8-e3b3413fc6e8.jpg",
+    "fileName" : "screenshot-07d1796d-9d67-446c-87cf-d31b040867a9.jpg",
     "seq" : 1
   }, {
     "id" : 2,
-    "fileName" : "screenshot-b0d8aa7f-9211-4c60-84dd-d92e4f010f16.jpg",
+    "fileName" : "screenshot-7c1cdde9-6b62-412b-876a-fc72d4c0d6d5.jpg",
     "seq" : 2
   }, {
     "id" : 3,
-    "fileName" : "screenshot-ab29de78-294d-42b9-b887-0f500b107497.jpg",
+    "fileName" : "screenshot-6039476f-be79-4cf1-9d87-abdd233dbe39.jpg",
     "seq" : 3
   } ],
   "summary" : "category-01's summary.",
   "description" : "description of this software. create by foo",
   "type" : "Web",
-  "pricePerDay" : 1500,
-  "version" : "2.0"
-}' | http PUT 'http://marketplace.yourdomain.com/softwares/1' \
+  "pricePerDay" : 1000,
+  "version" : "1.0"
+}' | http POST 'http://marketplace.yourdomain.com/softwares' \
     'Accept:application/json' \
     'Authorization:foo' \
     'Content-Type:application/json;charset=utf-8'</code></pre>
@@ -1263,32 +1199,31 @@ Host: marketplace.yourdomain.com
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
-  "id" : 1,
-  "name" : "software-rename-01",
+  "name" : "software-01",
   "category" : {
     "id" : 1
   },
-  "app" : "app-cf50a92b-a12f-4cfe-8569-1dbecd2c6b6d.jar",
-  "manifest" : "manifest-7b50ad97-84ba-4e14-8ef0-7aa6c67f3aea.yml",
-  "icon" : "icon-0e6103d4-8c64-474e-bc29-e43099bb52ec.png",
+  "app" : "app-fa4e6b09-6344-4f5d-b253-db46c80ca2f2.jar",
+  "manifest" : "manifest-8e014203-d768-4db4-9f83-7ed232ae3f6a.yml",
+  "icon" : "icon-106461cb-59a8-4a6c-97ff-8fa2987a408f.png",
   "screenshotList" : [ {
     "id" : 1,
-    "fileName" : "screenshot-e8dcbcbb-a8cb-4160-93b8-e3b3413fc6e8.jpg",
+    "fileName" : "screenshot-07d1796d-9d67-446c-87cf-d31b040867a9.jpg",
     "seq" : 1
   }, {
     "id" : 2,
-    "fileName" : "screenshot-b0d8aa7f-9211-4c60-84dd-d92e4f010f16.jpg",
+    "fileName" : "screenshot-7c1cdde9-6b62-412b-876a-fc72d4c0d6d5.jpg",
     "seq" : 2
   }, {
     "id" : 3,
-    "fileName" : "screenshot-ab29de78-294d-42b9-b887-0f500b107497.jpg",
+    "fileName" : "screenshot-6039476f-be79-4cf1-9d87-abdd233dbe39.jpg",
     "seq" : 3
   } ],
   "summary" : "category-01's summary.",
   "description" : "description of this software. create by foo",
   "type" : "Web",
-  "pricePerDay" : 1500,
-  "version" : "2.0"
+  "pricePerDay" : 1000,
+  "version" : "1.0"
 }</code></pre>
 </div>
 </div>
@@ -1338,45 +1273,242 @@ Host: marketplace.yourdomain.com
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Pragma: no-cache
-Content-Length: 1193
 X-XSS-Protection: 1; mode=block
 Expires: 0
 X-Frame-Options: DENY
 X-Content-Type-Options: nosniff
+Content-Length: 1186
 Content-Type: application/json;charset=UTF-8
 Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 
 {
   "inUse" : "Y",
   "createdBy" : "foo",
-  "createdDate" : "2019-07-29T16:55:54.475",
+  "createdDate" : "2019-07-29T17:30:47.662",
   "lastModifiedBy" : "foo",
-  "lastModifiedDate" : "2019-07-29T16:55:54.475",
+  "lastModifiedDate" : "2019-07-29T17:30:47.662",
   "id" : 1,
-  "name" : "software-rename-01",
+  "name" : "software-01",
   "category" : {
     "createdBy" : "admin",
-    "createdDate" : "2019-07-29T16:55:54.475",
+    "createdDate" : "2019-07-29T17:30:47.662",
     "lastModifiedBy" : "admin",
-    "lastModifiedDate" : "2019-07-29T16:55:54.475",
+    "lastModifiedDate" : "2019-07-29T17:30:47.662",
     "id" : 1,
     "name" : "category-01"
   },
   "status" : "Pending",
-  "app" : "app-cf50a92b-a12f-4cfe-8569-1dbecd2c6b6d.jar",
-  "manifest" : "manifest-7b50ad97-84ba-4e14-8ef0-7aa6c67f3aea.yml",
-  "icon" : "icon-0e6103d4-8c64-474e-bc29-e43099bb52ec.png",
+  "app" : "app-fa4e6b09-6344-4f5d-b253-db46c80ca2f2.jar",
+  "manifest" : "manifest-8e014203-d768-4db4-9f83-7ed232ae3f6a.yml",
+  "icon" : "icon-106461cb-59a8-4a6c-97ff-8fa2987a408f.png",
   "screenshotList" : [ {
     "id" : 1,
-    "fileName" : "screenshot-e8dcbcbb-a8cb-4160-93b8-e3b3413fc6e8.jpg",
+    "fileName" : "screenshot-07d1796d-9d67-446c-87cf-d31b040867a9.jpg",
     "seq" : 1
   }, {
     "id" : 2,
-    "fileName" : "screenshot-b0d8aa7f-9211-4c60-84dd-d92e4f010f16.jpg",
+    "fileName" : "screenshot-7c1cdde9-6b62-412b-876a-fc72d4c0d6d5.jpg",
     "seq" : 2
   }, {
     "id" : 3,
-    "fileName" : "screenshot-ab29de78-294d-42b9-b887-0f500b107497.jpg",
+    "fileName" : "screenshot-6039476f-be79-4cf1-9d87-abdd233dbe39.jpg",
+    "seq" : 3
+  } ],
+  "summary" : "category-01's summary.",
+  "description" : "description of this software. create by foo",
+  "type" : "Web",
+  "pricePerDay" : 1000,
+  "version" : "1.0"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_payload_6">payload</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code>{
+  "inUse" : "Y",
+  "createdBy" : "foo",
+  "createdDate" : "2019-07-29T17:30:47.662",
+  "lastModifiedBy" : "foo",
+  "lastModifiedDate" : "2019-07-29T17:30:47.662",
+  "id" : 1,
+  "name" : "software-01",
+  "category" : {
+    "createdBy" : "admin",
+    "createdDate" : "2019-07-29T17:30:47.662",
+    "lastModifiedBy" : "admin",
+    "lastModifiedDate" : "2019-07-29T17:30:47.662",
+    "id" : 1,
+    "name" : "category-01"
+  },
+  "status" : "Pending",
+  "app" : "app-fa4e6b09-6344-4f5d-b253-db46c80ca2f2.jar",
+  "manifest" : "manifest-8e014203-d768-4db4-9f83-7ed232ae3f6a.yml",
+  "icon" : "icon-106461cb-59a8-4a6c-97ff-8fa2987a408f.png",
+  "screenshotList" : [ {
+    "id" : 1,
+    "fileName" : "screenshot-07d1796d-9d67-446c-87cf-d31b040867a9.jpg",
+    "seq" : 1
+  }, {
+    "id" : 2,
+    "fileName" : "screenshot-7c1cdde9-6b62-412b-876a-fc72d4c0d6d5.jpg",
+    "seq" : 2
+  }, {
+    "id" : 3,
+    "fileName" : "screenshot-6039476f-be79-4cf1-9d87-abdd233dbe39.jpg",
+    "seq" : 3
+  } ],
+  "summary" : "category-01's summary.",
+  "description" : "description of this software. create by foo",
+  "type" : "Web",
+  "pricePerDay" : 1000,
+  "version" : "1.0"
+}</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33%;">
+<col style="width: 33%;">
+<col style="width: 33%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">id (PK)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">status (Pending,Approval,Rejected)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>inUse</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">usage status (Y,N)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>category</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">category</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>app</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">app file</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>manifest</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">manifest file</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>icon</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">icon file</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>screenshotList</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">screenshot files</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>summary</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">brief description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">detailed description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pricePerDay</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">price per day</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>version</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">version</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_update">1.1.4. update</h4>
+<div class="sect4">
+<h5 id="_request_4">request</h5>
+<div class="sect5">
+<h6 id="_parameters_4">parameters</h6>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 4. /softwares/{id}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Software&#8217;s id</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_http_7">http</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">PUT /softwares/1 HTTP/1.1
+Accept: application/json
+Authorization: foo
+Content-Type: application/json;charset=utf-8
+Content-Length: 809
+Host: marketplace.yourdomain.com
+
+{
+  "id" : 1,
+  "name" : "software-rename-01",
+  "category" : {
+    "id" : 1
+  },
+  "app" : "app-7cb74e3e-4e08-4713-87f6-64f8f6955d9a.jar",
+  "manifest" : "manifest-4c9649ac-d79e-45f7-860f-0a81d0319513.yml",
+  "icon" : "icon-c83ff511-99ae-434c-8ea7-8e3f27cb2d8e.png",
+  "screenshotList" : [ {
+    "id" : 1,
+    "fileName" : "screenshot-8841ec87-53cd-48eb-89a8-1822d6233444.jpg",
+    "seq" : 1
+  }, {
+    "id" : 2,
+    "fileName" : "screenshot-7dea6c85-b5c9-4c13-8791-b166e980a7e8.jpg",
+    "seq" : 2
+  }, {
+    "id" : 3,
+    "fileName" : "screenshot-2ff7413b-1445-46e4-972f-53a5171ba632.jpg",
     "seq" : 3
   } ],
   "summary" : "category-01's summary.",
@@ -1389,40 +1521,247 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 </div>
 </div>
 <div class="sect5">
-<h6 id="_payload_6">payload</h6>
+<h6 id="_curl_4">curl</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://marketplace.yourdomain.com/softwares/1' -i -X PUT \
+    -H 'Accept: application/json' \
+    -H 'Authorization: foo' \
+    -H 'Content-Type: application/json;charset=utf-8' \
+    -d '{
+  "id" : 1,
+  "name" : "software-rename-01",
+  "category" : {
+    "id" : 1
+  },
+  "app" : "app-7cb74e3e-4e08-4713-87f6-64f8f6955d9a.jar",
+  "manifest" : "manifest-4c9649ac-d79e-45f7-860f-0a81d0319513.yml",
+  "icon" : "icon-c83ff511-99ae-434c-8ea7-8e3f27cb2d8e.png",
+  "screenshotList" : [ {
+    "id" : 1,
+    "fileName" : "screenshot-8841ec87-53cd-48eb-89a8-1822d6233444.jpg",
+    "seq" : 1
+  }, {
+    "id" : 2,
+    "fileName" : "screenshot-7dea6c85-b5c9-4c13-8791-b166e980a7e8.jpg",
+    "seq" : 2
+  }, {
+    "id" : 3,
+    "fileName" : "screenshot-2ff7413b-1445-46e4-972f-53a5171ba632.jpg",
+    "seq" : 3
+  } ],
+  "summary" : "category-01's summary.",
+  "description" : "description of this software. create by foo",
+  "type" : "Web",
+  "pricePerDay" : 1500,
+  "version" : "2.0"
+}'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_httpie_4">httpie</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ echo '{
+  "id" : 1,
+  "name" : "software-rename-01",
+  "category" : {
+    "id" : 1
+  },
+  "app" : "app-7cb74e3e-4e08-4713-87f6-64f8f6955d9a.jar",
+  "manifest" : "manifest-4c9649ac-d79e-45f7-860f-0a81d0319513.yml",
+  "icon" : "icon-c83ff511-99ae-434c-8ea7-8e3f27cb2d8e.png",
+  "screenshotList" : [ {
+    "id" : 1,
+    "fileName" : "screenshot-8841ec87-53cd-48eb-89a8-1822d6233444.jpg",
+    "seq" : 1
+  }, {
+    "id" : 2,
+    "fileName" : "screenshot-7dea6c85-b5c9-4c13-8791-b166e980a7e8.jpg",
+    "seq" : 2
+  }, {
+    "id" : 3,
+    "fileName" : "screenshot-2ff7413b-1445-46e4-972f-53a5171ba632.jpg",
+    "seq" : 3
+  } ],
+  "summary" : "category-01's summary.",
+  "description" : "description of this software. create by foo",
+  "type" : "Web",
+  "pricePerDay" : 1500,
+  "version" : "2.0"
+}' | http PUT 'http://marketplace.yourdomain.com/softwares/1' \
+    'Accept:application/json' \
+    'Authorization:foo' \
+    'Content-Type:application/json;charset=utf-8'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_payload_7">payload</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code>{
+  "id" : 1,
+  "name" : "software-rename-01",
+  "category" : {
+    "id" : 1
+  },
+  "app" : "app-7cb74e3e-4e08-4713-87f6-64f8f6955d9a.jar",
+  "manifest" : "manifest-4c9649ac-d79e-45f7-860f-0a81d0319513.yml",
+  "icon" : "icon-c83ff511-99ae-434c-8ea7-8e3f27cb2d8e.png",
+  "screenshotList" : [ {
+    "id" : 1,
+    "fileName" : "screenshot-8841ec87-53cd-48eb-89a8-1822d6233444.jpg",
+    "seq" : 1
+  }, {
+    "id" : 2,
+    "fileName" : "screenshot-7dea6c85-b5c9-4c13-8791-b166e980a7e8.jpg",
+    "seq" : 2
+  }, {
+    "id" : 3,
+    "fileName" : "screenshot-2ff7413b-1445-46e4-972f-53a5171ba632.jpg",
+    "seq" : 3
+  } ],
+  "summary" : "category-01's summary.",
+  "description" : "description of this software. create by foo",
+  "type" : "Web",
+  "pricePerDay" : 1500,
+  "version" : "2.0"
+}</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33%;">
+<col style="width: 33%;">
+<col style="width: 33%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>category</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">category</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>summary</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">brief description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">detailed description</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_response_4">response</h5>
+<div class="sect5">
+<h6 id="_http_8">http</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Pragma: no-cache
+X-XSS-Protection: 1; mode=block
+Expires: 0
+X-Frame-Options: DENY
+X-Content-Type-Options: nosniff
+Content-Length: 1189
+Content-Type: application/json;charset=UTF-8
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+
+{
+  "inUse" : "Y",
+  "createdBy" : "foo",
+  "createdDate" : "2019-07-29T17:30:49.02",
+  "lastModifiedBy" : "foo",
+  "lastModifiedDate" : "2019-07-29T17:30:49.02",
+  "id" : 1,
+  "name" : "software-rename-01",
+  "category" : {
+    "createdBy" : "admin",
+    "createdDate" : "2019-07-29T17:30:49.02",
+    "lastModifiedBy" : "admin",
+    "lastModifiedDate" : "2019-07-29T17:30:49.02",
+    "id" : 1,
+    "name" : "category-01"
+  },
+  "status" : "Pending",
+  "app" : "app-7cb74e3e-4e08-4713-87f6-64f8f6955d9a.jar",
+  "manifest" : "manifest-4c9649ac-d79e-45f7-860f-0a81d0319513.yml",
+  "icon" : "icon-c83ff511-99ae-434c-8ea7-8e3f27cb2d8e.png",
+  "screenshotList" : [ {
+    "id" : 1,
+    "fileName" : "screenshot-8841ec87-53cd-48eb-89a8-1822d6233444.jpg",
+    "seq" : 1
+  }, {
+    "id" : 2,
+    "fileName" : "screenshot-7dea6c85-b5c9-4c13-8791-b166e980a7e8.jpg",
+    "seq" : 2
+  }, {
+    "id" : 3,
+    "fileName" : "screenshot-2ff7413b-1445-46e4-972f-53a5171ba632.jpg",
+    "seq" : 3
+  } ],
+  "summary" : "category-01's summary.",
+  "description" : "description of this software. create by foo",
+  "type" : "Web",
+  "pricePerDay" : 1500,
+  "version" : "2.0"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_payload_8">payload</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
   "inUse" : "Y",
   "createdBy" : "foo",
-  "createdDate" : "2019-07-29T16:55:54.475",
+  "createdDate" : "2019-07-29T17:30:49.02",
   "lastModifiedBy" : "foo",
-  "lastModifiedDate" : "2019-07-29T16:55:54.475",
+  "lastModifiedDate" : "2019-07-29T17:30:49.02",
   "id" : 1,
   "name" : "software-rename-01",
   "category" : {
     "createdBy" : "admin",
-    "createdDate" : "2019-07-29T16:55:54.475",
+    "createdDate" : "2019-07-29T17:30:49.02",
     "lastModifiedBy" : "admin",
-    "lastModifiedDate" : "2019-07-29T16:55:54.475",
+    "lastModifiedDate" : "2019-07-29T17:30:49.02",
     "id" : 1,
     "name" : "category-01"
   },
   "status" : "Pending",
-  "app" : "app-cf50a92b-a12f-4cfe-8569-1dbecd2c6b6d.jar",
-  "manifest" : "manifest-7b50ad97-84ba-4e14-8ef0-7aa6c67f3aea.yml",
-  "icon" : "icon-0e6103d4-8c64-474e-bc29-e43099bb52ec.png",
+  "app" : "app-7cb74e3e-4e08-4713-87f6-64f8f6955d9a.jar",
+  "manifest" : "manifest-4c9649ac-d79e-45f7-860f-0a81d0319513.yml",
+  "icon" : "icon-c83ff511-99ae-434c-8ea7-8e3f27cb2d8e.png",
   "screenshotList" : [ {
     "id" : 1,
-    "fileName" : "screenshot-e8dcbcbb-a8cb-4160-93b8-e3b3413fc6e8.jpg",
+    "fileName" : "screenshot-8841ec87-53cd-48eb-89a8-1822d6233444.jpg",
     "seq" : 1
   }, {
     "id" : 2,
-    "fileName" : "screenshot-b0d8aa7f-9211-4c60-84dd-d92e4f010f16.jpg",
+    "fileName" : "screenshot-7dea6c85-b5c9-4c13-8791-b166e980a7e8.jpg",
     "seq" : 2
   }, {
     "id" : 3,
-    "fileName" : "screenshot-ab29de78-294d-42b9-b887-0f500b107497.jpg",
+    "fileName" : "screenshot-2ff7413b-1445-46e4-972f-53a5171ba632.jpg",
     "seq" : 3
   } ],
   "summary" : "category-01's summary.",
@@ -1518,13 +1857,13 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 </div>
 </div>
 <div class="sect3">
-<h4 id="_update_in_use">1.1.4. update in-use</h4>
+<h4 id="_update_in_use">1.1.5. update in-use</h4>
 <div class="sect4">
-<h5 id="_request_4">request</h5>
+<h5 id="_request_5">request</h5>
 <div class="sect5">
-<h6 id="_parameters_4">parameters</h6>
+<h6 id="_parameters_5">parameters</h6>
 <table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 4. /softwares/{id}/in-use/{inUse}</caption>
+<caption class="title">Table 5. /softwares/{id}/in-use/{inUse}</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -1548,7 +1887,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 </table>
 </div>
 <div class="sect5">
-<h6 id="_http_7">http</h6>
+<h6 id="_http_9">http</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">PUT /softwares/1/in-use/N HTTP/1.1
@@ -1560,7 +1899,7 @@ Host: marketplace.yourdomain.com</code></pre>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_curl_4">curl</h6>
+<h6 id="_curl_5">curl</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://marketplace.yourdomain.com/softwares/1/in-use/N' -i -X PUT \
@@ -1571,7 +1910,7 @@ Host: marketplace.yourdomain.com</code></pre>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_httpie_4">httpie</h6>
+<h6 id="_httpie_5">httpie</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ http PUT 'http://marketplace.yourdomain.com/softwares/1/in-use/N' \
@@ -1582,7 +1921,7 @@ Host: marketplace.yourdomain.com</code></pre>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_payload_7">payload</h6>
+<h6 id="_payload_9">payload</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code></code></pre>
@@ -1594,9 +1933,9 @@ Host: marketplace.yourdomain.com</code></pre>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_response_4">response</h5>
+<h5 id="_response_5">response</h5>
 <div class="sect5">
-<h6 id="_http_8">http</h6>
+<h6 id="_http_10">http</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
@@ -1612,34 +1951,34 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 {
   "inUse" : "N",
   "createdBy" : "foo",
-  "createdDate" : "2019-07-29T16:55:54.614",
+  "createdDate" : "2019-07-29T17:30:49.243",
   "lastModifiedBy" : "foo",
-  "lastModifiedDate" : "2019-07-29T16:55:54.614",
+  "lastModifiedDate" : "2019-07-29T17:30:49.243",
   "id" : 1,
   "name" : "software-01",
   "category" : {
     "createdBy" : "admin",
-    "createdDate" : "2019-07-29T16:55:54.614",
+    "createdDate" : "2019-07-29T17:30:49.243",
     "lastModifiedBy" : "admin",
-    "lastModifiedDate" : "2019-07-29T16:55:54.614",
+    "lastModifiedDate" : "2019-07-29T17:30:49.243",
     "id" : 1,
     "name" : "category-01"
   },
   "status" : "Pending",
-  "app" : "app-c5282cb2-d5d8-4f24-b056-77566c34ab30.jar",
-  "manifest" : "manifest-c96815e0-dcb7-414f-aef5-646bc21e85c5.yml",
-  "icon" : "icon-6586a034-f7f6-4bb1-a672-480ad6a8e3d8.png",
+  "app" : "app-75b82c2d-dfe7-41d9-9192-1475ff93af35.jar",
+  "manifest" : "manifest-422de413-1e5a-40ab-a501-abb05440d83f.yml",
+  "icon" : "icon-85fbcf3c-aaa2-4f9a-9c7d-cbbd48cbcfb2.png",
   "screenshotList" : [ {
     "id" : 1,
-    "fileName" : "screenshot-74ad9514-9acc-404b-ae08-8eac2ca4dd6e.jpg",
+    "fileName" : "screenshot-c969dd59-2fa3-4049-97e9-fb94034d21e0.jpg",
     "seq" : 1
   }, {
     "id" : 2,
-    "fileName" : "screenshot-7daebd18-ebfd-4dcb-baa7-72619c0961d5.jpg",
+    "fileName" : "screenshot-8ae751d4-e795-413b-b1d7-d8a6574bb252.jpg",
     "seq" : 2
   }, {
     "id" : 3,
-    "fileName" : "screenshot-16072ce7-2c94-45f5-9e0a-5805fd7e45c2.jpg",
+    "fileName" : "screenshot-d65b3552-7040-416f-a903-c51ac9449e55.jpg",
     "seq" : 3
   } ],
   "summary" : "category-01's summary.",
@@ -1652,40 +1991,40 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 </div>
 </div>
 <div class="sect5">
-<h6 id="_payload_8">payload</h6>
+<h6 id="_payload_10">payload</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code>{
   "inUse" : "N",
   "createdBy" : "foo",
-  "createdDate" : "2019-07-29T16:55:54.614",
+  "createdDate" : "2019-07-29T17:30:49.243",
   "lastModifiedBy" : "foo",
-  "lastModifiedDate" : "2019-07-29T16:55:54.614",
+  "lastModifiedDate" : "2019-07-29T17:30:49.243",
   "id" : 1,
   "name" : "software-01",
   "category" : {
     "createdBy" : "admin",
-    "createdDate" : "2019-07-29T16:55:54.614",
+    "createdDate" : "2019-07-29T17:30:49.243",
     "lastModifiedBy" : "admin",
-    "lastModifiedDate" : "2019-07-29T16:55:54.614",
+    "lastModifiedDate" : "2019-07-29T17:30:49.243",
     "id" : 1,
     "name" : "category-01"
   },
   "status" : "Pending",
-  "app" : "app-c5282cb2-d5d8-4f24-b056-77566c34ab30.jar",
-  "manifest" : "manifest-c96815e0-dcb7-414f-aef5-646bc21e85c5.yml",
-  "icon" : "icon-6586a034-f7f6-4bb1-a672-480ad6a8e3d8.png",
+  "app" : "app-75b82c2d-dfe7-41d9-9192-1475ff93af35.jar",
+  "manifest" : "manifest-422de413-1e5a-40ab-a501-abb05440d83f.yml",
+  "icon" : "icon-85fbcf3c-aaa2-4f9a-9c7d-cbbd48cbcfb2.png",
   "screenshotList" : [ {
     "id" : 1,
-    "fileName" : "screenshot-74ad9514-9acc-404b-ae08-8eac2ca4dd6e.jpg",
+    "fileName" : "screenshot-c969dd59-2fa3-4049-97e9-fb94034d21e0.jpg",
     "seq" : 1
   }, {
     "id" : 2,
-    "fileName" : "screenshot-7daebd18-ebfd-4dcb-baa7-72619c0961d5.jpg",
+    "fileName" : "screenshot-8ae751d4-e795-413b-b1d7-d8a6574bb252.jpg",
     "seq" : 2
   }, {
     "id" : 3,
-    "fileName" : "screenshot-16072ce7-2c94-45f5-9e0a-5805fd7e45c2.jpg",
+    "fileName" : "screenshot-d65b3552-7040-416f-a903-c51ac9449e55.jpg",
     "seq" : 3
   } ],
   "summary" : "category-01's summary.",
@@ -1792,7 +2131,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-07-26 16:47:42 +09:00
+Last updated 2019-07-29 17:30:14 +09:00
 </div>
 </div>
 </body>

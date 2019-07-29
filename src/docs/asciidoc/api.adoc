@@ -9,6 +9,11 @@
 === Software
 :class-name: software
 
+==== page
+:method-name: page
+
+include::method.adoc[]
+
 ==== get
 :method-name: get
 
