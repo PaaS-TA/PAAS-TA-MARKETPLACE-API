@@ -4,6 +4,8 @@ import javax.validation.constraints.NotNull;
 
 import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
+import org.openpaas.paasta.marketplace.api.domain.Yn;
+import org.openpaas.paasta.marketplace.api.domain.Software.Status;
 import org.openpaas.paasta.marketplace.api.service.SoftwareService;
 import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
 import org.springframework.data.domain.Page;
@@ -30,12 +32,27 @@ public class SoftwareController {
 
     @GetMapping("/page")
     public Page<Software> getPage(SoftwareSpecification spec, Pageable pageable) {
+        spec.setStatus(Status.Approval);
+        spec.setInUse(Yn.Y);
+
+        return softwareService.getPage(spec, pageable);
+    }
+
+    @GetMapping("/page/my")
+    public Page<Software> getMyPage(SoftwareSpecification spec, Pageable pageable) {
+        spec.setCreatedBy(SecurityUtils.getUserId());
+
         return softwareService.getPage(spec, pageable);
     }
 
     @GetMapping("/{id}")
     public Software get(@NotNull @PathVariable Long id) {
-        return softwareService.get(id);
+        Software software = softwareService.get(id);
+        if (!software.canUse()) {
+            SecurityUtils.assertCreator(software);
+        }
+
+        return software;
     }
 
     @PostMapping

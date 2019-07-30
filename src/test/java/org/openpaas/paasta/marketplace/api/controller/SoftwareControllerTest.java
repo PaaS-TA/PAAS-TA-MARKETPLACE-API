@@ -130,6 +130,7 @@ public class SoftwareControllerTest {
         Category category2 = category(2L, "category-01");
         Software software1 = software(1L, "software-01", category1);
         Software software2 = software(1L, "software-02", category2);
+        software2.setCreatedBy("bar");
 
         Pageable pageable = PageRequest.of(0, 10);
 
@@ -160,7 +161,7 @@ public class SoftwareControllerTest {
                     ),
                 preprocessResponse(
                         prettyPrint()
-                    ), 
+                    ),
                 pathParameters(
                     ),
                 requestParameters(
@@ -181,6 +182,62 @@ public class SoftwareControllerTest {
     }
 
     @Test
+    public void getMyPage() throws Exception {
+        Category category1 = category(1L, "category-01");
+        Category category2 = category(2L, "category-01");
+        Software software1 = software(1L, "software-01", category1);
+        Software software2 = software(1L, "software-02", category2);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        List<Software> content = new ArrayList<>();
+        content.add(software1);
+        content.add(software2);
+        Page<Software> page = new PageImpl<>(content, pageable, content.size());
+
+        given(softwareService.getPage(any(SoftwareSpecification.class), any(Pageable.class))).willReturn(page);
+
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/softwares/page/my")
+                .param("page", "0").param("size", "10").param("sort", "id,asc").param("categoryId", "1")
+                .param("nameLike", "software").contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON).header("Authorization", userId).characterEncoding("utf-8"));
+
+        result.andExpect(status().isOk());
+        result.andDo(print());
+
+        // @formatter:off
+        result.andDo(
+            document("user/software/my-page",
+                preprocessRequest(
+                        modifyUris()
+                            .scheme("http")
+                            .host("marketplace.yourdomain.com")
+                            .removePort(),
+                        prettyPrint()
+                    ),
+                preprocessResponse(
+                        prettyPrint()
+                    ),
+                pathParameters(
+                    ),
+                requestParameters(
+                        parameterWithName("page").description("index of page (starting from 0)"),
+                        parameterWithName("size").description("size of page"),
+                        parameterWithName("sort").description("sort condition (column,direction)"),
+                        parameterWithName("categoryId").description("category's id"),
+                        parameterWithName("nameLike").description("search word of name")
+                    ),
+                relaxedResponseFields(
+                        fieldWithPath("content").type(JsonFieldType.ARRAY).description("content of page"),
+                        fieldWithPath("pageable").type(JsonFieldType.OBJECT).description("request pageable"),
+                        fieldWithPath("numberOfElements").type(JsonFieldType.NUMBER).description("total count of elements")
+                    )
+                )
+            );
+        // @formatter:on
+    }
+    
+    @Test
     public void get() throws Exception {
         Category category = category(1L, "category-01");
         Software software = software(1L, "software-01", category);
@@ -189,7 +246,7 @@ public class SoftwareControllerTest {
 
         ResultActions result = this.mockMvc.perform(
                 RestDocumentationRequestBuilders.get("/softwares/{id}", 1L).contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON).header("Authorization", userId).characterEncoding("utf-8"));
+                        .accept(MediaType.APPLICATION_JSON).header("Authorization", userId).content("").characterEncoding("utf-8"));
 
         result.andExpect(status().isOk());
         result.andDo(print());
@@ -206,9 +263,11 @@ public class SoftwareControllerTest {
                     ),
                 preprocessResponse(
                         prettyPrint()
-                    ), 
+                    ),
                 pathParameters(
                         parameterWithName("id").description("Software's id")
+                    ),
+                requestParameters(
                     ),
                 relaxedResponseFields(
                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("id (PK)"),
@@ -274,8 +333,10 @@ public class SoftwareControllerTest {
                     ),
                 preprocessResponse(
                         prettyPrint()
-                    ), 
+                    ),
                 pathParameters(
+                    ),
+                requestParameters(
                     ),
                 relaxedRequestFields(
                         fieldWithPath("name").type(JsonFieldType.STRING).description("name"),
@@ -352,9 +413,11 @@ public class SoftwareControllerTest {
                     ),
                 preprocessResponse(
                         prettyPrint()
-                    ), 
+                    ),
                 pathParameters(
                         parameterWithName("id").description("Software's id")
+                    ),
+                requestParameters(
                     ),
                 relaxedRequestFields(
                         fieldWithPath("name").type(JsonFieldType.STRING).description("name"),

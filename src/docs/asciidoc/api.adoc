@@ -2,6 +2,7 @@
 :toc: left
 :toclevels: 4
 :sectnums:
+:table-caption!:
 
 == User API
 :role-name: user
@@ -9,22 +10,27 @@
 === Software
 :class-name: software
 
-==== page
+==== page (User)
 :method-name: page
 
 include::method.adoc[]
 
-==== get
+==== my-page (Seller)
+:method-name: my-page
+
+include::method.adoc[]
+
+==== get (User, Seller)
 :method-name: get
 
 include::method.adoc[]
 
-==== create
+==== create (Seller)
 :method-name: create
 
 include::method.adoc[]
 
-==== update
+==== update (Seller)
 :method-name: update
 
 include::method.adoc[]
