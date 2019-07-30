@@ -4,6 +4,8 @@ import javax.validation.constraints.NotNull;
 
 import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.service.SoftwareService;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -20,12 +22,22 @@ public class AdminSoftwareController {
 
     private final SoftwareService softwareService;
 
-    @PutMapping("/{id}/status")
-    public Software updateStatus(@PathVariable @NotNull Long id,
-            @NotNull @Validated(Software.UpdateStatus.class) @RequestBody Software software) {
+    @PutMapping("/{id}")
+    public Software update(@PathVariable @NotNull Long id,
+            @NotNull @Validated(Software.Update.class) @RequestBody Software software, BindingResult bindingResult)
+            throws BindException {
+        Software sameName = softwareService.getByName(software.getName());
+        if (sameName != null && id != sameName.getId()) {
+            bindingResult.rejectValue("name", "Unique");
+        }
+
+        if (bindingResult.hasErrors()) {
+            throw new BindException(bindingResult);
+        }
+
         software.setId(id);
 
-        return softwareService.updateStatus(software);
+        return softwareService.updateMetadata(software);
     }
 
 }

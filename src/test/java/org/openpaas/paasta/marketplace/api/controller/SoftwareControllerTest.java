@@ -1,7 +1,7 @@
 package org.openpaas.paasta.marketplace.api.controller;
 
-import static org.mockito.BDDMockito.any;
-import static org.mockito.BDDMockito.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris;
@@ -27,11 +27,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openpaas.paasta.marketplace.api.domain.Category;
-import org.openpaas.paasta.marketplace.api.domain.Screenshot;
 import org.openpaas.paasta.marketplace.api.domain.Software;
-import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
 import org.openpaas.paasta.marketplace.api.domain.Software.Status;
 import org.openpaas.paasta.marketplace.api.domain.Software.Type;
+import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
 import org.openpaas.paasta.marketplace.api.domain.Yn;
 import org.openpaas.paasta.marketplace.api.repository.UserRepository;
 import org.openpaas.paasta.marketplace.api.service.SoftwareService;
@@ -108,13 +107,9 @@ public class SoftwareControllerTest {
         software.setApp("app-" + UUID.randomUUID().toString() + ".jar");
         software.setManifest("manifest-" + UUID.randomUUID().toString() + ".yml");
         software.setIcon("icon-" + UUID.randomUUID().toString() + ".png");
-        List<Screenshot> screenshotList = new ArrayList<>();
+        List<String> screenshotList = new ArrayList<>();
         for (long i = 1; i <= 3; i++) {
-            Screenshot screenshot = new Screenshot();
-            screenshot.setId(i);
-            screenshot.setFileName("screenshot-" + UUID.randomUUID().toString() + ".jpg");
-            screenshot.setSeq(i);
-            screenshotList.add(screenshot);
+            screenshotList.add("screenshot-" + UUID.randomUUID().toString() + ".jpg");
         }
         software.setScreenshotList(screenshotList);
         software.setType(Type.Web);
@@ -255,6 +250,7 @@ public class SoftwareControllerTest {
         s.setType(software.getType());
         s.setPricePerDay(software.getPricePerDay());
         s.setVersion(software.getVersion());
+        s.setInUse(Yn.Y);
 
         given(softwareService.create(any(Software.class))).willReturn(software);
 
@@ -331,6 +327,7 @@ public class SoftwareControllerTest {
         s.setType(software.getType());
         s.setPricePerDay(software.getPricePerDay());
         s.setVersion(software.getVersion());
+        s.setInUse(Yn.Y);
 
         given(softwareService.update(any(Software.class))).willReturn(software);
         given(softwareService.get(eq(1L))).willReturn(software);
@@ -364,60 +361,6 @@ public class SoftwareControllerTest {
                         fieldWithPath("category").type(JsonFieldType.OBJECT).description("category"),
                         fieldWithPath("summary").type(JsonFieldType.STRING).description("brief description"),
                         fieldWithPath("description").type(JsonFieldType.STRING).description("detailed description")                   
-                    ),
-                relaxedResponseFields(
-                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("id (PK)"),
-                        fieldWithPath("name").type(JsonFieldType.STRING).description("name"),
-                        fieldWithPath("status").type(JsonFieldType.STRING).description("status (" + StringUtils.arrayToCommaDelimitedString(Status.values()) +")"),
-                        fieldWithPath("inUse").type(JsonFieldType.STRING).description("usage status (" + StringUtils.arrayToCommaDelimitedString(Yn.values()) +")"),
-                        fieldWithPath("category").type(JsonFieldType.OBJECT).description("category"),
-                        fieldWithPath("app").type(JsonFieldType.STRING).description("app file"),
-                        fieldWithPath("manifest").type(JsonFieldType.STRING).description("manifest file"),
-                        fieldWithPath("icon").type(JsonFieldType.STRING).description("icon file"),
-                        fieldWithPath("screenshotList").type(JsonFieldType.ARRAY).description("screenshot files"),
-                        fieldWithPath("summary").type(JsonFieldType.STRING).description("brief description"),
-                        fieldWithPath("description").type(JsonFieldType.STRING).description("detailed description"),
-                        fieldWithPath("pricePerDay").type(JsonFieldType.NUMBER).description("price per day"),
-                        fieldWithPath("version").type(JsonFieldType.STRING).description("version")
-                    )
-                )
-            );
-        // @formatter:on
-    }
-
-    @Test
-    public void updateInuse() throws Exception {
-        Category category = category(1L, "category-01");
-        Software software = software(1L, "software-01", category);
-        software.setStatus(Status.Pending);
-        software.setInUse(Yn.N);
-
-        given(softwareService.updateInUse(eq(1L), any(Yn.class))).willReturn(software);
-        given(softwareService.get(eq(1L))).willReturn(software);
-
-        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders
-                .put("/softwares/{id}/in-use/{inUse}", 1L, Yn.N).contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON).header("Authorization", userId).characterEncoding("utf-8"));
-
-        result.andExpect(status().isOk());
-        result.andDo(print());
-
-        // @formatter:off
-        result.andDo(
-            document("user/software/updateInUse",
-                preprocessRequest(
-                        modifyUris()
-                            .scheme("http")
-                            .host("marketplace.yourdomain.com")
-                            .removePort(),
-                        prettyPrint()
-                    ),
-                preprocessResponse(
-                        prettyPrint()
-                    ), 
-                pathParameters(
-                        parameterWithName("id").description("Software's id"),
-                        parameterWithName("inUse").description("usage status")
                     ),
                 relaxedResponseFields(
                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("id (PK)"),

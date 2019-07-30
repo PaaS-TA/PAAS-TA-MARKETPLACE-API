@@ -4,7 +4,6 @@ import javax.validation.constraints.NotNull;
 
 import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
-import org.openpaas.paasta.marketplace.api.domain.Yn;
 import org.openpaas.paasta.marketplace.api.service.SoftwareService;
 import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
 import org.springframework.data.domain.Page;
@@ -73,14 +72,6 @@ public class SoftwareController {
         software.setId(id);
 
         return softwareService.update(software);
-    }
-
-    @PutMapping("/{id}/in-use/{inUse}")
-    public Software updateInuse(@NotNull @PathVariable Long id, @NotNull @PathVariable Yn inUse) {
-        Software saved = softwareService.get(id);
-        SecurityUtils.assertCreator(saved);
-
-        return softwareService.updateInUse(id, inUse);
     }
 
 }

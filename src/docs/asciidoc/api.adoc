@@ -29,10 +29,5 @@ include::method.adoc[]
 
 include::method.adoc[]
 
-==== update in-use
-:method-name: updateInUse
-
-include::method.adoc[]
-
 == Admin API
 :role-name: admin

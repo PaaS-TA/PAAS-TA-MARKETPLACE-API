@@ -3,8 +3,8 @@ package org.openpaas.paasta.marketplace.api.service;
 import javax.transaction.Transactional;
 
 import org.openpaas.paasta.marketplace.api.domain.Software;
+import org.openpaas.paasta.marketplace.api.domain.Software.Status;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
-import org.openpaas.paasta.marketplace.api.domain.Yn;
 import org.openpaas.paasta.marketplace.api.repository.SoftwareRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +20,8 @@ public class SoftwareService {
     private final SoftwareRepository softwareRepository;
 
     public Software create(Software software) {
+        software.setStatus(Status.Pending);
+
         return softwareRepository.save(software);
     }
 
@@ -48,19 +50,16 @@ public class SoftwareService {
         saved.setType(software.getType());
         saved.setPricePerDay(software.getPricePerDay());
         saved.setVersion(software.getVersion());
+        saved.setInUse(software.getInUse());
 
         return saved;
     }
 
-    public Software updateInUse(Long id, Yn inUse) {
-        Software saved = softwareRepository.findById(id).get();
-        saved.setInUse(inUse);
-
-        return saved;
-    }
-
-    public Software updateStatus(Software software) {
+    public Software updateMetadata(Software software) {
         Software saved = softwareRepository.findById(software.getId()).get();
+        saved.setName(software.getName());
+        saved.setCategory(software.getCategory());
+        saved.setInUse(software.getInUse());
         saved.setStatus(software.getStatus());
         saved.setConfirmComment(software.getConfirmComment());
 
