@@ -35,6 +35,19 @@ include::method.adoc[]
 
 include::method.adoc[]
 
+=== Category
+:class-name: category
+
+==== list (User, Seller)
+:method-name: list
+
+include::method.adoc[]
+
+==== get (User, Seller)
+:method-name: get
+
+include::method.adoc[]
+
 == Admin API
 :role-name: admin
 
@@ -53,5 +66,38 @@ include::method.adoc[]
 
 ==== update
 :method-name: update
+
+include::method.adoc[]
+
+=== Category
+:class-name: category
+
+==== list
+:method-name: list
+
+include::method.adoc[]
+
+==== get
+:method-name: get
+
+include::method.adoc[]
+
+==== create
+:method-name: create
+
+include::method.adoc[]
+
+==== update-name
+:method-name: update-name
+
+include::method.adoc[]
+
+==== update-seq
+:method-name: update-seq
+
+include::method.adoc[]
+
+==== delete
+:method-name: delete
 
 include::method.adoc[]

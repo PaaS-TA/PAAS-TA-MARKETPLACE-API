@@ -80,14 +80,19 @@ public class SoftwareControllerTest {
         current = LocalDateTime.now();
     }
 
+    @After
+    public void tearDown() throws Exception {
+    }
+
     private Category category(Long id, String name) {
         Category category = new Category();
-        category.setId(1L);
-        category.setName("category-01");
+        category.setId(id);
+        category.setName(name);
         category.setCreatedBy("admin");
         category.setCreatedDate(current);
         category.setLastModifiedBy("admin");
         category.setLastModifiedDate(current);
+        category.setSeq(id);
 
         return category;
     }
@@ -120,16 +125,12 @@ public class SoftwareControllerTest {
         return software;
     }
 
-    @After
-    public void tearDown() throws Exception {
-    }
-
     @Test
     public void getPage() throws Exception {
         Category category1 = category(1L, "category-01");
-        Category category2 = category(2L, "category-01");
+        Category category2 = category(2L, "category-02");
         Software software1 = software(1L, "software-01", category1);
-        Software software2 = software(1L, "software-02", category2);
+        Software software2 = software(2L, "software-02", category2);
         software2.setCreatedBy("bar");
 
         Pageable pageable = PageRequest.of(0, 10);
@@ -186,7 +187,7 @@ public class SoftwareControllerTest {
         Category category1 = category(1L, "category-01");
         Category category2 = category(2L, "category-01");
         Software software1 = software(1L, "software-01", category1);
-        Software software2 = software(1L, "software-02", category2);
+        Software software2 = software(2L, "software-02", category2);
 
         Pageable pageable = PageRequest.of(0, 10);
 
@@ -236,7 +237,7 @@ public class SoftwareControllerTest {
             );
         // @formatter:on
     }
-    
+
     @Test
     public void get() throws Exception {
         Category category = category(1L, "category-01");
@@ -265,7 +266,7 @@ public class SoftwareControllerTest {
                         prettyPrint()
                     ),
                 pathParameters(
-                        parameterWithName("id").description("Software's id")
+                        parameterWithName("id").description("Category's id")
                     ),
                 requestParameters(
                     ),
@@ -416,7 +417,7 @@ public class SoftwareControllerTest {
                         prettyPrint()
                     ),
                 pathParameters(
-                        parameterWithName("id").description("Software's id")
+                        parameterWithName("id").description("Category's id")
                     ),
                 requestParameters(
                     ),
