@@ -38,7 +38,7 @@ public class AdminSoftwareController {
 
     @PutMapping("/{id}")
     public Software update(@PathVariable @NotNull Long id,
-            @NotNull @Validated(Software.Update.class) @RequestBody Software software, BindingResult bindingResult)
+            @NotNull @Validated(Software.UpdateMetadata.class) @RequestBody Software software, BindingResult bindingResult)
             throws BindException {
         Software sameName = softwareService.getByName(software.getName());
         if (sameName != null && id != sameName.getId()) {

@@ -53,9 +53,9 @@ import org.springframework.util.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(SoftwareController.class)
+@WebMvcTest(AdminSoftwareController.class)
 @AutoConfigureRestDocs(outputDir = "build/generated-snippets")
-public class SoftwareControllerTest {
+public class AdminSoftwareControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -141,17 +141,17 @@ public class SoftwareControllerTest {
 
         given(softwareService.getPage(any(SoftwareSpecification.class), any(Pageable.class))).willReturn(page);
 
-        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/softwares/page")
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/admin/softwares/page")
                 .param("page", "0").param("size", "10").param("sort", "id,asc").param("categoryId", "1")
                 .param("nameLike", "software").contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON).header("Authorization", userId).characterEncoding("utf-8"));
+                .accept(MediaType.APPLICATION_JSON).header("Authorization", adminId).characterEncoding("utf-8"));
 
         result.andExpect(status().isOk());
         result.andDo(print());
 
         // @formatter:off
         result.andDo(
-            document("user/software/page",
+            document("admin/software/page",
                 preprocessRequest(
                         modifyUris()
                             .scheme("http")
@@ -181,62 +181,6 @@ public class SoftwareControllerTest {
         // @formatter:on
     }
 
-    @Test
-    public void getMyPage() throws Exception {
-        Category category1 = category(1L, "category-01");
-        Category category2 = category(2L, "category-01");
-        Software software1 = software(1L, "software-01", category1);
-        Software software2 = software(1L, "software-02", category2);
-
-        Pageable pageable = PageRequest.of(0, 10);
-
-        List<Software> content = new ArrayList<>();
-        content.add(software1);
-        content.add(software2);
-        Page<Software> page = new PageImpl<>(content, pageable, content.size());
-
-        given(softwareService.getPage(any(SoftwareSpecification.class), any(Pageable.class))).willReturn(page);
-
-        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/softwares/page/my")
-                .param("page", "0").param("size", "10").param("sort", "id,asc").param("categoryId", "1")
-                .param("nameLike", "software").contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON).header("Authorization", userId).characterEncoding("utf-8"));
-
-        result.andExpect(status().isOk());
-        result.andDo(print());
-
-        // @formatter:off
-        result.andDo(
-            document("user/software/my-page",
-                preprocessRequest(
-                        modifyUris()
-                            .scheme("http")
-                            .host("marketplace.yourdomain.com")
-                            .removePort(),
-                        prettyPrint()
-                    ),
-                preprocessResponse(
-                        prettyPrint()
-                    ),
-                pathParameters(
-                    ),
-                requestParameters(
-                        parameterWithName("page").description("index of page (starting from 0)"),
-                        parameterWithName("size").description("size of page"),
-                        parameterWithName("sort").description("sort condition (column,direction)"),
-                        parameterWithName("categoryId").description("category's id"),
-                        parameterWithName("nameLike").description("search word of name")
-                    ),
-                relaxedResponseFields(
-                        fieldWithPath("content").type(JsonFieldType.ARRAY).description("content of page"),
-                        fieldWithPath("pageable").type(JsonFieldType.OBJECT).description("request pageable"),
-                        fieldWithPath("numberOfElements").type(JsonFieldType.NUMBER).description("total count of elements")
-                    )
-                )
-            );
-        // @formatter:on
-    }
-    
     @Test
     public void get() throws Exception {
         Category category = category(1L, "category-01");
@@ -244,16 +188,16 @@ public class SoftwareControllerTest {
 
         given(softwareService.get(eq(1L))).willReturn(software);
 
-        ResultActions result = this.mockMvc.perform(
-                RestDocumentationRequestBuilders.get("/softwares/{id}", 1L).contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON).header("Authorization", userId).characterEncoding("utf-8"));
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/admin/softwares/{id}", 1L)
+                .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization", adminId).characterEncoding("utf-8"));
 
         result.andExpect(status().isOk());
         result.andDo(print());
 
         // @formatter:off
         result.andDo(
-            document("user/software/get",
+            document("admin/software/get",
                 preprocessRequest(
                         modifyUris()
                             .scheme("http")
@@ -289,89 +233,11 @@ public class SoftwareControllerTest {
     }
 
     @Test
-    public void create() throws Exception {
-        Category category = category(1L, "category-01");
-        Software software = software(1L, "software-01", category);
-        software.setStatus(Status.Pending);
-
-        Category c = new Category();
-        c.setId(category.getId());
-
-        Software s = new Software();
-        s.setName(software.getName());
-        s.setCategory(c);
-        s.setApp(software.getApp());
-        s.setManifest(software.getManifest());
-        s.setIcon(software.getIcon());
-        s.setScreenshotList(software.getScreenshotList());
-        s.setSummary(software.getSummary());
-        s.setDescription(software.getDescription());
-        s.setType(software.getType());
-        s.setPricePerDay(software.getPricePerDay());
-        s.setVersion(software.getVersion());
-        s.setInUse(software.getInUse());
-
-        given(softwareService.create(any(Software.class))).willReturn(software);
-
-        ResultActions result = this.mockMvc
-                .perform(RestDocumentationRequestBuilders.post("/softwares").contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON).header("Authorization", userId)
-                        .content(objectMapper.writeValueAsString(s)).characterEncoding("utf-8"));
-
-        result.andExpect(status().isOk());
-        result.andDo(print());
-
-        // @formatter:off
-        result.andDo(
-            document("user/software/create",
-                preprocessRequest(
-                        modifyUris()
-                            .scheme("http")
-                            .host("marketplace.yourdomain.com")
-                            .removePort(),
-                        prettyPrint()
-                    ),
-                preprocessResponse(
-                        prettyPrint()
-                    ),
-                pathParameters(
-                    ),
-                requestParameters(
-                    ),
-                relaxedRequestFields(
-                        fieldWithPath("name").type(JsonFieldType.STRING).description("name"),
-                        fieldWithPath("category").type(JsonFieldType.OBJECT).description("category"),
-                        fieldWithPath("summary").type(JsonFieldType.STRING).description("brief description"),
-                        fieldWithPath("description").type(JsonFieldType.STRING).description("detailed description"),
-                        fieldWithPath("inUse").type(JsonFieldType.STRING).description("usage status (" + StringUtils.arrayToCommaDelimitedString(Yn.values()) +")")
-                    ),
-                relaxedResponseFields(
-                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("id (PK)"),
-                        fieldWithPath("name").type(JsonFieldType.STRING).description("name"),
-                        fieldWithPath("status").type(JsonFieldType.STRING).description("status (" + StringUtils.arrayToCommaDelimitedString(Status.values()) +")"),
-                        fieldWithPath("inUse").type(JsonFieldType.STRING).description("usage status (" + StringUtils.arrayToCommaDelimitedString(Yn.values()) +")"),
-                        fieldWithPath("category").type(JsonFieldType.OBJECT).description("category"),
-                        fieldWithPath("app").type(JsonFieldType.STRING).description("app file"),
-                        fieldWithPath("manifest").type(JsonFieldType.STRING).description("manifest file"),
-                        fieldWithPath("icon").type(JsonFieldType.STRING).description("icon file"),
-                        fieldWithPath("screenshotList").type(JsonFieldType.ARRAY).description("screenshot files"),
-                        fieldWithPath("summary").type(JsonFieldType.STRING).description("brief description"),
-                        fieldWithPath("description").type(JsonFieldType.STRING).description("detailed description"),
-                        fieldWithPath("pricePerDay").type(JsonFieldType.NUMBER).description("price per day"),
-                        fieldWithPath("version").type(JsonFieldType.STRING).description("version")
-                    )
-                )
-            );
-        // @formatter:on
-    }
-
-    @Test
-    public void update() throws Exception {
+    public void updateMetadata() throws Exception {
         Category category = category(2L, "category-02");
         Software software = software(1L, "software-rename-01", category);
-        software.setStatus(Status.Pending);
-        software.setPricePerDay(1500L);
-        software.setVersion("2.0");
+        software.setStatus(Status.Approval);
+        software.setConfirmComment("confirm");
 
         Category c = new Category();
         c.setId(category.getId());
@@ -379,32 +245,25 @@ public class SoftwareControllerTest {
         Software s = new Software();
         s.setId(software.getId());
         s.setName(software.getName());
-        s.setCategory(c);
-        s.setApp(software.getApp());
-        s.setManifest(software.getManifest());
-        s.setIcon(software.getIcon());
-        s.setScreenshotList(software.getScreenshotList());
-        s.setSummary(software.getSummary());
-        s.setDescription(software.getDescription());
-        s.setType(software.getType());
-        s.setPricePerDay(software.getPricePerDay());
-        s.setVersion(software.getVersion());
+        s.setCategory(software.getCategory());
         s.setInUse(software.getInUse());
+        s.setStatus(software.getStatus());
+        s.setConfirmComment(software.getConfirmComment());
 
-        given(softwareService.update(any(Software.class))).willReturn(software);
+        given(softwareService.updateMetadata(any(Software.class))).willReturn(software);
         given(softwareService.get(eq(1L))).willReturn(software);
 
-        ResultActions result = this.mockMvc.perform(
-                RestDocumentationRequestBuilders.put("/softwares/{id}", 1L).contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON).header("Authorization", userId)
-                        .content(objectMapper.writeValueAsString(s)).characterEncoding("utf-8"));
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.put("/admin/softwares/{id}", 1L)
+                .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization", adminId).content(objectMapper.writeValueAsString(s))
+                .characterEncoding("utf-8"));
 
         result.andExpect(status().isOk());
         result.andDo(print());
 
         // @formatter:off
         result.andDo(
-            document("user/software/update",
+            document("admin/software/update",
                 preprocessRequest(
                         modifyUris()
                             .scheme("http")
@@ -423,9 +282,9 @@ public class SoftwareControllerTest {
                 relaxedRequestFields(
                         fieldWithPath("name").type(JsonFieldType.STRING).description("name"),
                         fieldWithPath("category").type(JsonFieldType.OBJECT).description("category"),
-                        fieldWithPath("summary").type(JsonFieldType.STRING).description("brief description"),
-                        fieldWithPath("description").type(JsonFieldType.STRING).description("detailed description"),
-                        fieldWithPath("inUse").type(JsonFieldType.STRING).description("usage status (" + StringUtils.arrayToCommaDelimitedString(Yn.values()) +")")
+                        fieldWithPath("inUse").type(JsonFieldType.STRING).description("usage status (" + StringUtils.arrayToCommaDelimitedString(Yn.values()) +")"),
+                        fieldWithPath("status").type(JsonFieldType.STRING).description("usage status (" + StringUtils.arrayToCommaDelimitedString(Yn.values()) +")"),
+                        fieldWithPath("confirmComment").type(JsonFieldType.STRING).description("reason for approval or rejected")
                     ),
                 relaxedResponseFields(
                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("id (PK)"),
