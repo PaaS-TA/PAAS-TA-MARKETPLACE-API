@@ -305,7 +305,7 @@ public class AdminCategoryControllerTest {
                     ),
                 pathParameters(
                         parameterWithName("id").description("Category's id"),
-                        parameterWithName("direction").description("direction to modify order (" + StringUtils.arrayToCommaDelimitedString(Direction.values()) + ")")
+                        parameterWithName("direction").description(String.format("direction to modify order (%s)", StringUtils.arrayToCommaDelimitedString(Direction.values())))
                     ),
                 requestParameters(
                     ),

@@ -109,12 +109,12 @@ public class SoftwareControllerTest {
         software.setCreatedDate(current);
         software.setLastModifiedBy(userId);
         software.setLastModifiedDate(current);
-        software.setApp("app-" + UUID.randomUUID().toString() + ".jar");
-        software.setManifest("manifest-" + UUID.randomUUID().toString() + ".yml");
-        software.setIcon("icon-" + UUID.randomUUID().toString() + ".png");
+        software.setApp(String.format("app-%s.jar", UUID.randomUUID()));
+        software.setManifest(String.format("manifest-%s.yml", UUID.randomUUID()));
+        software.setIcon(String.format("icon-%s.png", UUID.randomUUID()));
         List<String> screenshotList = new ArrayList<>();
         for (long i = 1; i <= 3; i++) {
-            screenshotList.add("screenshot-" + UUID.randomUUID().toString() + ".jpg");
+            screenshotList.add(String.format("screenshot-%s.jpg", UUID.randomUUID()));
         }
         software.setScreenshotList(screenshotList);
         software.setType(Type.Web);
@@ -273,7 +273,7 @@ public class SoftwareControllerTest {
                 relaxedResponseFields(
                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("id (PK)"),
                         fieldWithPath("name").type(JsonFieldType.STRING).description("name"),
-                        fieldWithPath("status").type(JsonFieldType.STRING).description("status (" + StringUtils.arrayToCommaDelimitedString(Status.values()) +")"),
+                        fieldWithPath("status").type(JsonFieldType.STRING).description(String.format("status (%s)", StringUtils.arrayToCommaDelimitedString(Status.values()))),
                         fieldWithPath("category").type(JsonFieldType.OBJECT).description("category"),
                         fieldWithPath("app").type(JsonFieldType.STRING).description("app file"),
                         fieldWithPath("manifest").type(JsonFieldType.STRING).description("manifest file"),
@@ -344,13 +344,13 @@ public class SoftwareControllerTest {
                         fieldWithPath("category").type(JsonFieldType.OBJECT).description("category"),
                         fieldWithPath("summary").type(JsonFieldType.STRING).description("brief description"),
                         fieldWithPath("description").type(JsonFieldType.STRING).description("detailed description"),
-                        fieldWithPath("inUse").type(JsonFieldType.STRING).description("usage status (" + StringUtils.arrayToCommaDelimitedString(Yn.values()) +")")
+                        fieldWithPath("inUse").type(JsonFieldType.STRING).description(String.format("usage status (%s)", StringUtils.arrayToCommaDelimitedString(Yn.values())))
                     ),
                 relaxedResponseFields(
                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("id (PK)"),
                         fieldWithPath("name").type(JsonFieldType.STRING).description("name"),
-                        fieldWithPath("status").type(JsonFieldType.STRING).description("status (" + StringUtils.arrayToCommaDelimitedString(Status.values()) +")"),
-                        fieldWithPath("inUse").type(JsonFieldType.STRING).description("usage status (" + StringUtils.arrayToCommaDelimitedString(Yn.values()) +")"),
+                        fieldWithPath("status").type(JsonFieldType.STRING).description(String.format("status (%s)", StringUtils.arrayToCommaDelimitedString(Status.values()))),
+                        fieldWithPath("inUse").type(JsonFieldType.STRING).description(String.format("usage status (%s)", StringUtils.arrayToCommaDelimitedString(Yn.values()))),
                         fieldWithPath("category").type(JsonFieldType.OBJECT).description("category"),
                         fieldWithPath("app").type(JsonFieldType.STRING).description("app file"),
                         fieldWithPath("manifest").type(JsonFieldType.STRING).description("manifest file"),
@@ -426,13 +426,13 @@ public class SoftwareControllerTest {
                         fieldWithPath("category").type(JsonFieldType.OBJECT).description("category"),
                         fieldWithPath("summary").type(JsonFieldType.STRING).description("brief description"),
                         fieldWithPath("description").type(JsonFieldType.STRING).description("detailed description"),
-                        fieldWithPath("inUse").type(JsonFieldType.STRING).description("usage status (" + StringUtils.arrayToCommaDelimitedString(Yn.values()) +")")
+                        fieldWithPath("inUse").type(JsonFieldType.STRING).description(String.format("usage status (%s)", StringUtils.arrayToCommaDelimitedString(Yn.values())))
                     ),
-                relaxedResponseFields(
+                relaxedResponseFields(                        
                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("id (PK)"),
                         fieldWithPath("name").type(JsonFieldType.STRING).description("name"),
-                        fieldWithPath("status").type(JsonFieldType.STRING).description("status (" + StringUtils.arrayToCommaDelimitedString(Status.values()) +")"),
-                        fieldWithPath("inUse").type(JsonFieldType.STRING).description("usage status (" + StringUtils.arrayToCommaDelimitedString(Yn.values()) +")"),
+                        fieldWithPath("status").type(JsonFieldType.STRING).description(String.format("status (%s)", StringUtils.arrayToCommaDelimitedString(Status.values()))),
+                        fieldWithPath("inUse").type(JsonFieldType.STRING).description(String.format("usage status (%s)", StringUtils.arrayToCommaDelimitedString(Yn.values()))),
                         fieldWithPath("category").type(JsonFieldType.OBJECT).description("category"),
                         fieldWithPath("app").type(JsonFieldType.STRING).description("app file"),
                         fieldWithPath("manifest").type(JsonFieldType.STRING).description("manifest file"),

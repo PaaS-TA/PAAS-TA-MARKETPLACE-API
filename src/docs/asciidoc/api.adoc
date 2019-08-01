@@ -4,7 +4,7 @@
 :sectnums:
 :table-caption!:
 
-== User API
+== User, Seller API
 :role-name: user
 
 === Software
