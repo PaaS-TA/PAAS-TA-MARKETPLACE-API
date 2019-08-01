@@ -28,8 +28,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openpaas.paasta.marketplace.api.domain.Category;
 import org.openpaas.paasta.marketplace.api.domain.Software;
-import org.openpaas.paasta.marketplace.api.domain.Software.Status;
-import org.openpaas.paasta.marketplace.api.domain.Software.Type;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
 import org.openpaas.paasta.marketplace.api.domain.Yn;
 import org.openpaas.paasta.marketplace.api.repository.UserRepository;
@@ -101,7 +99,7 @@ public class AdminSoftwareControllerTest {
         Software software = new Software();
         software.setId(1L);
         software.setName(name);
-        software.setStatus(Status.Approval);
+        software.setStatus(Software.Status.Approval);
         software.setCategory(category);
         software.setSummary("category-01's summary.");
         software.setDescription("description of this software.");
@@ -117,7 +115,7 @@ public class AdminSoftwareControllerTest {
             screenshotList.add(String.format("screenshot-%s.jpg", UUID.randomUUID()));
         }
         software.setScreenshotList(screenshotList);
-        software.setType(Type.Web);
+        software.setType(Software.Type.Web);
         software.setPricePerDay(1000L);
         software.setVersion("1.0");
         software.setInUse(Yn.Y);
@@ -217,7 +215,7 @@ public class AdminSoftwareControllerTest {
                 relaxedResponseFields(
                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("id (PK)"),
                         fieldWithPath("name").type(JsonFieldType.STRING).description("name"),
-                        fieldWithPath("status").type(JsonFieldType.STRING).description(String.format("status (%s)", StringUtils.arrayToCommaDelimitedString(Status.values()))),
+                        fieldWithPath("status").type(JsonFieldType.STRING).description(String.format("status (%s)", StringUtils.arrayToCommaDelimitedString(Software.Status.values()))),
                         fieldWithPath("category").type(JsonFieldType.OBJECT).description("category"),
                         fieldWithPath("app").type(JsonFieldType.STRING).description("app file"),
                         fieldWithPath("manifest").type(JsonFieldType.STRING).description("manifest file"),
@@ -237,7 +235,7 @@ public class AdminSoftwareControllerTest {
     public void updateMetadata() throws Exception {
         Category category = category(2L, "category-02");
         Software software = software(1L, "software-rename-01", category);
-        software.setStatus(Status.Approval);
+        software.setStatus(Software.Status.Approval);
         software.setConfirmComment("confirm");
 
         Category c = new Category();
@@ -284,13 +282,13 @@ public class AdminSoftwareControllerTest {
                         fieldWithPath("name").type(JsonFieldType.STRING).description("name"),
                         fieldWithPath("category").type(JsonFieldType.OBJECT).description("category"),
                         fieldWithPath("inUse").type(JsonFieldType.STRING).description(String.format("usage status (%s)", StringUtils.arrayToCommaDelimitedString(Yn.values()))),
-                        fieldWithPath("status").type(JsonFieldType.STRING).description(String.format("status (%s)", StringUtils.arrayToCommaDelimitedString(Status.values()))),
+                        fieldWithPath("status").type(JsonFieldType.STRING).description(String.format("status (%s)", StringUtils.arrayToCommaDelimitedString(Software.Status.values()))),
                         fieldWithPath("confirmComment").type(JsonFieldType.STRING).description("reason for approval or rejected")
                     ),
                 relaxedResponseFields(
                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("id (PK)"),
                         fieldWithPath("name").type(JsonFieldType.STRING).description("name"),
-                        fieldWithPath("status").type(JsonFieldType.STRING).description(String.format("status (%s)", StringUtils.arrayToCommaDelimitedString(Status.values()))),
+                        fieldWithPath("status").type(JsonFieldType.STRING).description(String.format("status (%s)", StringUtils.arrayToCommaDelimitedString(Software.Status.values()))),
                         fieldWithPath("inUse").type(JsonFieldType.STRING).description(String.format("usage status (%s)", StringUtils.arrayToCommaDelimitedString(Yn.values()))),
                         fieldWithPath("category").type(JsonFieldType.OBJECT).description("category"),
                         fieldWithPath("app").type(JsonFieldType.STRING).description("app file"),

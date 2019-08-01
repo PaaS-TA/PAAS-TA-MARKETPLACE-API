@@ -1,15 +1,20 @@
 package org.openpaas.paasta.marketplace.api.controller;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
+import org.openpaas.paasta.marketplace.api.domain.SoftwareHistory;
+import org.openpaas.paasta.marketplace.api.domain.SoftwareHistorySpecification;
 import org.openpaas.paasta.marketplace.api.domain.Yn;
 import org.openpaas.paasta.marketplace.api.domain.Software.Status;
 import org.openpaas.paasta.marketplace.api.service.SoftwareService;
 import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -47,12 +52,7 @@ public class SoftwareController {
 
     @GetMapping("/{id}")
     public Software get(@NotNull @PathVariable Long id) {
-        Software software = softwareService.get(id);
-        if (!software.canUse()) {
-            SecurityUtils.assertCreator(software);
-        }
-
-        return software;
+        return softwareService.get(id);
     }
 
     @PostMapping
@@ -89,6 +89,17 @@ public class SoftwareController {
         software.setId(id);
 
         return softwareService.update(software);
+    }
+
+    @GetMapping("/{id}/histories")
+    public List<SoftwareHistory> getHistoryList(@NotNull @PathVariable Long id, Sort sort) {
+        Software software = softwareService.get(id);
+        SecurityUtils.assertCreator(software);
+
+        SoftwareHistorySpecification spec = new SoftwareHistorySpecification();
+        spec.setSoftwareId(id);
+
+        return softwareService.getHistoryList(spec, sort);
     }
 
 }

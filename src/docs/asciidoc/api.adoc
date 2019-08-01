@@ -48,6 +48,22 @@ include::method.adoc[]
 
 include::method.adoc[]
 
+=== Profile
+:class-name: profile
+
+==== get (Seller)
+:method-name: get
+
+==== create (Seller)
+:method-name: create
+
+include::method.adoc[]
+
+==== update (Seller)
+:method-name: update
+
+include::method.adoc[]
+
 == Admin API
 :role-name: admin
 
@@ -99,5 +115,18 @@ include::method.adoc[]
 
 ==== delete
 :method-name: delete
+
+include::method.adoc[]
+
+=== Profile
+:class-name: profile
+
+==== page
+:method-name: page
+
+include::method.adoc[]
+
+==== get
+:method-name: get
 
 include::method.adoc[]

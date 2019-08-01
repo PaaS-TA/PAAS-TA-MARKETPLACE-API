@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -90,7 +91,7 @@ public class CategoryControllerTest {
         categoryList.add(category1);
         categoryList.add(category2);
 
-        given(categoryService.getList(any(CategorySpecification.class))).willReturn(categoryList);
+        given(categoryService.getList(any(CategorySpecification.class), any(Sort.class))).willReturn(categoryList);
 
         ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/categories")
                 .accept(MediaType.APPLICATION_JSON).header("Authorization", userId).characterEncoding("utf-8"));

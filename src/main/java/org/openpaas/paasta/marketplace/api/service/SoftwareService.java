@@ -1,13 +1,20 @@
 package org.openpaas.paasta.marketplace.api.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.Software.Status;
+import org.openpaas.paasta.marketplace.api.domain.SoftwareHistory;
+import org.openpaas.paasta.marketplace.api.domain.SoftwareHistorySpecification;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
+import org.openpaas.paasta.marketplace.api.repository.SoftwareHistoryRepository;
 import org.openpaas.paasta.marketplace.api.repository.SoftwareRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -18,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 public class SoftwareService {
 
     private final SoftwareRepository softwareRepository;
+
+    private final SoftwareHistoryRepository softwareHistoryRepository;
 
     public Software create(Software software) {
         software.setStatus(Status.Pending);
@@ -52,6 +61,10 @@ public class SoftwareService {
         saved.setVersion(software.getVersion());
         saved.setInUse(software.getInUse());
 
+        SoftwareHistory history = new SoftwareHistory();
+        history.setSoftware(saved);
+        softwareHistoryRepository.save(history);
+
         return saved;
     }
 
@@ -61,9 +74,20 @@ public class SoftwareService {
         saved.setCategory(software.getCategory());
         saved.setInUse(software.getInUse());
         saved.setStatus(software.getStatus());
+        if (software.getStatus() != saved.getStatus()) {
+            saved.setStatusModifiedDate(LocalDateTime.now());
+        }
         saved.setConfirmComment(software.getConfirmComment());
 
+        SoftwareHistory history = new SoftwareHistory();
+        history.setSoftware(saved);
+        softwareHistoryRepository.save(history);
+
         return saved;
+    }
+
+    public List<SoftwareHistory> getHistoryList(SoftwareHistorySpecification spec, Sort sort) {
+        return softwareHistoryRepository.findAll(spec, sort);
     }
 
 }

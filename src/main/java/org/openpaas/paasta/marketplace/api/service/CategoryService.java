@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 import org.openpaas.paasta.marketplace.api.domain.Category;
 import org.openpaas.paasta.marketplace.api.domain.CategorySpecification;
 import org.openpaas.paasta.marketplace.api.repository.CategoryRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -21,8 +22,8 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public List<Category> getList(CategorySpecification spec) {
-        return categoryRepository.findAll(spec);
+    public List<Category> getList(CategorySpecification spec, Sort sort) {
+        return categoryRepository.findAll(spec, sort);
     }
 
     public Category get(Long id) {

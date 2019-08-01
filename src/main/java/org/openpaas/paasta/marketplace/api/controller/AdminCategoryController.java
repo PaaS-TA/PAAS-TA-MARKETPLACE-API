@@ -5,6 +5,7 @@ import java.util.List;
 import org.openpaas.paasta.marketplace.api.domain.Category;
 import org.openpaas.paasta.marketplace.api.domain.CategorySpecification;
 import org.openpaas.paasta.marketplace.api.service.CategoryService;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,8 +25,8 @@ public class AdminCategoryController {
     private final CategoryService categoryService;
 
     @GetMapping
-    public List<Category> getList(CategorySpecification spec) {
-        return categoryService.getList(spec);
+    public List<Category> getList(CategorySpecification spec, Sort sort) {
+        return categoryService.getList(spec, sort);
     }
 
     @GetMapping("/{id}")

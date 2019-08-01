@@ -26,7 +26,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openpaas.paasta.marketplace.api.domain.Category;
-import org.openpaas.paasta.marketplace.api.domain.Category.Direction;
 import org.openpaas.paasta.marketplace.api.domain.CategorySpecification;
 import org.openpaas.paasta.marketplace.api.repository.UserRepository;
 import org.openpaas.paasta.marketplace.api.service.CategoryService;
@@ -35,6 +34,7 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.data.domain.Sort;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -98,7 +98,7 @@ public class AdminCategoryControllerTest {
         categoryList.add(category1);
         categoryList.add(category2);
 
-        given(categoryService.getList(any(CategorySpecification.class))).willReturn(categoryList);
+        given(categoryService.getList(any(CategorySpecification.class), any(Sort.class))).willReturn(categoryList);
 
         ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/admin/categories")
                 .accept(MediaType.APPLICATION_JSON).header("Authorization", adminId).characterEncoding("utf-8"));
@@ -280,10 +280,10 @@ public class AdminCategoryControllerTest {
         c.setId(category.getId());
         c.setName(category.getName());
 
-        given(categoryService.updateSeq(eq(1L), any(Direction.class))).willReturn(category);
+        given(categoryService.updateSeq(eq(1L), any(Category.Direction.class))).willReturn(category);
 
         ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders
-                .put("/admin/categories/{id}/{direction}", 1L, Direction.Down).contentType(MediaType.APPLICATION_JSON)
+                .put("/admin/categories/{id}/{direction}", 1L, Category.Direction.Down).contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON).header("Authorization", adminId)
                 .content(objectMapper.writeValueAsString(c)).characterEncoding("utf-8"));
 
@@ -305,7 +305,7 @@ public class AdminCategoryControllerTest {
                     ),
                 pathParameters(
                         parameterWithName("id").description("Category's id"),
-                        parameterWithName("direction").description(String.format("direction to modify order (%s)", StringUtils.arrayToCommaDelimitedString(Direction.values())))
+                        parameterWithName("direction").description(String.format("direction to modify order (%s)", StringUtils.arrayToCommaDelimitedString(Category.Direction.values())))
                     ),
                 requestParameters(
                     ),
