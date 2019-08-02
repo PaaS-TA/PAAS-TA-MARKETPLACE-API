@@ -43,7 +43,7 @@ public class SoftwareController {
         return softwareService.getPage(spec, pageable);
     }
 
-    @GetMapping("/page/my")
+    @GetMapping("/my/page")
     public Page<Software> getMyPage(SoftwareSpecification spec, Pageable pageable) {
         spec.setCreatedBy(SecurityUtils.getUserId());
 

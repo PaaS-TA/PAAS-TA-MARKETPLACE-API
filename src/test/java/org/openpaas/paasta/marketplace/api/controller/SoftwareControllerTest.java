@@ -196,7 +196,7 @@ public class SoftwareControllerTest {
 
         given(softwareService.getPage(any(SoftwareSpecification.class), any(Pageable.class))).willReturn(page);
 
-        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/softwares/page/my")
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/softwares/my/page")
                 .param("page", "0").param("size", "10").param("sort", "id,asc").param("categoryId", "1")
                 .param("nameLike", "software").contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON).header("Authorization", userId).characterEncoding("utf-8"));

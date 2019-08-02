@@ -35,6 +35,29 @@ include::method.adoc[]
 
 include::method.adoc[]
 
+=== Instance
+:class-name: instance
+
+==== my-page (User)
+:method-name: my-page
+
+include::method.adoc[]
+
+==== get (User)
+:method-name: get
+
+include::method.adoc[]
+
+==== create (User)
+:method-name: create
+
+include::method.adoc[]
+
+==== delete (User)
+:method-name: delete
+
+include::method.adoc[]
+
 === Category
 :class-name: category
 
