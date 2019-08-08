@@ -2,4 +2,5 @@ applications:
 - name: marketplace-api
   memory: 1G
   instances: 1
-  buildpack: java_buildpack
+  ## 우선 java_buildpack 은 에러남.
+  buildpack: staticfile_buildpack
