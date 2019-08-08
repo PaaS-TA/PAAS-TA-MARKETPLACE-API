@@ -23,3 +23,29 @@ logging:
 
 server:
   port: 8000
+
+provisioning:
+  pool-size: 3
+  try-count: 3
+  timeout: 3600000
+  ready-fixed-rate: 60000
+  ready-initial-delay: 3000
+  progress-fixed-rate: 120000
+  progress-initial-delay: 5000
+  timeout-fixed-rate: 300000
+  timeout-initial-delay: 1700
+  
+deprovisioning:
+  pool-size: 3
+  try-count: 3
+  timeout: 3600000
+  ready-fixed-rate: 60000
+  ready-initial-delay: 7000
+  progress-fixed-rate: 120000
+  progress-initial-delay: 13000
+  timeout-fixed-rate: 300000
+  timeout-initial-delay: 1700
+
+task:
+  execution:
+    restrict-to-same-host: true
