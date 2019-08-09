@@ -50,6 +50,18 @@ public class CategoryService {
         return saved;
     }
 
+    public Category updateCategory(Category category) {
+        Assert.notNull(category, "category can't be null.");
+        Assert.notNull(category.getId(), "category id can't be null.");
+
+        Category saved = categoryRepository.findById(category.getId()).get();
+
+        saved.setName(category.getName());
+        saved.setDescription(category.getDescription());
+
+        return saved;
+    }
+
     public Category updateSeq(Long id, Category.Direction direction) {
         Assert.notNull(id, "id can't be null.");
 
