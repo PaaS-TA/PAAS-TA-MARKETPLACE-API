@@ -39,17 +39,17 @@ public class AdminCategoryController {
         return categoryService.create(category);
     }
 
+    @PutMapping("/{id}")
+    public Category update(@PathVariable Long id, @RequestBody Category category) {
+        category.setId(id);
+        return categoryService.updateCategory(category);
+    }
+
     @PutMapping("/{id}/name")
     public Category updateName(@PathVariable Long id, @RequestBody Category category) {
         category.setId(id);
 
         return categoryService.updateName(category);
-    }
-
-    @PutMapping("/{id}")
-    public Category updateCategory(@PathVariable Long id, @RequestBody Category category) {
-        category.setId(id);
-        return categoryService.updateCategory(category);
     }
 
     @PutMapping("/{id}/{direction}")
