@@ -30,6 +30,10 @@ public class CategoryService {
         return categoryRepository.findById(id).get();
     }
 
+    public Category getByName(String name) {
+        return categoryRepository.findByName(name);
+    }
+
     public Category create(Category category) {
         category = categoryRepository.save(category);
         category.setSeq(category.getId());
@@ -39,7 +43,7 @@ public class CategoryService {
         return category;
     }
 
-    public Category updateCategory(Category category) {
+    public Category update(Category category) {
         Assert.notNull(category, "category can't be null.");
         Assert.notNull(category.getId(), "category id can't be null.");
 

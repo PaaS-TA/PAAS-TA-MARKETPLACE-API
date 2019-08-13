@@ -126,6 +126,11 @@ include::method.adoc[]
 
 include::method.adoc[]
 
+==== update
+:method-name: update
+
+include::method.adoc[]
+
 ==== update-name
 :method-name: update-name
 

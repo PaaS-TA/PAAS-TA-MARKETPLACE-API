@@ -80,6 +80,7 @@ public class AdminCategoryControllerTest {
         Category category = new Category();
         category.setId(id);
         category.setName("category-01");
+        category.setDescription("descritpion");
         category.setCreatedBy("admin");
         category.setCreatedDate(current);
         category.setLastModifiedBy("admin");
@@ -127,7 +128,8 @@ public class AdminCategoryControllerTest {
                         fieldWithPath("[]").type(JsonFieldType.ARRAY).description("list of categories"),
                         fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("id (PK)"),
                         fieldWithPath("[].name").type(JsonFieldType.STRING).description("name"),
-                        fieldWithPath("[].seq").type(JsonFieldType.NUMBER).description("order in category list")
+                        fieldWithPath("[].seq").type(JsonFieldType.NUMBER).description("order in category list"),
+                        fieldWithPath("[]description").type(JsonFieldType.STRING).description("description")
                     )
                 )
             );
@@ -168,7 +170,8 @@ public class AdminCategoryControllerTest {
                 relaxedResponseFields(
                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("id (PK)"),
                         fieldWithPath("name").type(JsonFieldType.STRING).description("name"),
-                        fieldWithPath("seq").type(JsonFieldType.NUMBER).description("order in category list")
+                        fieldWithPath("seq").type(JsonFieldType.NUMBER).description("order in category list"),
+                        fieldWithPath("description").type(JsonFieldType.STRING).description("description")
                     )
                 )
             );
@@ -215,7 +218,59 @@ public class AdminCategoryControllerTest {
                 relaxedResponseFields(
                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("id (PK)"),
                         fieldWithPath("name").type(JsonFieldType.STRING).description("name"),
-                        fieldWithPath("seq").type(JsonFieldType.NUMBER).description("order in category list")
+                        fieldWithPath("seq").type(JsonFieldType.NUMBER).description("order in category list"),
+                        fieldWithPath("description").type(JsonFieldType.STRING).description("description")
+                    )
+                )
+            );
+        // @formatter:on
+    }
+
+    @Test
+    public void update() throws Exception {
+        Category category = category(1L, "category-rename-01");
+        category.setDescription("updated description");
+
+        Category c = new Category();
+        c.setName(category.getName());
+        c.setDescription(category.getDescription());
+
+        given(categoryService.update(any(Category.class))).willReturn(category);
+
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.put("/admin/categories/{id}", 1L)
+                .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                .header("Authorization", adminId).content(objectMapper.writeValueAsString(c))
+                .characterEncoding("utf-8"));
+
+        result.andExpect(status().isOk());
+        result.andDo(print());
+
+        // @formatter:off
+        result.andDo(
+            document("admin/category/update",
+                preprocessRequest(
+                        modifyUris()
+                            .scheme("http")
+                            .host("marketplace.yourdomain.com")
+                            .removePort(),
+                        prettyPrint()
+                    ),
+                preprocessResponse(
+                        prettyPrint()
+                    ),
+                pathParameters(
+                        parameterWithName("id").description("Category's id")
+                    ),
+                requestParameters(
+                    ),
+                relaxedRequestFields(
+                        fieldWithPath("name").type(JsonFieldType.STRING).description("name")
+                    ),
+                relaxedResponseFields(
+                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("id (PK)"),
+                        fieldWithPath("name").type(JsonFieldType.STRING).description("name"),
+                        fieldWithPath("seq").type(JsonFieldType.NUMBER).description("order in category list"),
+                        fieldWithPath("description").type(JsonFieldType.STRING).description("description")
                     )
                 )
             );
@@ -264,7 +319,8 @@ public class AdminCategoryControllerTest {
                 relaxedResponseFields(
                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("id (PK)"),
                         fieldWithPath("name").type(JsonFieldType.STRING).description("name"),
-                        fieldWithPath("seq").type(JsonFieldType.NUMBER).description("order in category list")
+                        fieldWithPath("seq").type(JsonFieldType.NUMBER).description("order in category list"),
+                        fieldWithPath("description").type(JsonFieldType.STRING).description("description")
                     )
                 )
             );
@@ -282,10 +338,11 @@ public class AdminCategoryControllerTest {
 
         given(categoryService.updateSeq(eq(1L), any(Category.Direction.class))).willReturn(category);
 
-        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders
-                .put("/admin/categories/{id}/{direction}", 1L, Category.Direction.Down).contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON).header("Authorization", adminId)
-                .content(objectMapper.writeValueAsString(c)).characterEncoding("utf-8"));
+        ResultActions result = this.mockMvc.perform(
+                RestDocumentationRequestBuilders.put("/admin/categories/{id}/{direction}", 1L, Category.Direction.Down)
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                        .header("Authorization", adminId).content(objectMapper.writeValueAsString(c))
+                        .characterEncoding("utf-8"));
 
         result.andExpect(status().isOk());
         result.andDo(print());
@@ -314,7 +371,8 @@ public class AdminCategoryControllerTest {
                 relaxedResponseFields(
                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("id (PK)"),
                         fieldWithPath("name").type(JsonFieldType.STRING).description("name"),
-                        fieldWithPath("seq").type(JsonFieldType.NUMBER).description("order in category list")
+                        fieldWithPath("seq").type(JsonFieldType.NUMBER).description("order in category list"),
+                        fieldWithPath("description").type(JsonFieldType.STRING).description("description")
                     )
                 )
             );

@@ -17,7 +17,10 @@ import static org.springframework.restdocs.request.RequestDocumentation.requestP
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -187,6 +190,13 @@ public class SoftwareControllerTest {
         Software software1 = software(1L, "software-01", category1);
         Software software2 = software(2L, "software-02", category2);
 
+        LocalDate currentDate = current.toLocalDate();
+        LocalTime midnight = LocalTime.of(0, 0);
+        LocalDateTime dateTimeAfter = LocalDateTime.of(currentDate, midnight);
+        LocalDateTime dateTimeBefore = dateTimeAfter.plusDays(1);
+        String createdDateAfter = dateTimeAfter.format(DateTimeFormatter.ISO_DATE_TIME);
+        String createdDateBefore = dateTimeBefore.format(DateTimeFormatter.ISO_DATE_TIME);
+
         Pageable pageable = PageRequest.of(0, 10);
 
         List<Software> content = new ArrayList<>();
@@ -199,6 +209,7 @@ public class SoftwareControllerTest {
         ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/softwares/my/page")
                 .param("page", "0").param("size", "10").param("sort", "id,asc").param("categoryId", "1")
                 .param("nameLike", "software").contentType(MediaType.APPLICATION_JSON)
+                .param("createdDateAfter", createdDateAfter).param("createdDateBefore", createdDateBefore)
                 .accept(MediaType.APPLICATION_JSON).header("Authorization", userId).characterEncoding("utf-8"));
 
         result.andExpect(status().isOk());
@@ -224,7 +235,9 @@ public class SoftwareControllerTest {
                         parameterWithName("size").description("size of page"),
                         parameterWithName("sort").description("sort condition (column,direction)"),
                         parameterWithName("categoryId").description("category's id"),
-                        parameterWithName("nameLike").description("search word of name")
+                        parameterWithName("nameLike").description("search word of name"),
+                        parameterWithName("createdDateAfter").description("start date time"),
+                        parameterWithName("createdDateBefore").description("end date time")
                     ),
                 relaxedResponseFields(
                         fieldWithPath("content").type(JsonFieldType.ARRAY).description("content of page"),
