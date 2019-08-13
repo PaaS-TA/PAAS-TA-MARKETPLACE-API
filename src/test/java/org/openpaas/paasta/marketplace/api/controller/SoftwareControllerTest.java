@@ -196,6 +196,8 @@ public class SoftwareControllerTest {
         LocalDateTime dateTimeBefore = dateTimeAfter.plusDays(1);
         String createdDateAfter = dateTimeAfter.format(DateTimeFormatter.ISO_DATE_TIME);
         String createdDateBefore = dateTimeBefore.format(DateTimeFormatter.ISO_DATE_TIME);
+        String statusModifiedDateAfter = dateTimeAfter.format(DateTimeFormatter.ISO_DATE_TIME);
+        String statusModifiedDateBefore = dateTimeBefore.format(DateTimeFormatter.ISO_DATE_TIME);
 
         Pageable pageable = PageRequest.of(0, 10);
 
@@ -210,6 +212,7 @@ public class SoftwareControllerTest {
                 .param("page", "0").param("size", "10").param("sort", "id,asc").param("categoryId", "1")
                 .param("nameLike", "software").contentType(MediaType.APPLICATION_JSON)
                 .param("createdDateAfter", createdDateAfter).param("createdDateBefore", createdDateBefore)
+                .param("statusModifiedDateAfter", statusModifiedDateAfter).param("statusModifiedDateBefore", statusModifiedDateBefore)
                 .accept(MediaType.APPLICATION_JSON).header("Authorization", userId).characterEncoding("utf-8"));
 
         result.andExpect(status().isOk());
@@ -236,8 +239,10 @@ public class SoftwareControllerTest {
                         parameterWithName("sort").description("sort condition (column,direction)"),
                         parameterWithName("categoryId").description("category's id"),
                         parameterWithName("nameLike").description("search word of name"),
-                        parameterWithName("createdDateAfter").description("start date time"),
-                        parameterWithName("createdDateBefore").description("end date time")
+                        parameterWithName("createdDateAfter").description("start created date time"),
+                        parameterWithName("createdDateBefore").description("end created date time"),
+                        parameterWithName("statusModifiedDateAfter").description("start status modified date time"),
+                        parameterWithName("statusModifiedDateBefore").description("end status modified date time")
                     ),
                 relaxedResponseFields(
                         fieldWithPath("content").type(JsonFieldType.ARRAY).description("content of page"),
