@@ -77,6 +77,8 @@ include::method.adoc[]
 ==== get (Seller)
 :method-name: get
 
+include::method.adoc[]
+
 ==== create (Seller)
 :method-name: create
 
