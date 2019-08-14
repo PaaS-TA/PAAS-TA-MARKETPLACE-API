@@ -2,6 +2,7 @@ package org.openpaas.paasta.marketplace.api.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 
 import org.openpaas.paasta.marketplace.api.domain.Software;
@@ -36,7 +37,9 @@ public class SoftwareController {
     private final SoftwareService softwareService;
 
     @GetMapping("/page")
-    public Page<Software> getPage(SoftwareSpecification spec, Pageable pageable) {
+    public Page<Software> getPage(SoftwareSpecification spec, Pageable pageable, HttpServletRequest httpServletRequest) {
+        System.out.println("bearer 토큰 ::: " + httpServletRequest.getHeader("bearer"));
+
         spec.setStatus(Status.Approval);
         spec.setInUse(Yn.Y);
 
