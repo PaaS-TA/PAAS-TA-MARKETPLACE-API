@@ -38,7 +38,7 @@ public class SoftwareController {
 
     @GetMapping("/page")
     public Page<Software> getPage(SoftwareSpecification spec, Pageable pageable, HttpServletRequest httpServletRequest) {
-        System.out.println("bearer 토큰 ::: " + httpServletRequest.getHeader("bearer"));
+        //System.out.println("bearer 토큰 ::: " + httpServletRequest.getHeader("cf-Authorization"));
 
         spec.setStatus(Status.Approval);
         spec.setInUse(Yn.Y);
