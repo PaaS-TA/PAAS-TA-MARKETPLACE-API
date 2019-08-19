@@ -33,6 +33,7 @@ ext {
 	marketVersion = '0.0.1-SNAPSHOT';
 	mysqlConnectorVersion = '8.0.15';
 	adonistrackVersion = '0.0.2';
+	jossVersion = '0.10.1'
 }
 
 dependencies {
@@ -47,6 +48,13 @@ dependencies {
 	compile "org.projectlombok:lombok:${lombokVersion}"
 	compile "org.springframework.boot:spring-boot-devtools:${springBootVersion}"
 	compile "com.woozooha:adonistrack:${adonistrackVersion}"
+
+	//Java Client for OpenStack Storage
+	compile ("org.javaswift:joss:${jossVersion}")
+	compile('junit:junit:4.12')
+	// https://mvnrepository.com/artifact/javax.ws.rs/javax.ws.rs-api
+	compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.0.1'
+
 
 	runtimeOnly "mysql:mysql-connector-java:${mysqlConnectorVersion}"
 
