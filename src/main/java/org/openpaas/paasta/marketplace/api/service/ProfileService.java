@@ -27,7 +27,7 @@ public class ProfileService {
     }
 
     public Profile get(String id) {
-        return profileRepository.findById(id).get();
+        return profileRepository.findById(id).orElse(null);
     }
 
     public Profile update(Profile profile) {
