@@ -33,7 +33,7 @@ ext {
 	marketVersion = '0.0.1-SNAPSHOT';
 	mysqlConnectorVersion = '8.0.15';
 	adonistrackVersion = '0.0.2';
-	jossVersion = '0.10.1'
+	jossVersion = '0.10.3'
 }
 
 dependencies {
