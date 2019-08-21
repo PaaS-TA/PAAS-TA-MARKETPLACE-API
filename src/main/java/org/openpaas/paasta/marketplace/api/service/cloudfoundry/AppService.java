@@ -155,7 +155,7 @@ public class AppService extends Common {
             int index = param.getApp().indexOf(".");
             File file = File.createTempFile(appName.substring(0, index), appName.substring(index , appName.length()));
             int pathIndex = param.getAppPath().lastIndexOf("/");
-            String FileName = param.getAppPath().substring(index + 1, param.getAppPath().length());
+            String FileName = param.getAppPath().substring(pathIndex + 1, param.getAppPath().length());
             final StoredObject object = container.getObject(FileName);
             byte[] bytes = object.downloadObject();
             InputStream is = new ByteArrayInputStream( bytes );
@@ -186,7 +186,8 @@ public class AppService extends Common {
             int index = param.getManifest().indexOf(".");
             file = File.createTempFile(manifestName.substring(0, index), manifestName.substring(index , manifestName.length()));
             int pathIndex = param.getManifestPath().lastIndexOf("/");
-            String FileName = param.getManifestPath().substring(index + 1, param.getManifestPath().length());
+            String FileName = param.getManifestPath().substring(pathIndex + 1, param.getManifestPath().length());
+            System.out.println(FileName);
             final StoredObject object = container.getObject(FileName);
             byte[] bytes = object.downloadObject();
 
