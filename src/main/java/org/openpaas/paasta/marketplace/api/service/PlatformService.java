@@ -39,10 +39,10 @@ public class PlatformService {
         Software software = instance.getSoftware();
         String name = generateName(instance);
 
-        software.setName(name);
+        //software.setName(name);
 
         // 1) 앱 생성하는 CF 호출
-        Map<String, Object> result = appService.createApp(software);
+        Map<String, Object> result = appService.createApp(software, name);
 
         // 2) 나머지 값 채워주기
         String appGuid = result.get("appId").toString();

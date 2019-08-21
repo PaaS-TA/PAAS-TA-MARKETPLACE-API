@@ -72,7 +72,7 @@ public class AppService extends Common {
         return listApplicationsResponse;
     }
 
-    public Map<String, Object> createApp(Software param) {
+    public Map<String, Object> createApp(Software param, String name) {
         ReactorCloudFoundryClient reactorCloudFoundryClient = cloudFoundryClient(tokenProvider());
         String applicationid = "applicationID";
         String routeid = "route ID";
@@ -107,9 +107,9 @@ public class AppService extends Common {
 //            }
             app.setDiskQuota(1024);
             app.setSpaceGuid(marketSpaceGuid);
-            app.setAppName(param.getName());
+            app.setAppName(name);
             app.setDomainId(marketDomainGuid);
-            app.setHostName(param.getName());
+            app.setHostName(name);
 
             file = createTempFile(param); // 임시파일을 생성합니다.
             applicationid = createApplication(app, reactorCloudFoundryClient); // App을 만들고 guid를 return 합니다.
@@ -215,7 +215,7 @@ public class AppService extends Common {
         }
 
         Map<String, Object> yamlMaps = yaml.load(yamlFile);
-        
+
         System.out.println(yamlMaps);
 
         return yamlMaps;
