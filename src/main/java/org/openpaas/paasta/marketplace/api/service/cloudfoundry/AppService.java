@@ -1,0 +1,351 @@
+package org.openpaas.paasta.marketplace.api.service.cloudfoundry;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.cloudfoundry.client.v2.applications.*;
+import org.cloudfoundry.client.v2.routemappings.CreateRouteMappingRequest;
+import org.cloudfoundry.client.v2.routes.CreateRouteRequest;
+import org.cloudfoundry.client.v2.routes.DeleteRouteRequest;
+import org.cloudfoundry.reactor.client.ReactorCloudFoundryClient;
+import org.openpaas.paasta.marketplace.api.config.common.Common;
+import org.openpaas.paasta.marketplace.api.domain.Software;
+import org.openpaas.paasta.marketplace.api.cloudFoundryModel.App;
+import org.openpaas.paasta.marketplace.api.cloudFoundryModel.NameType;
+import org.openpaas.paasta.marketplace.api.service.SoftwareService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.Yaml;
+
+import java.io.*;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.*;
+
+/**
+ * @author hrjin
+ * @version 1.0
+ * @since 2019-08-20
+ */
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class AppService extends Common {
+
+    @Value("${market.org..guid}")
+    public String marketOrgGuid;
+
+    @Value("${market.space.guid}")
+    public String marketSpaceGuid;
+
+    @Value("${local.uploadPath}")
+    private String localUploadPath;
+
+    @Value("${market.naming-type}")
+    public NameType localNamingType;
+
+    @Value("${market.domain_guid}")
+    public String marketDomainGuid;
+
+
+    // 아래는 manifest 파싱해서 나오는 값들
+    private String buildPackName = "java_buildpack";
+
+    private final SoftwareService softwareService;
+
+
+
+    /**
+     * 앱 목록 조회
+     *
+     * @param orgid
+     * @param spaceid
+     * @return
+     */
+    public ListApplicationsResponse getAppList(String orgid, String spaceid) throws IOException {
+        ListApplicationsResponse listApplicationsResponse = cloudFoundryClient(tokenProvider()).applicationsV2().list(ListApplicationsRequest.builder().organizationId(orgid).spaceId(spaceid).build()).block();
+        return listApplicationsResponse;
+    }
+
+    public Map<String, Object> createApp(Software param, String agentToken) {
+        ReactorCloudFoundryClient reactorCloudFoundryClient = cloudFoundryClient(tokenProvider());
+        String applicationid = "applicationID";
+        String routeid = "route ID";
+        File file = null;
+        App app = new App();
+
+
+        try {
+
+            Map parsingEnv = createManifestFile(param, agentToken);
+            List applications = (List) parsingEnv.get("applications");
+
+            Object ddd = applications.get(0);
+            LinkedHashMap<String, ?> hehe = (LinkedHashMap<String, String>) ddd;
+
+            System.out.println("따로 찍어보아요~~~" + hehe.get("memory"));
+
+            Integer memorySize = Integer.valueOf(hehe.get("memory").toString().replaceAll("[^0-9]", ""));
+            Integer instance = (Integer) hehe.get("instances");
+
+            //Integer diskSize = Integer.valueOf(hehe.get("disk_quota").toString().replaceAll("[^0-9]", ""));
+
+            //app.setBuildpack(parsingEnv.get("buildpack").toString());
+            app.setBuildpack("java_buildpack");
+            if(hehe.get("memory").toString().toLowerCase().indexOf("g") > -1){
+                memorySize = memorySize * 1024;
+            }
+            app.setMemory(memorySize);
+            app.setInstances(instance);
+//            if(hehe.get("disk_quota").toString().toLowerCase().indexOf("g") > -1){
+//                diskSize = diskSize * 1024;
+//            }
+            app.setDiskQuota(1024);
+            app.setSpaceGuid(marketSpaceGuid);
+            app.setAppName(param.getName());
+            app.setDomainId(marketDomainGuid);
+            app.setHostName(param.getName());
+
+            file = createTempFile(param, agentToken); // 임시파일을 생성합니다.
+            applicationid = createApplication(app, reactorCloudFoundryClient); // App을 만들고 guid를 return 합니다.
+            routeid = createRoute(app, reactorCloudFoundryClient); //route를 생성후 guid를 return 합니다.
+            routeMapping(applicationid, routeid, reactorCloudFoundryClient); // app와 route를 mapping합니다.
+            fileUpload(file, applicationid, reactorCloudFoundryClient); // app에 파일 업로드 작업을 합니다.
+            updateApp(parsingEnv, applicationid); // 환경변수를 넣어준다.
+            procCatalogStartApplication(applicationid, reactorCloudFoundryClient); //앱 시작
+
+            String finalApplicationid = applicationid;
+            return new HashMap<String, Object>() {{
+                put("appId", finalApplicationid);
+            }};
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            if (!applicationid.equals("applicationID")) {
+                if (!routeid.equals("route ID")) {
+                    reactorCloudFoundryClient.routes().delete(DeleteRouteRequest.builder().routeId(routeid).build()).block();
+                }
+                reactorCloudFoundryClient.applicationsV2().delete(DeleteApplicationRequest.builder().applicationId(applicationid).build()).block();
+            }
+            return new HashMap<String, Object>() {{
+                put("RESULT", "fail");
+                put("msg", e.getMessage());
+            }};
+        } finally {
+//            if (file != null) {
+//                file.delete();
+//            }
+        }
+    }
+
+
+    /**
+     * 임시 파일을 생성한다.
+     *
+     * @param param  Catalog(모델클래스)
+     * @param token2 String(자바클래스)
+     * @return Map(자바클래스)
+     * @throws Exception Exception(자바클래스)
+     */
+    private File createTempFile(Software param, String token2) throws Exception {
+
+        try {
+            //response.setContentType("application/octet-stream");
+            String fileNameForBrowser = getDisposition(param.getApp(), getBrowser(token2));
+            //response.setHeader("Content-Disposition", "attachment; filename=" + fileNameForBrowser);
+            File file = File.createTempFile(param.getApp().substring(0, param.getApp().length() - 4), param.getApp().substring(param.getApp().length() - 4));
+            System.out.println(file.getPath());
+            InputStream is = (new URL(param.getAppPath()).openConnection()).getInputStream();
+            OutputStream out = new FileOutputStream(file);
+            IOUtils.copy(is, out);
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(out);
+            return file;
+        } catch (Exception e) {
+            log.info(e.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * 임시 파일을 생성한다.
+     *
+     * @param param  Catalog(모델클래스)
+     * @param token2 String(자바클래스)
+     * @return Map(자바클래스)
+     * @throws Exception Exception(자바클래스)
+     */
+    private Map createManifestFile(Software param, String token2) throws Exception {
+
+        File file = null;
+
+        try {
+            //response.setContentType("application/octet-stream");
+            String fileNameForBrowser = getDisposition(param.getManifest(), getBrowser(token2));
+            //response.setHeader("Content-Disposition", "attachment; filename=" + fileNameForBrowser);
+            file = File.createTempFile(param.getManifest().substring(0, param.getManifest().length() - 4), param.getManifest().substring(param.getManifest().length() - 4));
+            System.out.println(file.getPath());
+            InputStream is = (new URL(param.getManifestPath()).openConnection()).getInputStream();
+            OutputStream out = new FileOutputStream(file);
+            IOUtils.copy(is, out);
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(out);
+            System.out.println("file ::: " + file.getPath());
+        } catch (Exception e) {
+            log.info(e.getMessage());
+        }
+        return convertYamlToJson(file);
+    }
+
+    public Map<String, Object> convertYamlToJson(File file) {
+        Yaml yaml = new Yaml();
+
+        Reader yamlFile = null;
+
+        try {
+            yamlFile = new FileReader(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        Map<String, Object> yamlMaps = yaml.load(yamlFile);
+        
+        System.out.println(yamlMaps);
+
+        return yamlMaps;
+    }
+
+    private String getBrowser(String header) {
+
+        if (header.indexOf("MSIE") > -1) {
+            return "MSIE";
+        } else if (header.indexOf("Chrome") > -1) {
+            return "Chrome";
+        } else if (header.indexOf("Opera") > -1) {
+            return "Opera";
+        } else if (header.indexOf("Trident/7.0") > -1) {
+            //IE 11 이상 //IE 버전 별 체크 >> Trident/6.0(IE 10) , Trident/5.0(IE 9) , Trident/4.0(IE 8)
+            return "MSIE";
+        }
+
+        return "Firefox";
+    }
+
+    private String getDisposition(String filename, String browser) throws Exception {
+        String encodedFilename = null;
+
+        if (browser.equals("MSIE")) {
+            encodedFilename = URLEncoder.encode(filename, "UTF-8").replaceAll("\\+", "%20");
+        } else if (browser.equals("Firefox")) {
+            encodedFilename = "\"" + new String(filename.getBytes("UTF-8"), "8859_1") + "\"";
+        } else if (browser.equals("Opera")) {
+            encodedFilename = "\"" + new String(filename.getBytes("UTF-8"), "8859_1") + "\"";
+        } else if (browser.equals("Chrome")) {
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < filename.length(); i++) {
+                char c = filename.charAt(i);
+                if (c > '~') {
+                    sb.append(URLEncoder.encode("" + c, "UTF-8"));
+                } else {
+                    sb.append(c);
+                }
+            }
+            encodedFilename = sb.toString();
+        } else {
+            throw new RuntimeException("Not supported browser");
+        }
+
+        return encodedFilename;
+    }
+
+    private String createApplication(App param, ReactorCloudFoundryClient reactorCloudFoundryClient) throws Exception {
+        return reactorCloudFoundryClient.
+                applicationsV2().create(CreateApplicationRequest.builder().buildpack(param.getBuildpack()).memory(param.getMemory()).name(param.getAppName()).diskQuota(param.getDiskQuota()).spaceId(param.getSpaceGuid()).build()).block().getMetadata().getId();
+
+    }
+
+    /**
+     * 라우트를 생성한다..
+     *
+     * @param param                     Catalog
+     * @param reactorCloudFoundryClient ReactorCloudFoundryClient
+     * @return Map(자바클래스)
+     * @throws Exception Exception(자바클래스)
+     */
+    private String createRoute(App param, ReactorCloudFoundryClient reactorCloudFoundryClient) {
+        return reactorCloudFoundryClient.
+                routes().create(CreateRouteRequest.builder().host(param.getHostName()).domainId(param.getDomainId()).spaceId(param.getSpaceGuid()).build()).block().getMetadata().getId();
+    }
+
+
+    /**
+     * 라우트를 앱에 매핑한다.
+     *
+     * @param applicationid             String
+     * @param routeid                   String
+     * @param reactorCloudFoundryClient ReactorCloudFoundryClient
+     * @return Map(자바클래스)
+     * @throws Exception Exception(자바클래스)
+     */
+    private void routeMapping(String applicationid, String routeid, ReactorCloudFoundryClient reactorCloudFoundryClient) throws Exception {
+        reactorCloudFoundryClient.
+                routeMappings().create(CreateRouteMappingRequest.builder().routeId(routeid).applicationId(applicationid).build()).block();
+    }
+
+    /**
+     * 파일을 업로드한다.
+     *
+     * @param file                      File
+     * @param applicationid             String
+     * @param reactorCloudFoundryClient ReactorCloudFoundryClient
+     * @return Map(자바클래스)
+     * @throws Exception Exception(자바클래스)
+     */
+    private void fileUpload(File file, String applicationid, ReactorCloudFoundryClient reactorCloudFoundryClient) throws Exception {
+        try {
+            reactorCloudFoundryClient.
+                    applicationsV2().upload(UploadApplicationRequest.builder().applicationId(applicationid).application(file.toPath()).build()).block();
+        } catch (Exception e) {
+            log.info(e.toString());
+        }
+    }
+
+    public Map updateApp(Map envJson, String appGuid) {
+        Map resultMap = new HashMap();
+        try {
+            ReactorCloudFoundryClient cloudFoundryClient = cloudFoundryClient(tokenProvider());
+            if (envJson != null && envJson.size() > 0) {
+                cloudFoundryClient.applicationsV2().update(org.cloudfoundry.client.v2.applications.UpdateApplicationRequest.builder().applicationId(appGuid).environmentJsons(envJson).build()).block();
+            } else if (envJson != null && envJson.size() == 0) {
+                cloudFoundryClient.applicationsV2().update(UpdateApplicationRequest.builder().applicationId(appGuid).environmentJsons(new HashMap<>()).build()).block();
+            }
+
+            resultMap.put("result", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put("result", false);
+            resultMap.put("msg", e);
+        }
+
+        return resultMap;
+    }
+
+    /**
+     * 카탈로그 앱을 시작한다.
+     *
+     * @param applicationid             applicationid
+     * @param reactorCloudFoundryClient ReactorCloudFoundryClient
+     * @return Map(자바클래스)
+     * @throws Exception Exception(자바클래스)
+     */
+    private Map<String, Object> procCatalogStartApplication(String applicationid, ReactorCloudFoundryClient reactorCloudFoundryClient) throws Exception {
+        try {
+            Thread.sleep(500);
+            reactorCloudFoundryClient.applicationsV2().update(UpdateApplicationRequest.builder().applicationId(applicationid).state("STARTED").build()).block();
+        } catch (Exception e) {
+            log.info(e.toString());
+        }
+        return new HashMap<String, Object>() {{
+            put("RESULT", "success");
+        }};
+    }
+}
