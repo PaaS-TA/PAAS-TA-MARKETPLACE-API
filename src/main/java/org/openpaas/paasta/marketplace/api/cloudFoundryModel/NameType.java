@@ -1,0 +1,29 @@
+package org.openpaas.paasta.marketplace.api.cloudFoundryModel;
+
+import org.openpaas.paasta.marketplace.api.domain.Instance;
+
+import java.util.UUID;
+
+public enum NameType {
+    Hash(""), Auto("app-");
+
+    private String template;
+
+    NameType(String template) {
+        this.template = template;
+    }
+
+    public String generateName(Instance instance) {
+        if(this.equals(NameType.Auto)) {
+            return template + instance.getId();
+        }
+        return uuidGetter(instance);
+    }
+
+    private String uuidGetter(Instance softwareInstance) {
+		int beginIndex = 20;
+		String parentGuid = softwareInstance.getAppGuid().replaceAll("-", "").substring(beginIndex);
+        String uuidStr = UUID.randomUUID().toString().replaceAll("-", "").substring(beginIndex);
+		return parentGuid + "-" + uuidStr;
+	}
+}
