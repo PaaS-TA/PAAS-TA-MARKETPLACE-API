@@ -1,10 +1,6 @@
 package org.openpaas.paasta.marketplace.api.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import javax.transaction.Transactional;
-
+import lombok.RequiredArgsConstructor;
 import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.Software.Status;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareHistory;
@@ -17,12 +13,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
+import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class SoftwareService {
+
+    //private final SwiftOSService swiftOSService;
 
     private final SoftwareRepository softwareRepository;
 
@@ -90,4 +90,32 @@ public class SoftwareService {
         return softwareHistoryRepository.findAll(spec, sort);
     }
 
+//    public Object getObjectDownload(String name) throws IOException {
+//        final StoredObject object = swiftOSService.getRawObject( name );
+//        if (null == object) {
+//
+//            //return createResponseEntity( new byte[0], null, HttpStatus.NOT_FOUND );
+//        }
+//
+//        final SwiftOSFileInfo fileInfo = SwiftOSFileInfo.newInstanceFromStoredObject( object );
+//        if (null == fileInfo) {
+//
+//            return null;
+//        }
+//
+//        final HttpHeaders headers = new HttpHeaders();
+//
+//        // use SwiftOSFileInfo.getFilename() instead of name(stored filename)
+//        headers.add( "Content-Disposition", ( "attachment;filename=" + fileInfo.getFilename() ) );
+//        headers.add( "Content-Transfer-Encoding", "binary" );
+//
+//
+//        // use SwiftOSFileInfo.getFileType() instead of StoredObject.getContentType()
+//        headers.add( "Content-Type", fileInfo.getFileType() );
+//
+//
+//        byte[] rawContents = object.downloadObject();
+//
+//        return rawContents;
+//    }
 }
