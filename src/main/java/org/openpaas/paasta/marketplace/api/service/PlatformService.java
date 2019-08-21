@@ -33,8 +33,8 @@ public class PlatformService {
     private final SoftwareService softwareService;
 
     public void provision(Instance instance) {
-        // TODO: implements
-        String agentToken = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36";
+
+
 
         Software software = instance.getSoftware();
         String name = generateName(instance);
@@ -42,7 +42,7 @@ public class PlatformService {
         software.setName(name);
 
         // 1) 앱 생성하는 CF 호출
-        Map<String, Object> result = appService.createApp(software, agentToken);
+        Map<String, Object> result = appService.createApp(software);
 
         // 2) 나머지 값 채워주기
         String appGuid = result.get("appId").toString();

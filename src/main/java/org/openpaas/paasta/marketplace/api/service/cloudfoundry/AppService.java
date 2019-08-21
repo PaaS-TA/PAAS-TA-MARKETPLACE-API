@@ -8,11 +8,14 @@ import org.cloudfoundry.client.v2.routemappings.CreateRouteMappingRequest;
 import org.cloudfoundry.client.v2.routes.CreateRouteRequest;
 import org.cloudfoundry.client.v2.routes.DeleteRouteRequest;
 import org.cloudfoundry.reactor.client.ReactorCloudFoundryClient;
+import org.javaswift.joss.model.Container;
+import org.javaswift.joss.model.StoredObject;
 import org.openpaas.paasta.marketplace.api.config.common.Common;
 import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.cloudFoundryModel.App;
 import org.openpaas.paasta.marketplace.api.cloudFoundryModel.NameType;
 import org.openpaas.paasta.marketplace.api.service.SoftwareService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
@@ -53,6 +56,8 @@ public class AppService extends Common {
 
     private final SoftwareService softwareService;
 
+    @Autowired
+    private final Container container;
 
 
     /**
@@ -67,7 +72,7 @@ public class AppService extends Common {
         return listApplicationsResponse;
     }
 
-    public Map<String, Object> createApp(Software param, String agentToken) {
+    public Map<String, Object> createApp(Software param) {
         ReactorCloudFoundryClient reactorCloudFoundryClient = cloudFoundryClient(tokenProvider());
         String applicationid = "applicationID";
         String routeid = "route ID";
@@ -77,7 +82,7 @@ public class AppService extends Common {
 
         try {
 
-            Map parsingEnv = createManifestFile(param, agentToken);
+            Map parsingEnv = createManifestFile(param);
             List applications = (List) parsingEnv.get("applications");
 
             Object ddd = applications.get(0);
@@ -106,14 +111,13 @@ public class AppService extends Common {
             app.setDomainId(marketDomainGuid);
             app.setHostName(param.getName());
 
-            file = createTempFile(param, agentToken); // 임시파일을 생성합니다.
+            file = createTempFile(param); // 임시파일을 생성합니다.
             applicationid = createApplication(app, reactorCloudFoundryClient); // App을 만들고 guid를 return 합니다.
             routeid = createRoute(app, reactorCloudFoundryClient); //route를 생성후 guid를 return 합니다.
             routeMapping(applicationid, routeid, reactorCloudFoundryClient); // app와 route를 mapping합니다.
             fileUpload(file, applicationid, reactorCloudFoundryClient); // app에 파일 업로드 작업을 합니다.
             updateApp(parsingEnv, applicationid); // 환경변수를 넣어준다.
             procCatalogStartApplication(applicationid, reactorCloudFoundryClient); //앱 시작
-
             String finalApplicationid = applicationid;
             return new HashMap<String, Object>() {{
                 put("appId", finalApplicationid);
@@ -142,23 +146,24 @@ public class AppService extends Common {
      * 임시 파일을 생성한다.
      *
      * @param param  Catalog(모델클래스)
-     * @param token2 String(자바클래스)
      * @return Map(자바클래스)
      * @throws Exception Exception(자바클래스)
      */
-    private File createTempFile(Software param, String token2) throws Exception {
-
+    private File createTempFile(Software param) throws Exception {
         try {
-            //response.setContentType("application/octet-stream");
-            String fileNameForBrowser = getDisposition(param.getApp(), getBrowser(token2));
-            //response.setHeader("Content-Disposition", "attachment; filename=" + fileNameForBrowser);
-            File file = File.createTempFile(param.getApp().substring(0, param.getApp().length() - 4), param.getApp().substring(param.getApp().length() - 4));
-            System.out.println(file.getPath());
-            InputStream is = (new URL(param.getAppPath()).openConnection()).getInputStream();
+            String appName= param.getApp();
+            int index = param.getApp().indexOf(".");
+            File file = File.createTempFile(appName.substring(0, index), appName.substring(index , appName.length()));
+            int pathIndex = param.getAppPath().lastIndexOf("/");
+            String FileName = param.getAppPath().substring(index + 1, param.getAppPath().length());
+            final StoredObject object = container.getObject(FileName);
+            byte[] bytes = object.downloadObject();
+            InputStream is = new ByteArrayInputStream( bytes );
             OutputStream out = new FileOutputStream(file);
             IOUtils.copy(is, out);
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(out);
+            System.out.println("file ::: " + file.getPath());
             return file;
         } catch (Exception e) {
             log.info(e.getMessage());
@@ -170,21 +175,22 @@ public class AppService extends Common {
      * 임시 파일을 생성한다.
      *
      * @param param  Catalog(모델클래스)
-     * @param token2 String(자바클래스)
      * @return Map(자바클래스)
      * @throws Exception Exception(자바클래스)
      */
-    private Map createManifestFile(Software param, String token2) throws Exception {
-
+    private Map createManifestFile(Software param) throws Exception {
         File file = null;
-
         try {
             //response.setContentType("application/octet-stream");
-            String fileNameForBrowser = getDisposition(param.getManifest(), getBrowser(token2));
-            //response.setHeader("Content-Disposition", "attachment; filename=" + fileNameForBrowser);
-            file = File.createTempFile(param.getManifest().substring(0, param.getManifest().length() - 4), param.getManifest().substring(param.getManifest().length() - 4));
-            System.out.println(file.getPath());
-            InputStream is = (new URL(param.getManifestPath()).openConnection()).getInputStream();
+            String manifestName= param.getManifest();
+            int index = param.getManifest().indexOf(".");
+            file = File.createTempFile(manifestName.substring(0, index), manifestName.substring(index , manifestName.length()));
+            int pathIndex = param.getManifestPath().lastIndexOf("/");
+            String FileName = param.getManifestPath().substring(index + 1, param.getManifestPath().length());
+            final StoredObject object = container.getObject(FileName);
+            byte[] bytes = object.downloadObject();
+
+            InputStream is = new ByteArrayInputStream( bytes );
             OutputStream out = new FileOutputStream(file);
             IOUtils.copy(is, out);
             IOUtils.closeQuietly(is);
