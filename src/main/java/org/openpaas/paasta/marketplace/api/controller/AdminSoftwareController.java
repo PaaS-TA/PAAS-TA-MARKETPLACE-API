@@ -40,10 +40,11 @@ public class AdminSoftwareController {
     public Software update(@PathVariable @NotNull Long id,
             @NotNull @Validated(Software.UpdateMetadata.class) @RequestBody Software software, BindingResult bindingResult)
             throws BindException {
-        Software sameName = softwareService.getByName(software.getName());
-        if (sameName != null && id != sameName.getId()) {
-            bindingResult.rejectValue("name", "Unique");
-        }
+
+//        Software sameName = softwareService.getByName(software.getName());
+//        if (sameName != null && id != sameName.getId()) {
+//            bindingResult.rejectValue("name", "Unique");
+//        }
 
         if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);

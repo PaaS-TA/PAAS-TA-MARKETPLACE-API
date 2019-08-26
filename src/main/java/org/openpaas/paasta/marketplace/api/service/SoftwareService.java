@@ -73,10 +73,10 @@ public class SoftwareService {
         saved.setName(software.getName());
         saved.setCategory(software.getCategory());
         saved.setInUse(software.getInUse());
-        saved.setStatus(software.getStatus());
         if (software.getStatus() != saved.getStatus()) {
             saved.setStatusModifiedDate(LocalDateTime.now());
         }
+        saved.setStatus(software.getStatus());
         saved.setConfirmComment(software.getConfirmComment());
 
         SoftwareHistory history = new SoftwareHistory();
