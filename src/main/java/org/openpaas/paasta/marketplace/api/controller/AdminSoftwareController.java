@@ -3,10 +3,13 @@ package org.openpaas.paasta.marketplace.api.controller;
 import javax.validation.constraints.NotNull;
 
 import org.openpaas.paasta.marketplace.api.domain.Software;
+import org.openpaas.paasta.marketplace.api.domain.SoftwareHistory;
+import org.openpaas.paasta.marketplace.api.domain.SoftwareHistorySpecification;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
 import org.openpaas.paasta.marketplace.api.service.SoftwareService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/admin/softwares")
@@ -53,6 +58,14 @@ public class AdminSoftwareController {
         software.setId(id);
 
         return softwareService.updateMetadata(software);
+    }
+
+    @GetMapping("/{id}/histories")
+    public List<SoftwareHistory> getHistoryList(@NotNull @PathVariable Long id, Sort sort) {
+        SoftwareHistorySpecification spec = new SoftwareHistorySpecification();
+        spec.setSoftwareId(id);
+
+        return softwareService.getHistoryList(spec, sort);
     }
 
 }
