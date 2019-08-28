@@ -20,9 +20,9 @@ public enum NameType {
         return uuidGetter(instance);
     }
 
-    private String uuidGetter(Instance softwareInstance) {
+    private String uuidGetter(Instance instance) {
 		int beginIndex = 20;
-		String parentGuid = softwareInstance.getAppGuid().replaceAll("-", "").substring(beginIndex);
+		String parentGuid = instance.getAppGuid().replaceAll("-", "").substring(beginIndex);
         String uuidStr = UUID.randomUUID().toString().replaceAll("-", "").substring(beginIndex);
 		return parentGuid + "-" + uuidStr;
 	}

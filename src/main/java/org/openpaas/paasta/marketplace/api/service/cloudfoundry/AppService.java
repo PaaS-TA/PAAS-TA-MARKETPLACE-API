@@ -10,18 +10,16 @@ import org.cloudfoundry.client.v2.routes.DeleteRouteRequest;
 import org.cloudfoundry.reactor.client.ReactorCloudFoundryClient;
 import org.javaswift.joss.model.Container;
 import org.javaswift.joss.model.StoredObject;
-import org.openpaas.paasta.marketplace.api.config.common.Common;
-import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.cloudFoundryModel.App;
 import org.openpaas.paasta.marketplace.api.cloudFoundryModel.NameType;
-import org.openpaas.paasta.marketplace.api.service.SoftwareService;
+import org.openpaas.paasta.marketplace.api.config.common.Common;
+import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
 
@@ -50,11 +48,7 @@ public class AppService extends Common {
     @Value("${market.domain_guid}")
     public String marketDomainGuid;
 
-
-    // 아래는 manifest 파싱해서 나오는 값들
-    private String buildPackName = "java_buildpack";
-
-    private final SoftwareService softwareService;
+    public static final int ONE_SECOND = 1000;
 
     @Autowired
     private final Container container;
@@ -72,6 +66,13 @@ public class AppService extends Common {
         return listApplicationsResponse;
     }
 
+    /**
+     * 앱 생성
+     *
+     * @param param
+     * @param name
+     * @return
+     */
     public Map<String, Object> createApp(Software param, String name) {
         ReactorCloudFoundryClient reactorCloudFoundryClient = cloudFoundryClient(tokenProvider());
         String applicationid = "applicationID";
@@ -79,33 +80,56 @@ public class AppService extends Common {
         File file = null;
         App app = new App();
 
-
         try {
 
             Map parsingEnv = createManifestFile(param);
             List applications = (List) parsingEnv.get("applications");
 
-            Object ddd = applications.get(0);
-            LinkedHashMap<String, ?> hehe = (LinkedHashMap<String, String>) ddd;
+            Object propertyResult = applications.get(0);
+            LinkedHashMap<String, ?> resultMap = (LinkedHashMap<String, String>) propertyResult;
 
-            System.out.println("따로 찍어보아요~~~" + hehe.get("memory"));
+            Integer memorySize = null;
+            Integer instance = null;
+            Integer diskSize = null;
+            String buildPack = null;
 
-            Integer memorySize = Integer.valueOf(hehe.get("memory").toString().replaceAll("[^0-9]", ""));
-            Integer instance = (Integer) hehe.get("instances");
+            if(resultMap.containsKey("memory")){
+                memorySize = Integer.valueOf(resultMap.get("memory").toString().replaceAll("[^0-9]", ""));
 
-            //Integer diskSize = Integer.valueOf(hehe.get("disk_quota").toString().replaceAll("[^0-9]", ""));
-
-            //app.setBuildpack(parsingEnv.get("buildpack").toString());
-            app.setBuildpack("java_buildpack");
-            if(hehe.get("memory").toString().toLowerCase().indexOf("g") > -1){
-                memorySize = memorySize * 1024;
+                if(resultMap.get("memory").toString().toLowerCase().contains("g")){
+                    memorySize = memorySize * 1024;
+                }
             }
-            app.setMemory(memorySize);
-            app.setInstances(instance);
-//            if(hehe.get("disk_quota").toString().toLowerCase().indexOf("g") > -1){
+
+            if(resultMap.containsKey("disk_quota")){
+                diskSize = Integer.valueOf(resultMap.get("disk_quota").toString().replaceAll("[^0-9]", ""));
+
+                if(resultMap.get("disk_quota").toString().toLowerCase().contains("g")){
+                    diskSize = diskSize * 1024;
+                }
+            }
+
+//            if(resultMap.get("memory").toString().toLowerCase().contains("g")){
+//                memorySize = memorySize * 1024;
+//            }
+
+
+//            if(resultMap.get("disk_quota").toString().toLowerCase().contains("g")){
 //                diskSize = diskSize * 1024;
 //            }
-            app.setDiskQuota(1024);
+
+            if(resultMap.containsKey("instances")){
+                instance = (Integer) resultMap.get("instances");
+            }
+
+            if(resultMap.containsKey("buildpack")){
+                buildPack = resultMap.get("buildpack").toString();
+            }
+
+            app.setInstances(instance);
+            app.setMemory(memorySize);
+            app.setDiskQuota(diskSize);
+            app.setBuildpack(buildPack);
             app.setSpaceGuid(marketSpaceGuid);
             app.setAppName(name);
             app.setDomainId(marketDomainGuid);
@@ -116,11 +140,17 @@ public class AppService extends Common {
             routeid = createRoute(app, reactorCloudFoundryClient); //route를 생성후 guid를 return 합니다.
             routeMapping(applicationid, routeid, reactorCloudFoundryClient); // app와 route를 mapping합니다.
             fileUpload(file, applicationid, reactorCloudFoundryClient); // app에 파일 업로드 작업을 합니다.
-            updateApp(parsingEnv, applicationid); // 환경변수를 넣어준다.
-            procCatalogStartApplication(applicationid, reactorCloudFoundryClient); //앱 시작
+
+            // TODO (1) :::
+            //updateApp((Map) resultMap.get("env"), applicationid); // 환경변수를 넣어준다.
+
+            // TODO (2) ::: 마지막 단계
+            //procStartApplication(applicationid, reactorCloudFoundryClient); //앱 시작
+
             String finalApplicationid = applicationid;
             return new HashMap<String, Object>() {{
                 put("appId", finalApplicationid);
+                put("env", resultMap);
             }};
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -143,7 +173,7 @@ public class AppService extends Common {
 
 
     /**
-     * 임시 파일을 생성한다.
+     * 임시 app 파일을 생성한다.
      *
      * @param param  Catalog(모델클래스)
      * @return Map(자바클래스)
@@ -172,7 +202,7 @@ public class AppService extends Common {
     }
 
     /**
-     * 임시 파일을 생성한다.
+     * 임시 manifest 파일을 생성한다.
      *
      * @param param  Catalog(모델클래스)
      * @return Map(자바클래스)
@@ -339,20 +369,41 @@ public class AppService extends Common {
     /**
      * 카탈로그 앱을 시작한다.
      *
-     * @param applicationid             applicationid
-     * @param reactorCloudFoundryClient ReactorCloudFoundryClient
+     * @param applicationId             applicationId
      * @return Map(자바클래스)
-     * @throws Exception Exception(자바클래스)
      */
-    private Map<String, Object> procCatalogStartApplication(String applicationid, ReactorCloudFoundryClient reactorCloudFoundryClient) throws Exception {
+    public Map<String, Object> procStartApplication(String applicationId) {
+        ReactorCloudFoundryClient reactorCloudFoundryClient = cloudFoundryClient(tokenProvider());
+
         try {
             Thread.sleep(500);
-            reactorCloudFoundryClient.applicationsV2().update(UpdateApplicationRequest.builder().applicationId(applicationid).state("STARTED").build()).block();
+            reactorCloudFoundryClient.applicationsV2().update(UpdateApplicationRequest.builder().applicationId(applicationId).state("STARTED").build()).block();
         } catch (Exception e) {
             log.info(e.toString());
         }
         return new HashMap<String, Object>() {{
             put("RESULT", "success");
         }};
+    }
+
+    public void timer(int waitTime) {
+        long startTime = Calendar.getInstance().getTimeInMillis();
+        while ((Calendar.getInstance().getTimeInMillis() - startTime) < (ONE_SECOND * waitTime)){}
+    }
+
+
+
+    public ApplicationEntity getApplicationNameExists(String name) {
+        int count = 0;
+        ListApplicationsResponse listApplicationsResponse = cloudFoundryClient(tokenProvider()).applicationsV2().list(ListApplicationsRequest.builder().organizationId(marketOrgGuid).spaceId(marketSpaceGuid).build()).block();
+        ApplicationEntity app = null;
+
+        for (ApplicationResource applicationResource : listApplicationsResponse.getResources()) {
+            if (applicationResource.getEntity().getName().equals(name)) {
+                app = applicationResource.getEntity();
+                count++;
+            }
+        }
+        return (count > 0)? app : null;
     }
 }
