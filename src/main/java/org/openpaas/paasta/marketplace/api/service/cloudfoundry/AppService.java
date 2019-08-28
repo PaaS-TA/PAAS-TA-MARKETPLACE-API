@@ -39,9 +39,6 @@ public class AppService extends Common {
     @Value("${market.space.guid}")
     public String marketSpaceGuid;
 
-    @Value("${local.uploadPath}")
-    private String localUploadPath;
-
     @Value("${market.naming-type}")
     public NameType localNamingType;
 
