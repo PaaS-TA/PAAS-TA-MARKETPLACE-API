@@ -84,6 +84,11 @@ public class InstanceService {
 
             instance.setProvisionStatus(Instance.ProvisionStatus.Successful);
             instance.setProvisionEndDate(LocalDateTime.now());
+
+            System.out.println("instance 는??? " + instance.toString());
+
+            instanceRepository.save(instance);
+
         } catch (Exception e) {
             log.info("provision failed: {}", instance.getId());
 

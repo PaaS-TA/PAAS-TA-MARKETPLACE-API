@@ -1,6 +1,7 @@
 package org.openpaas.paasta.marketplace.api.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.cloudfoundry.client.v2.applications.ApplicationEntity;
 import org.cloudfoundry.client.v2.servicebrokers.ListServiceBrokersResponse;
 import org.cloudfoundry.client.v2.servicebrokers.ServiceBrokerResource;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -151,21 +153,25 @@ public class PlatformService {
         int tryCount = 0;
         appService.timer(10);
 
+        log.info("============== 앱 START ================");
         // 앱 스타뚜가 여기서 되어야하는군!!!!
         Map result = appService.procStartApplication(appGuid);
         System.out.println("result ::: " + result.toString());
 
-        while(tryCount < 11) {
+        while(tryCount < 7) {
             appService.timer(30);
             application = appService.getApplicationNameExists(appName);
             tryCount++;
-            if(tryCount == 10 && !application.getPackageState().equals("STAGED")) { //5분
+            System.out.println("app 스테이트트트트 ::: " + application.getPackageState());
+            if(tryCount == 6 && !application.getPackageState().equals("STAGED")) { //3분
                 throw new PlatformException("앱이 시작되지 않네요...! 시작중일지도 모르지만용");
             }
             if(application.getPackageState().equals("STAGED")) {
+                log.info("============== 앱 START END================");
                 return application;
             }
         }
+        System.out.println("app 을 돌려주세욤" + application);
         return application;
     }
 

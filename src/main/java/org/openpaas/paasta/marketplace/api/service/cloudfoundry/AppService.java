@@ -132,6 +132,7 @@ public class AppService extends Common {
             app.setDomainId(marketDomainGuid);
             app.setHostName(name);
 
+            log.info("================= 앱 생성 START =================");
             file = createTempFile(param); // 임시파일을 생성합니다.
             applicationid = createApplication(app, reactorCloudFoundryClient); // App을 만들고 guid를 return 합니다.
             routeid = createRoute(app, reactorCloudFoundryClient); //route를 생성후 guid를 return 합니다.
@@ -145,6 +146,9 @@ public class AppService extends Common {
             //procStartApplication(applicationid, reactorCloudFoundryClient); //앱 시작
 
             String finalApplicationid = applicationid;
+
+            log.info("================= 앱 생성 END - APP_GUID ::: " + finalApplicationid);
+
             return new HashMap<String, Object>() {{
                 put("appId", finalApplicationid);
                 put("env", resultMap);
