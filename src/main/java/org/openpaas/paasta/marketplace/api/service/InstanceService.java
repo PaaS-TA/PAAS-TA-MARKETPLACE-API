@@ -77,7 +77,7 @@ public class InstanceService {
         Instance instance = instanceRepository.findById(id).get();
 
         try {
-            log.info("provision success: {}", instance.getId());
+            log.info("provision start: {}", instance.getId());
 
             platformService.deprovision(instance);
             platformService.provision(instance);
@@ -85,10 +85,7 @@ public class InstanceService {
             instance.setProvisionStatus(Instance.ProvisionStatus.Successful);
             instance.setProvisionEndDate(LocalDateTime.now());
 
-            System.out.println("instance 는??? " + instance.toString());
-
-            instanceRepository.save(instance);
-
+            log.info("provision success: {}", instance.getId());
         } catch (Exception e) {
             log.info("provision failed: {}", instance.getId());
 
@@ -109,12 +106,14 @@ public class InstanceService {
         Instance instance = instanceRepository.findById(id).get();
 
         try {
-            log.info("deprovision success: {}", instance.getId());
+            log.info("deprovision start: {}", instance.getId());
 
             platformService.deprovision(instance);
 
             instance.setDeprovisionStatus(Instance.ProvisionStatus.Successful);
             instance.setDeprovisionEndDate(LocalDateTime.now());
+
+            log.info("deprovision success: {}", instance.getId());
         } catch (Exception e) {
             log.info("deprovision failed: {}", instance.getId());
 
@@ -308,7 +307,4 @@ public class InstanceService {
         log.info("stopDeprovisioning: end: {}", timeout);
     }
 
-//    public Instance findBySoftwareId(Long id) {
-//        return instanceRepository.findBySoftwareId(id);
-//    }
 }

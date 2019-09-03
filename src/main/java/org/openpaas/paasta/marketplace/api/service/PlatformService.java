@@ -45,35 +45,38 @@ public class PlatformService {
     private final ServiceService serviceService;
 
     public void provision(Instance instance) throws PlatformException {
+        try {
+            Software software = instance.getSoftware();
+            String name = generateName(instance);
 
-        Software software = instance.getSoftware();
-        String name = generateName(instance);
-
-        // 1) 앱 생성하는 CF 호출(처음에는 app no start)
-        Map<String, Object> result = appService.createApp(software, name);
-        String appGuid = result.get("appId").toString();
-
-
-        // 환경변수 업데이트
-        Map env = (Map) result.get("env");
-        appService.updateApp(env, appGuid);
+            // 1) 앱 생성하는 CF 호출(처음에는 app no start)
+            Map<String, Object> result = appService.createApp(software, name);
+            String appGuid = result.get("appId").toString();
 
 
-        // 2) 서비스 요청이 있을 경우
-        if(env.containsKey("services")){
-            procServiceBinding(instance, env, appGuid);
+            // 환경변수 업데이트
+            Map env = (Map) result.get("env");
+            appService.updateApp(env, appGuid);
+
+
+            // 2) 서비스 요청이 있을 경우
+            if(env.containsKey("services")){
+                procServiceBinding(instance, env, appGuid);
+            }
+
+
+            // 3) 나머지 값 채워주기
+            instance.setAppGuid(appGuid);
+            instance.setAppName(name);
+            instance.setAppUrl(name + cfHostName);
+
+
+            // 4) 앱 시작 및 상태 체크
+            getAppStats(appGuid, name);
+        } catch (Throwable t) {
+            log.error(t.getMessage(), t);
+            throw new PlatformException(t);
         }
-
-
-        // 3) 나머지 값 채워주기
-        instance.setAppGuid(appGuid);
-        instance.setAppName(name);
-        instance.setAppUrl(name + cfHostName);
-
-
-        // 4) 앱 시작 및 상태 체크
-        getAppStats(appGuid, name);
-
     }
 
     public void deprovision(Instance instance) throws PlatformException {
@@ -162,8 +165,9 @@ public class PlatformService {
             appService.timer(30);
             application = appService.getApplicationNameExists(appName);
             tryCount++;
-            System.out.println("app 스테이트트트트 ::: " + application.getPackageState());
+            System.err.println("app state ::: appName=" + appName + ", appState=" + application.getPackageState());
             if(tryCount == 6 && !application.getPackageState().equals("STAGED")) { //3분
+                System.err.println("Not started ::: appName=" + appName + ", appState=" + application.getPackageState());
                 throw new PlatformException("앱이 시작되지 않네요...! 시작중일지도 모르지만용");
             }
             if(application.getPackageState().equals("STAGED")) {
