@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.cloudfoundry.client.v2.applications.*;
 import org.cloudfoundry.client.v2.routemappings.CreateRouteMappingRequest;
+import org.cloudfoundry.client.v2.routemappings.ListRouteMappingsRequest;
+import org.cloudfoundry.client.v2.routemappings.ListRouteMappingsResponse;
 import org.cloudfoundry.client.v2.routes.CreateRouteRequest;
 import org.cloudfoundry.client.v2.routes.DeleteRouteRequest;
 import org.cloudfoundry.reactor.client.ReactorCloudFoundryClient;
@@ -13,6 +15,7 @@ import org.javaswift.joss.model.StoredObject;
 import org.openpaas.paasta.marketplace.api.cloudFoundryModel.App;
 import org.openpaas.paasta.marketplace.api.cloudFoundryModel.NameType;
 import org.openpaas.paasta.marketplace.api.config.common.Common;
+import org.openpaas.paasta.marketplace.api.domain.Instance;
 import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -407,4 +410,39 @@ public class AppService extends Common {
         }
         return (count > 0)? app : null;
     }
+
+    public GetApplicationResponse getApp(Instance instance) {
+        return cloudFoundryClient(tokenProvider()).applicationsV2().get(GetApplicationRequest.builder().applicationId(instance.getAppGuid()).build()).block();
+    }
+
+    public ListRouteMappingsResponse getRouteMappingList(String appGuid) {
+        return cloudFoundryClient(tokenProvider()).routeMappings().list(ListRouteMappingsRequest.builder().applicationId(appGuid).build()).block();
+    }
+
+    public Map deleteApp(String appGuid) {
+        HashMap result = new HashMap();
+        try {
+//            try {
+//                ListApplicationServiceBindingsResponse listApplicationServiceBindingsResponse = cloudFoundryClient(tokenProvider()).applicationsV2().listServiceBindings(ListApplicationServiceBindingsRequest.builder().applicationId(appGuid).build()).block();
+//                for (ServiceBindingResource resource : listApplicationServiceBindingsResponse.getResources()) {
+//                    cloudFoundryClient(tokenProvider()).serviceBindingsV2().delete(DeleteServiceBindingRequest.builder().serviceBindingId(resource.getMetadata().getId()).build()).block();
+//                }
+//            } catch (Exception e) {
+//
+//            }
+//            List<Route> routes = cloudFoundryClient(tokenProvider()).applicationsV2().summary(SummaryApplicationRequest.builder().applicationId(appGuid).build()).block().getRoutes();
+//            for (Route route : routes) {
+//                cloudFoundryClient(tokenProvider()).routes().delete(DeleteRouteRequest.builder().routeId(route.getId()).build()).block();
+//            }
+            cloudFoundryClient(tokenProvider()).applicationsV2().delete(DeleteApplicationRequest.builder().applicationId(appGuid).build()).block();
+            result.put("result", true);
+            result.put("msg", "You have successfully completed the task.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("result", false);
+            result.put("msg", e.getMessage());
+        }
+        return result;
+    }
+
 }

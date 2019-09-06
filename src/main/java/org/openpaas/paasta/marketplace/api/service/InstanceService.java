@@ -67,6 +67,7 @@ public class InstanceService {
     public Instance updateToDeleted(Long id) {
         Instance saved = instanceRepository.findById(id).get();
         saved.setStatus(Status.Deleted);
+        saved.setDeprovisionStatus(ProvisionStatus.Pending);
         saved.setUsageEndDate(LocalDateTime.now());
 
         return saved;

@@ -1,11 +1,16 @@
 package org.openpaas.paasta.marketplace.api.service.cloudfoundry;
 
+import org.cloudfoundry.client.v2.applications.ListApplicationServiceBindingsRequest;
+import org.cloudfoundry.client.v2.applications.ListApplicationServiceBindingsResponse;
+import org.cloudfoundry.client.v2.applications.RemoveApplicationRouteRequest;
+import org.cloudfoundry.client.v2.routes.DeleteRouteRequest;
 import org.cloudfoundry.client.v2.servicebindings.CreateServiceBindingRequest;
 import org.cloudfoundry.client.v2.servicebindings.CreateServiceBindingResponse;
+import org.cloudfoundry.client.v2.servicebindings.DeleteServiceBindingRequest;
+import org.cloudfoundry.client.v2.servicebindings.DeleteServiceBindingResponse;
 import org.cloudfoundry.client.v2.servicebrokers.ListServiceBrokersRequest;
 import org.cloudfoundry.client.v2.servicebrokers.ListServiceBrokersResponse;
-import org.cloudfoundry.client.v2.serviceinstances.CreateServiceInstanceRequest;
-import org.cloudfoundry.client.v2.serviceinstances.CreateServiceInstanceResponse;
+import org.cloudfoundry.client.v2.serviceinstances.*;
 import org.cloudfoundry.client.v2.serviceplans.ListServicePlansRequest;
 import org.cloudfoundry.client.v2.serviceplans.ListServicePlansResponse;
 import org.openpaas.paasta.marketplace.api.config.common.Common;
@@ -55,5 +60,84 @@ public class ServiceService extends Common {
                         .applicationId(appGuid)
                         .serviceInstanceId(serviceInstanceId).build())
                 .block();
+    }
+
+    public ListApplicationServiceBindingsResponse getServiceBindings(String appGuid) {
+        return cloudFoundryClient(tokenProvider()).applicationsV2().listServiceBindings(ListApplicationServiceBindingsRequest.builder().applicationId(appGuid).build()).block();
+    }
+
+    
+
+    /**
+     * 앱-서비스를 언바인드한다.
+     *
+     * @param serviceInstanceId
+     * @param applicationId
+     * @return
+     */
+    public Map unbindService(String serviceInstanceId, String applicationId) {
+        Map resultMap = new HashMap();
+
+        try {
+            ListServiceInstanceServiceBindingsResponse listServiceInstanceServiceBindingsResponse = cloudFoundryClient().serviceInstances().listServiceBindings(ListServiceInstanceServiceBindingsRequest.builder().applicationId(applicationId).serviceInstanceId(serviceInstanceId).build()).block();
+            String instancesServiceBindingGuid = listServiceInstanceServiceBindingsResponse.getResources().get(0).getMetadata().getId();
+
+            DeleteServiceBindingResponse deleteServiceBindingResponse = cloudFoundryClient(tokenProvider()).serviceBindingsV2().delete(DeleteServiceBindingRequest.builder().serviceBindingId(instancesServiceBindingGuid).build()).block();
+
+            resultMap.put("result", true);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put("result", false);
+            resultMap.put("msg", e);
+        }
+
+        return resultMap;
+    }
+
+
+    /**
+     * 서비스 인스턴스를 삭제한다.
+     *
+     * @param guid
+     * @return
+     */
+    public Map deleteInstance(String guid) {
+        HashMap result = new HashMap();
+        try {
+            cloudFoundryClient(tokenProvider()).serviceInstances().delete(DeleteServiceInstanceRequest.builder().serviceInstanceId(guid).build()).block();
+            result.put("result", true);
+            result.put("msg", "You have successfully completed the task.");
+        } catch (Exception e) {
+            result.put("result", false);
+            result.put("msg", e.getMessage());
+        }
+        return result;
+    }
+
+
+    /**
+     * 앱 라우트를 삭제한다.
+     * 
+     * @param guid
+     * @param routeGuid
+     * @return
+     */
+    public Map removeApplicationRoute(String guid, String routeGuid) {
+        Map resultMap = new HashMap();
+
+        try {
+            cloudFoundryClient(tokenProvider()).applicationsV2().removeRoute(RemoveApplicationRouteRequest.builder().applicationId(guid).routeId(routeGuid).build()).block();
+
+            cloudFoundryClient(tokenProvider()).routes().delete(DeleteRouteRequest.builder().routeId(routeGuid).build()).block();
+
+            resultMap.put("result", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put("result", false);
+            resultMap.put("msg", e);
+        }
+
+        return resultMap;
     }
 }

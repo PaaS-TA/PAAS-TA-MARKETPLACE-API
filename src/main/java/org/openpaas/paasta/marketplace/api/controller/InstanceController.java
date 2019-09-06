@@ -37,7 +37,7 @@ public class InstanceController {
     @GetMapping("/my/page")
     public Page<Instance> getMyPage(InstanceSpecification spec, Pageable pageable) {
         spec.setCreatedBy(SecurityUtils.getUserId());
-
+        spec.setStatus(Instance.Status.Approval);
         return instanceService.getPage(spec, pageable);
     }
 
