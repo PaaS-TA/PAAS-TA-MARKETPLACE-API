@@ -60,6 +60,13 @@ public class AdminStatsController {
         return count;
     }
 
+
+    /**
+     * 한 명의 판매자의 총 판매량
+     *
+     * @param providerId
+     * @return
+     */
     @GetMapping("/instances/counts/provider")
     public long countOfInstsUsingProvider(@RequestParam(name = "providerId") String providerId) {
         long count = statsService.countOfInstsCurrent(providerId);
