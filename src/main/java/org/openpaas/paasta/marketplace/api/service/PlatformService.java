@@ -47,6 +47,11 @@ public class PlatformService {
     private final ServiceService serviceService;
 
     public void provision(Instance instance) throws PlatformException {
+        if(instance == null) {
+            log.info("아직 없어");
+            return;
+        }
+
         try {
             Software software = instance.getSoftware();
             String name = generateName(instance);
@@ -82,7 +87,6 @@ public class PlatformService {
     }
 
     public void deprovision(Instance instance) throws PlatformException {
-        // TODO: implements
         if(instance.getAppGuid() == null) {
             log.info("여기는 앱 안 만들어졌어");
             return;
@@ -92,29 +96,28 @@ public class PlatformService {
             String appGuid = appService.getApp(instance).getMetadata().getId();
             log.info("어풀리케이쇼온~~~ " + appGuid);
 
-            try {
-                // 1) appGuid 로 서비스 바인딩 id 모두 찾는다.
-                ListApplicationServiceBindingsResponse bindingList = serviceService.getServiceBindings(appGuid);
 
-                if (bindingList != null) {
-                    for (int i = 0; i < bindingList.getResources().size(); i++) {
-                        String serviceInstanceId = bindingList.getResources().get(i).getEntity().getServiceInstanceId();
-                        log.info("서비스 인스턴스 아뒤 ::: " + serviceInstanceId);
-                        // 2) 언바인드 & 3) 서비스 삭제
-                        procServiceUnBind(serviceInstanceId, appGuid);
-                    }
+            // 1) appGuid 로 서비스 바인딩 id 모두 찾는다.
+            ListApplicationServiceBindingsResponse bindingList = serviceService.getServiceBindings(appGuid);
+
+            if (bindingList.getTotalResults() > 0) {
+                for (int i = 0; i < bindingList.getResources().size(); i++) {
+                    String serviceInstanceId = bindingList.getResources().get(i).getEntity().getServiceInstanceId();
+                    log.info("서비스 인스턴스 아뒤 ::: " + serviceInstanceId);
+                    // 2) 언바인드 & 3) 서비스 삭제
+                    procServiceUnBind(serviceInstanceId, appGuid);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
 
 
             // 4) 라우트 삭제
             ListRouteMappingsResponse listRoutesMapping = appService.getRouteMappingList(appGuid);
+            log.info("라우트 리스트 ::: " + listRoutesMapping.getResources().toString());
 
             listRoutesMapping.getResources().forEach(entity -> {
                 String routeId = entity.getEntity().getRouteId();
-                serviceService.removeApplicationRoute(appGuid, routeId);
+                log.info("라우트 id ::: " + routeId);
+                appService.removeApplicationRoute(appGuid, routeId);
             });
 
 
@@ -228,8 +231,9 @@ public class PlatformService {
     private void procServiceUnBind(String serviceInstanceId, String appGuid) {
         // 2) 언바인드
         Map unbindResult = serviceService.unbindService(serviceInstanceId, appGuid);
-
+        log.info("언바인드 ::: " + unbindResult.toString());
         // 3) 서비스 인스턴스 삭제
         Map deleteResult = serviceService.deleteInstance(serviceInstanceId);
+        log.info("서비스 인스턴스 ::: " + deleteResult.toString());
     }
 }

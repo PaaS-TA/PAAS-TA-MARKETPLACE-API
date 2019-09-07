@@ -36,7 +36,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class AppService extends Common {
 
-    @Value("${market.org..guid}")
+    @Value("${market.org.guid}")
     public String marketOrgGuid;
 
     @Value("${market.space.guid}")
@@ -419,6 +419,38 @@ public class AppService extends Common {
         return cloudFoundryClient(tokenProvider()).routeMappings().list(ListRouteMappingsRequest.builder().applicationId(appGuid).build()).block();
     }
 
+
+    /**
+     * 앱 라우트를 삭제한다.
+     *
+     * @param guid
+     * @param routeGuid
+     * @return
+     */
+    public Map removeApplicationRoute(String guid, String routeGuid) {
+        Map resultMap = new HashMap();
+
+        try {
+            cloudFoundryClient(tokenProvider()).applicationsV2().removeRoute(RemoveApplicationRouteRequest.builder().applicationId(guid).routeId(routeGuid).build()).block();
+            cloudFoundryClient(tokenProvider()).routes().delete(DeleteRouteRequest.builder().routeId(routeGuid).build()).block();
+
+            resultMap.put("result", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put("result", false);
+            resultMap.put("msg", e);
+        }
+
+        return resultMap;
+    }
+
+
+    /**
+     * 앱을 삭제한다.
+     *
+     * @param appGuid
+     * @return
+     */
     public Map deleteApp(String appGuid) {
         HashMap result = new HashMap();
         try {
@@ -444,5 +476,6 @@ public class AppService extends Common {
         }
         return result;
     }
+
 
 }
