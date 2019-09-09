@@ -234,4 +234,10 @@ public class StatsService {
         return datas;
     }
 
+    public Map<Long, Long> getSoldInstanceCount(List<Long> idIn) {
+        List<Object[]> values = statsRepository.countsOfSodInsts(idIn);
+        Map<Long, Long> data = values.stream().collect(Collectors.toMap(v -> (Long) v[0], v -> (Long) v[1]));
+
+        return data;
+    }
 }

@@ -208,6 +208,17 @@ public class AdminStatsController {
         return users;
     }
 
+    /**
+     * 상품 총 팔린 개수
+     *
+     * @param idIn
+     * @return
+     */
+    @GetMapping("/instances/totalSold/counts/ids")
+    public Map<Long, Long> getSoldInstanceCount(@RequestParam(name = "idIn", required = false) List<Long> idIn) {
+        return statsService.getSoldInstanceCount(idIn);
+    }
+
     private Map<String, Object> countsOfInsts(List<Term> terms, boolean using) {
         List<String> termStrings = terms.stream().map(t -> Stats.toString(t.getStart())).collect(Collectors.toList());
 

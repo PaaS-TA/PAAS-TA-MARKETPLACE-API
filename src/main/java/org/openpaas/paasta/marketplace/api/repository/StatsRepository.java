@@ -127,6 +127,10 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
             + "GROUP BY i.software.createdBy ORDER BY COUNT(*) DESC, i.software.id DESC")
     List<Object[]> countsOfInstsGroupByProvider(@Param("status") Instance.Status status, Pageable page);
 
+    @Query("SELECT i.software.id, COUNT(*) FROM Instance i WHERE i.software.id IN :idIn "
+            + "GROUP BY i.software.id")
+    List<Object[]> countsOfSodInsts(@Param("idIn") List<Long> idIn);
+
     default long countOfInsts(LocalDateTime start, LocalDateTime end, boolean using) {
         if (using) {
             return countOfInstsUsing(start, end);
