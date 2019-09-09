@@ -62,24 +62,29 @@ public class PlatformService {
 
 
             // 환경변수 업데이트
-            Map env = (Map) result.get("env");
-            appService.updateApp(env, appGuid);
-
-
-            // 2) 서비스 요청이 있을 경우
-            if(env.containsKey("services")){
-                procServiceBinding(instance, env, appGuid);
+            Map env = new HashMap();
+            if(result.get("env") != null) {
+                log.info("매니페스트에 env 있음!!!!!!!!!!");
+                env = (Map) result.get("env");
+                appService.updateApp(env, appGuid);
+                log.info("env 업뎃 완료!!!!!!!!!!");
             }
 
-
-            // 3) 나머지 값 채워주기
+            // 2) 나머지 값 채워주기
             instance.setAppGuid(appGuid);
             instance.setAppName(name);
             instance.setAppUrl(name + cfHostName);
 
+            // 3) 서비스 요청이 있을 경우
+            if(env.containsKey("services")){
+                log.info("서비스 요청 들어옴!!!!!!!!!!");
+                procServiceBinding(instance, env, appGuid);
+                log.info("서비스 바인딩 완료!!!!!!!!!!");
+            }
 
             // 4) 앱 시작 및 상태 체크
             getAppStats(appGuid, name);
+
         } catch (Throwable t) {
             log.error(t.getMessage(), t);
             throw new PlatformException(t);
@@ -141,7 +146,7 @@ public class PlatformService {
 
     private void procServiceBinding(Instance instance, Map env, String appGuid){
         List<String> services = (List) env.get("services");
-        System.out.println("services ::: " + services.toString());
+        log.info("services ::: " + services.toString());
 
         // 플랜 아이디로 서비스 생성
         int index = 0;
@@ -158,8 +163,8 @@ public class PlatformService {
                 broker = resource;
 
                 if(broker.getEntity().getName().toLowerCase().contains(serviceName.toLowerCase())){
-                    System.out.println("브로커 아이디이이이 ::: " + broker.getMetadata().getId());
-                    System.out.println("서비스 플랜들..." + serviceService.getServicePlans(broker.getMetadata().getId()).getResources().toString());
+                    log.info("브로커 아이디이이이 ::: " + broker.getMetadata().getId());
+                    log.info("서비스 플랜들..." + serviceService.getServicePlans(broker.getMetadata().getId()).getResources().toString());
 
                     ListServicePlansResponse planList = serviceService.getServicePlans(broker.getMetadata().getId());
                     for (ServicePlanResource plan : planList.getResources()) {
@@ -185,15 +190,15 @@ public class PlatformService {
             }
         }
 
-        System.out.println("createdService ::: " + createdService.get(0).toString());
+        log.info("서비스 인스턴스 생성!!!");
 
 
         // 앱 아이디와 서비스 아이디로 바인딩
         if(createdService.size() > 0){
-            System.out.println("여기로 들어왔녜???");
+            log.info("앱 아이디와 서비스 아이디로 바인딩");
             for (int j = 0; j < createdService.size(); j++){
                 String serviceInstanceId = createdService.get(j).toString();
-                System.out.println("service instance id ::: " + serviceInstanceId);
+                log.info("service instance id ::: " + serviceInstanceId);
                 serviceService.createBindService(appGuid, serviceInstanceId);
             }
         }
@@ -207,7 +212,7 @@ public class PlatformService {
         log.info("============== 앱 START ================");
         // 앱 스타뚜가 여기서 되어야하는군!!!!
         Map result = appService.procStartApplication(appGuid);
-        System.out.println("result ::: " + result.toString());
+        log.info("result ::: " + result.toString());
 
         while(tryCount < 7) {
             appService.timer(30);
@@ -223,7 +228,7 @@ public class PlatformService {
                 return application;
             }
         }
-        System.out.println("app 을 돌려주세욤" + application);
+        log.info("app 을 돌려주세욤" + application);
         return application;
     }
 
