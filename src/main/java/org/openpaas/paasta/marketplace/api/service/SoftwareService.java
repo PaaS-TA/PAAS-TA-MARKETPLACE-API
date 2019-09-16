@@ -51,8 +51,11 @@ public class SoftwareService {
         saved.setName(software.getName());
         saved.setCategory(software.getCategory());
         saved.setApp(software.getApp());
+        saved.setAppPath(software.getAppPath());
         saved.setManifest(software.getManifest());
+        saved.setManifestPath(software.getManifestPath());
         saved.setIcon(software.getIcon());
+        saved.setIconPath(software.getIconPath());
         saved.setScreenshotList(software.getScreenshotList());
         saved.setSummary(software.getSummary());
         saved.setDescription(software.getDescription());
