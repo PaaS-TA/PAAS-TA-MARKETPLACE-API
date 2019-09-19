@@ -41,6 +41,12 @@ public class InstanceController {
         return instanceService.getPage(spec, pageable);
     }
 
+    @GetMapping("/my/totalPage")
+    public Page<Instance> getMyTotalPage(InstanceSpecification spec, Pageable pageable) {
+        spec.setCreatedBy(SecurityUtils.getUserId());
+        return instanceService.getPage(spec, pageable);
+    }
+
     @GetMapping("/{id}")
     public Instance get(@NotNull @PathVariable Long id) {
         return instanceService.get(id);
