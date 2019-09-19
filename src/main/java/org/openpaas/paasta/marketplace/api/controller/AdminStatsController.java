@@ -141,7 +141,7 @@ public class AdminStatsController {
 
     @GetMapping("/instances/sum/days")
     public Map<String, Object> countOfInstsDaily(@RequestParam(name = "epoch", required = false) LocalDateTime epoch,
-            @RequestParam(name = "size", required = false, defaultValue = "30") int size) {
+            @RequestParam(name = "size", required = false, defaultValue = "180") int size) {
         List<Term> terms = Stats.termsOf(epoch, size, ChronoUnit.DAYS);
 
         return countsOfInsts(terms, true);
