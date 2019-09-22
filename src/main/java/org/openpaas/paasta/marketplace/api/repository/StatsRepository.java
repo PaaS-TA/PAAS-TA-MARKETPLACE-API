@@ -1,8 +1,5 @@
 package org.openpaas.paasta.marketplace.api.repository;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 import org.openpaas.paasta.marketplace.api.domain.Instance;
 import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.Stats;
@@ -11,6 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> {
@@ -130,6 +130,9 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
     @Query("SELECT i.software.id, COUNT(*) FROM Instance i WHERE i.software.id IN :idIn "
             + "GROUP BY i.software.id")
     List<Object[]> countsOfSodInsts(@Param("idIn") List<Long> idIn);
+
+    @Query("SELECT i.id, DATEDIFF(ifnull(i.usageEndDate, now()), i.usageStartDate) FROM Instance i WHERE i.createdBy = :providerId AND i.id IN :idIn")
+    List<Object[]> dayOfUseInstsPeriod(@Param("providerId") String providerId, @Param("idIn") List<Long> idIn);
 
     default long countOfInsts(LocalDateTime start, LocalDateTime end, boolean using) {
         if (using) {

@@ -1,16 +1,6 @@
 package org.openpaas.paasta.marketplace.api.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
-import javax.transaction.Transactional;
-
+import lombok.RequiredArgsConstructor;
 import org.openpaas.paasta.marketplace.api.domain.Instance;
 import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.Stats;
@@ -20,7 +10,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
+import javax.transaction.Transactional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -238,6 +230,19 @@ public class StatsService {
         List<Object[]> values = statsRepository.countsOfSodInsts(idIn);
         Map<Long, Long> data = values.stream().collect(Collectors.toMap(v -> (Long) v[0], v -> (Long) v[1]));
 
+        return data;
+    }
+
+    /**
+     * 구매 상품 사용한 일(Day) 수
+     *
+     * @param providerId
+     * @param idIn
+     * @return
+     */
+    public Map<Long, Integer> getDayOfUseInstsPeriod(String providerId, List<Long> idIn) {
+        List<Object[]> values = statsRepository.dayOfUseInstsPeriod(providerId, idIn);
+        Map<Long, Integer> data = values.stream().collect(Collectors.toMap(v -> (Long) v[0], v -> (Integer) v[1]));
         return data;
     }
 }

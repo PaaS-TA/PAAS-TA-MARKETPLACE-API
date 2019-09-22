@@ -1,12 +1,6 @@
 package org.openpaas.paasta.marketplace.api.controller;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import lombok.RequiredArgsConstructor;
 import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
 import org.openpaas.paasta.marketplace.api.domain.Stats;
@@ -22,7 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/stats")
@@ -128,4 +127,15 @@ public class StatsController {
         return data;
     }
 
+    /**
+     * 구매 상품 사용한 일(Day) 수
+     *
+     * @param idIn
+     * @return
+     */
+    @GetMapping("/instances/my/usePeriod/days")
+    public Map<Long, Integer> getDayOfUseInstsPeriod(@RequestParam(name = "idIn", required = false) List<Long> idIn) {
+        String providerId = SecurityUtils.getUserId();
+        return statsService.getDayOfUseInstsPeriod(providerId, idIn);
+    }
 }
