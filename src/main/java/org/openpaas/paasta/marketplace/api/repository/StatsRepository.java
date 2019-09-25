@@ -134,6 +134,9 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
     @Query("SELECT i.id, DATEDIFF(ifnull(i.usageEndDate, now()), i.usageStartDate) FROM Instance i WHERE i.createdBy = :providerId AND i.id IN :idIn")
     List<Object[]> dayOfUseInstsPeriod(@Param("providerId") String providerId, @Param("idIn") List<Long> idIn);
 
+    @Query("SELECT count(*) FROM Software s, Instance i WHERE s.id = i.software.id AND s.createdBy = :providerId AND i.software.id = :id AND i.status='Approval'")
+    Object usingPerInstanceByProvider(@Param("providerId") String providerId, @Param("id") Long id);
+
     default long countOfInsts(LocalDateTime start, LocalDateTime end, boolean using) {
         if (using) {
             return countOfInstsUsing(start, end);

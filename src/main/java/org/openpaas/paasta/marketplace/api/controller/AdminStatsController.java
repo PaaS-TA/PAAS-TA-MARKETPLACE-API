@@ -17,6 +17,7 @@ import org.openpaas.paasta.marketplace.api.domain.UserSpecification;
 import org.openpaas.paasta.marketplace.api.service.SoftwareService;
 import org.openpaas.paasta.marketplace.api.service.StatsService;
 import org.openpaas.paasta.marketplace.api.service.UserService;
+import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -253,6 +254,18 @@ public class AdminStatsController {
         data.put("counts", counts);
 
         return data;
+    }
+
+    /**
+     * [Admin] 판매자가 판매한 상품 중 사용중(status = Approval)인 상품 수
+     *
+     * @param idIn
+     * @return
+     */
+    @GetMapping("/instances/usingCount")
+    public Map<Long, Object> getUsingPerInstanceByProvider(@RequestParam(name = "idIn", required = false) List<Long> idIn) {
+        String providerId = SecurityUtils.getUserId();
+        return statsService.getUsingPerInstanceByProvider(providerId, idIn);
     }
 
 }

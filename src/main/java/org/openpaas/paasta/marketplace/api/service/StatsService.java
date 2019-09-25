@@ -245,4 +245,22 @@ public class StatsService {
         Map<Long, Integer> data = values.stream().collect(Collectors.toMap(v -> (Long) v[0], v -> (Integer) v[1]));
         return data;
     }
+
+    /**
+     * [Admin] 판매자가 판매한 상품 중 사용중(status = Approval)인 상품 수
+     *
+     * @param providerId
+     * @param idIn
+     * @return
+     */
+    public Map<Long, Object> getUsingPerInstanceByProvider(String providerId, List<Long> idIn) {
+        Object obj;
+        Map<Long, Object> data = new HashMap<>();
+        for (Long id:idIn) {
+            obj = statsRepository.usingPerInstanceByProvider(providerId, id);
+            data.put(id, obj);
+        }
+
+        return data;
+    }
 }
