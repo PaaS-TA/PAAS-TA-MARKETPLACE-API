@@ -21,10 +21,7 @@ import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 import lombok.RequiredArgsConstructor;
@@ -262,9 +259,8 @@ public class AdminStatsController {
      * @param idIn
      * @return
      */
-    @GetMapping("/instances/usingCount")
-    public Map<Long, Object> getUsingPerInstanceByProvider(@RequestParam(name = "idIn", required = false) List<Long> idIn) {
-        String providerId = SecurityUtils.getUserId();
+    @GetMapping("/instances/usingCount/provider/{providerId}")
+    public Map<Long, Object> getUsingPerInstanceByProvider(@PathVariable String providerId, @RequestParam(name = "idIn", required = false) List<Long> idIn) {
         return statsService.getUsingPerInstanceByProvider(providerId, idIn);
     }
 
