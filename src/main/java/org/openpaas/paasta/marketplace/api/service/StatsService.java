@@ -263,4 +263,23 @@ public class StatsService {
 
         return data;
     }
+
+
+    /**
+     * 판매자의 상품별 총 판매량(사용 + 중지)
+     *
+     * @param providerId
+     * @param idIn
+     * @return
+     */
+    public Map<Long, Object> soldInstanceByProvider(String providerId, List<Long> idIn) {
+        Object obj;
+        Map<Long, Object> data = new HashMap<>();
+        for (Long id:idIn) {
+            obj = statsRepository.soldInstanceByProvider(providerId, id);
+            data.put(id, obj);
+        }
+
+        return data;
+    }
 }

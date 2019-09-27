@@ -138,4 +138,18 @@ public class StatsController {
         String providerId = SecurityUtils.getUserId();
         return statsService.getDayOfUseInstsPeriod(providerId, idIn);
     }
+
+
+    /**
+     * 판매자의 상품별 총 판매량(사용 + 중지)
+     *
+     * @param idIn
+     * @return
+     */
+    @GetMapping("/instances/sold/count")
+    public Map<Long, Object> soldInstanceByProvider(@RequestParam(name = "idIn", required = false) List<Long> idIn) {
+        String providerId = SecurityUtils.getUserId();
+        return statsService.soldInstanceByProvider(providerId, idIn);
+    }
+
 }

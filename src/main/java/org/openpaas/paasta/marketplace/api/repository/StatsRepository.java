@@ -137,6 +137,10 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
     @Query("SELECT count(*) FROM Software s, Instance i WHERE s.id = i.software.id AND s.createdBy = :providerId AND i.software.id = :id AND i.status='Approval'")
     Object usingPerInstanceByProvider(@Param("providerId") String providerId, @Param("id") Long id);
 
+    // 판매자의 상품별 총 판매량(사용 + 중지)
+    @Query("SELECT count(*) FROM Software s, Instance i WHERE s.id = i.software.id AND s.createdBy = :providerId AND i.software.id = :id")
+    Object soldInstanceByProvider(@Param("providerId") String providerId, @Param("id") Long id);
+
     default long countOfInsts(LocalDateTime start, LocalDateTime end, boolean using) {
         if (using) {
             return countOfInstsUsing(start, end);
