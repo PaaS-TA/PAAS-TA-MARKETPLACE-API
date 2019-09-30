@@ -164,7 +164,7 @@ public class AdminStatsController {
     @GetMapping("/instances/counts/months")
     public Map<String, Object> countOfInstsMonthly(@RequestParam(name = "idIn", required = false) List<Long> idIn,
             @RequestParam(name = "epoch", required = false) LocalDateTime epoch,
-            @RequestParam(name = "size", required = false, defaultValue = "12") int size) {
+            @RequestParam(name = "size", required = false, defaultValue = "6") int size) {
         List<Term> terms = Stats.termsOf(epoch, size, ChronoUnit.MONTHS);
 
         return countsOfInsts(idIn, terms, true);
