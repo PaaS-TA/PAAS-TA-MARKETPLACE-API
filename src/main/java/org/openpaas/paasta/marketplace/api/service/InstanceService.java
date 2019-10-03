@@ -44,6 +44,7 @@ public class InstanceService {
     private long deprovisioningTimeout;
 
     private final InstanceRepository instanceRepository;
+    //private final StatsRepository statsRepository;
 
     private final PlatformService platformService;
 
@@ -59,6 +60,10 @@ public class InstanceService {
     public Page<Instance> getPage(InstanceSpecification spec, Pageable pageable) {
         return instanceRepository.findAll(spec, pageable);
     }
+
+//    public Page<Instance> getPage2(String userId, LocalDateTime usageStartDate, LocalDateTime usageEndDate, Pageable pageable) {
+//        return statsRepository.countsOfInstsUsingMonth(userId, usageStartDate, usageEndDate, pageable);
+//    }
 
     public Instance get(Long id) {
         return instanceRepository.findById(id).get();
