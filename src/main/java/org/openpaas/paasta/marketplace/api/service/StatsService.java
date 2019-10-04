@@ -219,7 +219,7 @@ public class StatsService {
     }
 
     public List<Long> countsOfInstsProvider(List<Long> idIn, List<Term> terms, boolean using) {
-        Map<String, Long> values = new HashMap<>();
+        Map<String, Long> values = new LinkedHashMap<>();
         Set<Long> ids = new TreeSet<>();
         terms.forEach(t -> {
             List<Object[]> vs = statsRepository.countsOfInsts(idIn, t.getStart(), t.getEnd(), using);
