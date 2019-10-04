@@ -3,6 +3,7 @@ package org.openpaas.paasta.marketplace.api.controller;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -151,6 +152,16 @@ public class AdminStatsController {
         return countsOfInsts(terms, true);
     }
 
+    @GetMapping("/instances/sum/months/ids")
+    public Map<String, Object> countsOfInstsMonthlyProvider(
+            @RequestParam(name = "idIn", required = false) List<String> idIn,
+            @RequestParam(name = "epoch", required = false) LocalDateTime epoch,
+            @RequestParam(name = "size", required = false, defaultValue = "6") int size) {
+        List<Term> terms = Stats.termsOf(epoch, size, ChronoUnit.MONTHS);
+
+        return countsOfInstsProvider(idIn, terms, true);
+    }
+
     @GetMapping("/instances/sum/days")
     public Map<String, Object> countOfInstsDaily(@RequestParam(name = "epoch", required = false) LocalDateTime epoch,
             @RequestParam(name = "size", required = false, defaultValue = "180") int size) {
@@ -251,6 +262,31 @@ public class AdminStatsController {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("terms", termStrings);
         data.put("counts", counts);
+
+        return data;
+    }
+
+    private Map<String, Object> countsOfInstsProvider(List<String> idIn, List<Term> terms, boolean using) {
+        List<String> termStrings = terms.stream().map(t -> Stats.toString(t.getStart())).collect(Collectors.toList());
+
+        Map<String, Object> data = new LinkedHashMap<>();
+        Map<String, List<Long>> usingSwCount = new LinkedHashMap<>();
+
+        for(int i = 0; i< idIn.size(); i++) {
+            List<Long> newIdIn = new ArrayList<>();
+            // 1. 공급자 별로 본인이 등록한 software id 목록 추출
+            List<Software> softwares = softwareService.getSwByCreatedBy(idIn.get(i));
+            for(int j = 0; j < softwares.size(); j++) {
+                newIdIn.add(softwares.get(j).getId());
+            }
+            // 2. 상품 id 목록으로 월 별 사용량 조회
+            List<Long> counts = statsService.countsOfInstsProvider(newIdIn, terms, using);
+            usingSwCount.put(idIn.get(i), counts);
+        }
+
+        data.put("counts", usingSwCount);
+        data.put("terms", termStrings);
+
 
         return data;
     }

@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface SoftwareRepository extends JpaRepository<Software, Long>, JpaSpecificationExecutor<Software> {
 
     Software findByName(String name);
@@ -15,4 +17,5 @@ public interface SoftwareRepository extends JpaRepository<Software, Long>, JpaSp
     @Query("UPDATE Software s SET s.category = NULL WHERE s.category.id = :categoryId")
     int clearCategory(@Param("categoryId") Long categoryId);
 
+    List<Software> findByCreatedBy(String providerId);
 }

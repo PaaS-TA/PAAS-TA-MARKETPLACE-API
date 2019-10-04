@@ -109,8 +109,15 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
             + "AND i.usageStartDate IS NOT NULL "
             + "AND ((i.usageStartDate <= :start AND (i.usageEndDate IS NULL OR i.usageEndDate < :end)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end)) "
             + "GROUP BY i.software.id ORDER BY COUNT(*) DESC, i.software.id ASC")
-    List<Object[]> countsOfInstsUsing(@Param("idIn") List<Long> idIn, @Param("start") LocalDateTime start,
+    List<Object[]> countsOfInstsUsingByProvider(@Param("idIn") List<Long> idIn, @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end);
+
+    @Query("SELECT i.software.id, COUNT(*) FROM Instance i WHERE i.software.id IN :idIn "
+            + "AND i.usageStartDate IS NOT NULL "
+            + "AND ((i.usageStartDate <= :start AND (ifnull(i.usageEndDate, now()) >= :start AND ifnull(i.usageEndDate, now()) < :end)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end)) "
+            + "GROUP BY i.software.id ORDER BY COUNT(*) DESC, i.software.id ASC")
+    List<Object[]> countsOfInstsUsing(@Param("idIn") List<Long> idIn, @Param("start") LocalDateTime start,
+                                      @Param("end") LocalDateTime end);
 
     @Query("SELECT i.software.id, COUNT(*) FROM Instance i WHERE i.software.createdBy = :providerId AND i.software.id IN :idIn "
             + "AND i.usageStartDate >= :start AND i.usageStartDate < :end "

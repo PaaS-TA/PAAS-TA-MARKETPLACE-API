@@ -218,6 +218,34 @@ public class StatsService {
         return datas;
     }
 
+    public List<Long> countsOfInstsProvider(List<Long> idIn, List<Term> terms, boolean using) {
+        Map<String, Long> values = new HashMap<>();
+        Set<Long> ids = new TreeSet<>();
+        terms.forEach(t -> {
+            List<Object[]> vs = statsRepository.countsOfInsts(idIn, t.getStart(), t.getEnd(), using);
+
+            final Long[] count = {0L};
+            final Long[] count2 = {0L};
+            vs.forEach(v -> {
+                Long id = (Long) v[0];
+                count2[0] = (Long) v[1];
+                ids.add(id);
+                count[0] += count2[0];
+            });
+
+            String pair = Stats.toString(t.getStart());
+            values.put(pair, count[0]);
+        });
+
+        List<Long> data = new ArrayList<>();
+        terms.forEach(t -> {
+            Long count = values.getOrDefault(Stats.toString(t.getStart()), 0L);
+            data.add(count);
+        });
+
+        return data;
+    }
+
     public Map<Long, List<Long>> countsOfInsts(String providerId, List<Long> idIn, List<Term> terms, boolean using) {
         Map<Pair<Long, String>, Long> values = new HashMap<>();
         Set<Long> ids = new TreeSet<>();
