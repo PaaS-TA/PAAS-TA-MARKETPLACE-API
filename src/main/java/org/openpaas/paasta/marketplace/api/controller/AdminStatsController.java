@@ -37,6 +37,14 @@ public class AdminStatsController {
 
     private final UserService userService;
 
+
+    @GetMapping("/softwares/counts/total/sum")
+    public long countOfTotalSws() {
+        long count = statsService.countOfTotalSws();
+
+        return count;
+    }
+
     @GetMapping("/softwares/counts/sum")
     public long countOfSwsUsing() {
         long count = statsService.countOfSwsCurrent();
@@ -84,6 +92,12 @@ public class AdminStatsController {
         long count = statsService.countOfProvidersCurrent();
 
         return count;
+    }
+
+    @GetMapping("/providers/total/softwares/counts")
+    public Map<String, Long> countsOfTotalSwsProvider(
+            @RequestParam(name = "maxResults", required = false, defaultValue = "-1") int maxResults) {
+        return statsService.countsOfTotalSwsProvider(maxResults);
     }
 
     @GetMapping("/providers/softwares/counts")

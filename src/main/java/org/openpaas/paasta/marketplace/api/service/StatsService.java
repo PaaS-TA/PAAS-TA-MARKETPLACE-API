@@ -21,6 +21,11 @@ public class StatsService {
 
     private final StatsRepository statsRepository;
 
+    // 총 등록된 상품 수
+    public long countOfTotalSws() {
+        return statsRepository.countOfTotalSws();
+    }
+
     public long countOfSwsCurrent() {
         return statsRepository.countOfSws(Software.Status.Approval);
     }
@@ -75,6 +80,20 @@ public class StatsService {
 
     public long countOfUsersCurrent(String providerId) {
         return statsRepository.countOfUsers(providerId, Instance.Status.Approval);
+    }
+
+    public Map<String, Long> countsOfTotalSwsProvider(int maxResults) {
+        if (maxResults == -1) {
+            maxResults = Integer.MAX_VALUE;
+        }
+
+        List<Object[]> values = statsRepository.countsOfTotalSwsProvider(PageRequest.of(0, maxResults));
+        Map<String, Long> data = new LinkedHashMap<>();
+        for (Object[] v : values) {
+            data.put((String) v[0], (Long) v[1]);
+        }
+
+        return data;
     }
 
     public Map<String, Long> countsOfSwsProvider(int maxResults) {
