@@ -116,8 +116,9 @@ public class StatsService {
             maxResults = Integer.MAX_VALUE;
         }
 
-        List<Object[]> values = statsRepository.countsOfInstsProvider(Instance.Status.Approval,
-                PageRequest.of(0, maxResults));
+        //List<Object[]> values = statsRepository.countsOfInstsProvider(Instance.Status.Approval,
+        //        PageRequest.of(0, maxResults));
+        List<Object[]> values = statsRepository.countsOfTotalInstsProvider(PageRequest.of(0, maxResults));
         Map<String, Long> data = new LinkedHashMap<>();
         for (Object[] v : values) {
             data.put((String) v[0], (Long) v[1]);

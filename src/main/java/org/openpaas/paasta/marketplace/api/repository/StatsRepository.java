@@ -78,6 +78,9 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
             + "i.status = :status GROUP BY i.software.createdBy ORDER BY COUNT(*) DESC")
     List<Object[]> countsOfInstsProvider(@Param("status") Instance.Status status, Pageable page);
 
+    @Query("SELECT i.software.createdBy, COUNT(*) FROM Instance i GROUP BY i.software.createdBy ORDER BY COUNT(*) DESC")
+    List<Object[]> countsOfTotalInstsProvider(Pageable page);
+
     @Query("SELECT i.createdBy, COUNT(*) FROM Instance i WHERE "
             + "i.status = :status GROUP BY i.createdBy ORDER BY COUNT(*) DESC")
     List<Object[]> countsOfInstsUser(@Param("status") Instance.Status status, Pageable page);
