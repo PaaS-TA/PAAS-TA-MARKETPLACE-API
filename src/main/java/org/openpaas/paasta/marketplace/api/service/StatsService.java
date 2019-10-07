@@ -75,7 +75,7 @@ public class StatsService {
     }
 
     public long countOfInstsCurrent(String providerId) {
-        return statsRepository.countOfInsts(providerId, Instance.Status.Approval);
+        return statsRepository.countOfInsts(providerId);
     }
 
     public long countOfUsersCurrent(String providerId) {

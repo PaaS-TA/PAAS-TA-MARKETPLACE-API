@@ -46,6 +46,9 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
     @Query("SELECT COUNT(*) FROM Instance i WHERE i.status = :status")
     long countOfInsts(@Param("status") Instance.Status status);
 
+    @Query("SELECT COUNT(*) FROM Instance i WHERE i.software.createdBy = :providerId")
+    long countOfInsts(@Param("providerId") String providerId);
+
     @Query("SELECT COUNT(*) FROM Instance i WHERE i.software.createdBy = :providerId AND i.status = :status")
     long countOfInsts(@Param("providerId") String providerId, @Param("status") Instance.Status status);
 
@@ -130,7 +133,7 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
 
     @Query("SELECT i.software.id, COUNT(*) FROM Instance i WHERE i.software.createdBy = :providerId AND i.software.id IN :idIn "
             + "AND i.usageStartDate IS NOT NULL "
-            + "AND ((i.usageStartDate <= :start AND (i.usageEndDate IS NULL OR i.usageEndDate < :end)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end)) "
+            + "AND ((i.usageStartDate <= :start AND (ifnull(i.usageEndDate, now()) >= :start AND ifnull(i.usageEndDate, now()) < :end)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end)) "
             + "GROUP BY i.software.id ORDER BY COUNT(*) DESC, i.software.id ASC")
     List<Object[]> countsOfInstsUsing(@Param("providerId") String providerId, @Param("idIn") List<Long> idIn,
             @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);

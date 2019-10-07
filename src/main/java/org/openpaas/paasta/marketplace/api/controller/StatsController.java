@@ -78,7 +78,7 @@ public class StatsController {
     public Map<String, Object> countsOfInstsProviderMonthly(
             @RequestParam(name = "idIn", required = false) List<Long> idIn,
             @RequestParam(name = "epoch", required = false) LocalDateTime epoch,
-            @RequestParam(name = "size", required = false, defaultValue = "12") int size) {
+            @RequestParam(name = "size", required = false, defaultValue = "6") int size) {
         String providerId = SecurityUtils.getUserId();
 
         List<Term> terms = Stats.termsOf(epoch, size, ChronoUnit.MONTHS);
