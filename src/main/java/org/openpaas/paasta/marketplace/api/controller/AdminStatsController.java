@@ -18,7 +18,6 @@ import org.openpaas.paasta.marketplace.api.domain.UserSpecification;
 import org.openpaas.paasta.marketplace.api.service.SoftwareService;
 import org.openpaas.paasta.marketplace.api.service.StatsService;
 import org.openpaas.paasta.marketplace.api.service.UserService;
-import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -144,12 +143,24 @@ public class AdminStatsController {
         return statsService.countsOfInstsCurrent(idIn);
     }
 
+
     @GetMapping("/instances/sum/months")
-    public Map<String, Object> countsOfInstsMonthly(@RequestParam(name = "epoch", required = false) LocalDateTime epoch,
+    public Map<String, Object> countsOfInstsMonthly(
+            @RequestParam(name = "epoch", required = false) LocalDateTime epoch,
             @RequestParam(name = "size", required = false, defaultValue = "12") int size) {
         List<Term> terms = Stats.termsOf(epoch, size, ChronoUnit.MONTHS);
 
         return countsOfInsts(terms, true);
+    }
+
+    @GetMapping("/instances/counts/months/ids")
+    public Map<String, Object> countsOfInstCountMonthlyProvider(
+            @RequestParam(name = "idIn", required = false) List<String> idIn,
+            @RequestParam(name = "epoch", required = false) LocalDateTime epoch,
+            @RequestParam(name = "size", required = false, defaultValue = "12") int size) {
+        List<Term> terms = Stats.termsOf(epoch, size, ChronoUnit.MONTHS);
+
+        return countsOfInstsProvider(idIn, terms, true);
     }
 
     @GetMapping("/instances/sum/months/ids")
