@@ -42,6 +42,10 @@ public class StatsService {
         return statsRepository.countOfProviders(Software.Status.Approval);
     }
 
+    public long soldInstanceCountOfSw(Long id) {
+        return statsRepository.soldInstanceCountOfSw(id);
+    }
+
     public Map<String, Long> countsOfInstsProviderCurrent(List<String> idIn) {
         List<Object[]> values = statsRepository.countsOfInstsByProviderIds(Instance.Status.Approval, idIn);
         Map<String, Long> data = values.stream().collect(Collectors.toMap(v -> (String) v[0], v -> (Long) v[1]));

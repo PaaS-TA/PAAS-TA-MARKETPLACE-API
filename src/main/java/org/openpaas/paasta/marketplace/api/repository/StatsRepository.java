@@ -160,6 +160,10 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
     @Query("SELECT count(*) FROM Software s, Instance i WHERE s.id = i.software.id AND s.createdBy = :providerId AND i.software.id = :id")
     Object soldInstanceByProvider(@Param("providerId") String providerId, @Param("id") Long id);
 
+    // 판매자의 단일 상품에 대한 총 판매량(사용 + 중지)
+    @Query("SELECT count(*) FROM Instance i WHERE i.software.id = :id")
+    long soldInstanceCountOfSw(@Param("id") Long id);
+
     // 사용자 사용연월 조회(구매 상품별)
     //@Query("SELECT i FROM Instance i WHERE i.usageStartDate IS NOT NULL AND (((i.usageStartDate <= :usageStartDate AND (ifnull(i.usageEndDate, now()) >= :usageStartDate AND ifnull(i.usageEndDate, now()) < :usageEndDate)) OR (i.usageStartDate >= :usageStartDate AND i.usageStartDate < :usageEndDate))) AND i.createdBy = :userId")
     //Page<Instance> countsOfInstsUsingMonth(@Param("userId") String userId, @Param("usageStartDate") LocalDateTime usageStartDate, @Param("usageEndDate") LocalDateTime usageEndDate, Pageable pageable);

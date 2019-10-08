@@ -11,10 +11,7 @@ import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -58,6 +55,14 @@ public class StatsController {
 
         return count;
     }
+
+    @GetMapping("/software/{id}/sold/counts/sum")
+    public long soldInstanceCountOfSw(@PathVariable Long id) {
+        long count = statsService.soldInstanceCountOfSw(id);
+
+        return count;
+    }
+
 
     @GetMapping("/instances/my/counts")
     public Map<Long, Long> countsOfInstsUsingProvider(
