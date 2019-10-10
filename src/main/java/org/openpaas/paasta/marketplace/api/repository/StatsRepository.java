@@ -95,10 +95,15 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
             + "AND ((i.usageStartDate <= :start AND (i.usageEndDate IS NULL OR i.usageEndDate < :end)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end))")
     long countOfInstsUsing(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
+//    @Query("SELECT COUNT(*) FROM Instance i WHERE i.createdBy = :createdBy "
+//            + "AND i.usageStartDate >= :start AND i.usageStartDate < :end")
+//    long countOfInstsUserApproval(@Param("createdBy") String createdBy, @Param("start") LocalDateTime start,
+//            @Param("end") LocalDateTime end);
+
     @Query("SELECT COUNT(*) FROM Instance i WHERE i.createdBy = :createdBy "
-            + "AND i.usageStartDate >= :start AND i.usageStartDate < :end")
-    long countOfInstsUserApproval(@Param("createdBy") String createdBy, @Param("start") LocalDateTime start,
-            @Param("end") LocalDateTime end);
+            + "AND i.usageStartDate IS NOT NULL "
+            + "AND ((i.usageStartDate <= :start AND (ifnull(i.usageEndDate, now()) >= :start AND ifnull(i.usageEndDate, now()) < :end)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end)) ")
+    long countOfInstsUserApproval(@Param("createdBy") String createdBy, @Param("start") LocalDateTime start,  @Param("end") LocalDateTime end);
 
     @Query("SELECT COUNT(*) FROM Instance i WHERE i.createdBy = :createdBy " + "AND i.usageStartDate IS NOT NULL "
             + "AND ((i.usageStartDate <= :start AND (i.usageEndDate IS NULL OR i.usageEndDate < :end)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end))")
