@@ -92,7 +92,7 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
     long countOfInstsApproval(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
     @Query("SELECT COUNT(*) FROM Instance i WHERE i.usageStartDate IS NOT NULL "
-            + "AND ((i.usageStartDate <= :start AND (i.usageEndDate IS NULL OR i.usageEndDate < :end)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end))")
+            + "AND ((i.usageStartDate <= :start AND (i.usageEndDate IS NULL OR i.usageEndDate > :start)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end))")
     long countOfInstsUsing(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
     @Query("SELECT COUNT(*) FROM Instance i WHERE i.createdBy = :createdBy "
@@ -101,7 +101,7 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
             @Param("end") LocalDateTime end);
 
     @Query("SELECT COUNT(*) FROM Instance i WHERE i.createdBy = :createdBy " + "AND i.usageStartDate IS NOT NULL "
-            + "AND ((i.usageStartDate <= :start AND (i.usageEndDate IS NULL OR i.usageEndDate < :end)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end))")
+            + "AND ((i.usageStartDate <= :start AND (i.usageEndDate IS NULL OR i.usageEndDate > :start)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end))")
     long countOfInstsUserUsing(@Param("createdBy") String createdBy, @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end);
 
@@ -113,14 +113,14 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
 
     @Query("SELECT i.software.id, COUNT(*) FROM Instance i WHERE i.software.id IN :idIn "
             + "AND i.usageStartDate IS NOT NULL "
-            + "AND ((i.usageStartDate <= :start AND (i.usageEndDate IS NULL OR i.usageEndDate < :end)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end)) "
+            + "AND ((i.usageStartDate <= :start AND (i.usageEndDate IS NULL OR i.usageEndDate > :start)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end)) "
             + "GROUP BY i.software.id ORDER BY COUNT(*) DESC, i.software.id ASC")
     List<Object[]> countsOfInstsUsingByProvider(@Param("idIn") List<Long> idIn, @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end);
 
     @Query("SELECT i.software.id, COUNT(*) FROM Instance i WHERE i.software.id IN :idIn "
             + "AND i.usageStartDate IS NOT NULL "
-            + "AND ((i.usageStartDate <= :start AND (ifnull(i.usageEndDate, now()) >= :start AND ifnull(i.usageEndDate, now()) < :end)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end)) "
+            + "AND ((i.usageStartDate <= :start AND (i.usageEndDate IS NULL OR i.usageEndDate > :start)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end)) "
             + "GROUP BY i.software.id ORDER BY COUNT(*) DESC, i.software.id ASC")
     List<Object[]> countsOfInstsUsing(@Param("idIn") List<Long> idIn, @Param("start") LocalDateTime start,
                                       @Param("end") LocalDateTime end);
@@ -133,7 +133,7 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
 
     @Query("SELECT i.software.id, COUNT(*) FROM Instance i WHERE i.software.createdBy = :providerId AND i.software.id IN :idIn "
             + "AND i.usageStartDate IS NOT NULL "
-            + "AND ((i.usageStartDate <= :start AND (ifnull(i.usageEndDate, now()) >= :start AND ifnull(i.usageEndDate, now()) < :end)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end)) "
+            + "AND ((i.usageStartDate <= :start AND (i.usageEndDate IS NULL OR i.usageEndDate > :start)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end)) "
             + "GROUP BY i.software.id ORDER BY COUNT(*) DESC, i.software.id ASC")
     List<Object[]> countsOfInstsUsing(@Param("providerId") String providerId, @Param("idIn") List<Long> idIn,
             @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
