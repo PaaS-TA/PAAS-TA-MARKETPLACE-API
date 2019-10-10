@@ -178,7 +178,7 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
 
     default long countOfInstsUser(String createdBy, LocalDateTime start, LocalDateTime end, boolean using) {
         if (using) {
-            return countOfInstsUserApproval(createdBy, start, end);
+            return countOfInstsUserUsing(createdBy, start, end);
         } else {
             return countOfInstsUserApproval(createdBy, start, end);
         }
