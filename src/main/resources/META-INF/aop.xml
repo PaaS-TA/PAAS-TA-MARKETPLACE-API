@@ -1,0 +1,11 @@
+<!DOCTYPE aspectj PUBLIC "-//AspectJ//DTD//EN" "http://www.eclipse.org/aspectj/dtd/aspectj.dtd">
+<aspectj>
+    <weaver options="">
+        <include within="java.sql.Statement+" />
+        <include within="java.sql.Connection+" />
+        <include within="com.woozooha.adonistrack.aspect.JdbcAspect" />
+    </weaver>
+    <aspects>
+        <aspect name="com.woozooha.adonistrack.aspect.JdbcAspect" />
+    </aspects>
+</aspectj>
