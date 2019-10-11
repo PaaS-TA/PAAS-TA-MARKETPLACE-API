@@ -117,7 +117,7 @@ public class InstanceControllerTest {
         }
         software.setScreenshotList(screenshotList);
         software.setType(Software.Type.Web);
-        software.setPricePerDay(1000L);
+        software.setPricePerMonth(1000L);
         software.setVersion("1.0");
         software.setInUse(Yn.Y);
 

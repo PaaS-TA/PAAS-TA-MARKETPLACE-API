@@ -116,7 +116,7 @@ public class AdminSoftwareControllerTest {
         }
         software.setScreenshotList(screenshotList);
         software.setType(Software.Type.Web);
-        software.setPricePerDay(1000L);
+        software.setPricePerMonth(1000L);
         software.setVersion("1.0");
         software.setInUse(Yn.Y);
 
@@ -223,7 +223,7 @@ public class AdminSoftwareControllerTest {
                         fieldWithPath("screenshotList").type(JsonFieldType.ARRAY).description("screenshot files"),
                         fieldWithPath("summary").type(JsonFieldType.STRING).description("brief description"),
                         fieldWithPath("description").type(JsonFieldType.STRING).description("detailed description"),
-                        fieldWithPath("pricePerDay").type(JsonFieldType.NUMBER).description("price per day"),
+                        fieldWithPath("pricePerMonth").type(JsonFieldType.NUMBER).description("price per month"),
                         fieldWithPath("version").type(JsonFieldType.STRING).description("version")
                     )
                 )
@@ -297,7 +297,7 @@ public class AdminSoftwareControllerTest {
                         fieldWithPath("screenshotList").type(JsonFieldType.ARRAY).description("screenshot files"),
                         fieldWithPath("summary").type(JsonFieldType.STRING).description("brief description"),
                         fieldWithPath("description").type(JsonFieldType.STRING).description("detailed description"),
-                        fieldWithPath("pricePerDay").type(JsonFieldType.NUMBER).description("price per day"),
+                        fieldWithPath("pricePerMonth").type(JsonFieldType.NUMBER).description("price per month"),
                         fieldWithPath("version").type(JsonFieldType.STRING).description("version")
                     )
                 )

@@ -60,7 +60,7 @@ public class SoftwareService {
         saved.setSummary(software.getSummary());
         saved.setDescription(software.getDescription());
         saved.setType(software.getType());
-        saved.setPricePerDay(software.getPricePerDay());
+        saved.setPricePerMonth(software.getPricePerMonth());
         saved.setVersion(software.getVersion());
         saved.setInUse(software.getInUse());
 

@@ -769,7 +769,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
     "summary" : "category-01's summary.",
     "description" : "description of this software. create by foo",
     "type" : "Web",
-    "pricePerDay" : 1000,
+    "pricePerMonth" : 1000,
     "version" : "1.0"
   }, {
     "inUse" : "Y",
@@ -796,7 +796,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
     "summary" : "category-01's summary.",
     "description" : "description of this software. create by foo",
     "type" : "Web",
-    "pricePerDay" : 1000,
+    "pricePerMonth" : 1000,
     "version" : "1.0"
   } ],
   "pageable" : {
@@ -858,7 +858,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
     "summary" : "category-01's summary.",
     "description" : "description of this software. create by foo",
     "type" : "Web",
-    "pricePerDay" : 1000,
+    "pricePerMonth" : 1000,
     "version" : "1.0"
   }, {
     "inUse" : "Y",
@@ -885,7 +885,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
     "summary" : "category-01's summary.",
     "description" : "description of this software. create by foo",
     "type" : "Web",
-    "pricePerDay" : 1000,
+    "pricePerMonth" : 1000,
     "version" : "1.0"
   } ],
   "pageable" : {
@@ -1111,7 +1111,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
     "summary" : "category-01's summary.",
     "description" : "description of this software. create by foo",
     "type" : "Web",
-    "pricePerDay" : 1000,
+    "pricePerMonth" : 1000,
     "version" : "1.0"
   }, {
     "inUse" : "Y",
@@ -1138,7 +1138,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
     "summary" : "category-01's summary.",
     "description" : "description of this software. create by foo",
     "type" : "Web",
-    "pricePerDay" : 1000,
+    "pricePerMonth" : 1000,
     "version" : "1.0"
   } ],
   "pageable" : {
@@ -1200,7 +1200,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
     "summary" : "category-01's summary.",
     "description" : "description of this software. create by foo",
     "type" : "Web",
-    "pricePerDay" : 1000,
+    "pricePerMonth" : 1000,
     "version" : "1.0"
   }, {
     "inUse" : "Y",
@@ -1227,7 +1227,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
     "summary" : "category-01's summary.",
     "description" : "description of this software. create by foo",
     "type" : "Web",
-    "pricePerDay" : 1000,
+    "pricePerMonth" : 1000,
     "version" : "1.0"
   } ],
   "pageable" : {
@@ -1420,7 +1420,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
   "summary" : "category-01's summary.",
   "description" : "description of this software. create by foo",
   "type" : "Web",
-  "pricePerDay" : 1000,
+  "pricePerMonth" : 1000,
   "version" : "1.0"
 }</code></pre>
 </div>
@@ -1455,7 +1455,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
   "summary" : "category-01's summary.",
   "description" : "description of this software. create by foo",
   "type" : "Web",
-  "pricePerDay" : 1000,
+  "pricePerMonth" : 1000,
   "version" : "1.0"
 }</code></pre>
 </div>
@@ -1525,9 +1525,9 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 <td class="tableblock halign-left valign-top"><p class="tableblock">detailed description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pricePerDay</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pricePerMonth</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">price per day</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">price per month</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>version</code></p></td>
@@ -1598,7 +1598,7 @@ Host: marketplace.yourdomain.com
   "summary" : "category-01's summary.",
   "description" : "description of this software. create by foo",
   "type" : "Web",
-  "pricePerDay" : 1000,
+  "pricePerMonth" : 1000,
   "version" : "1.0"
 }</code></pre>
 </div>
@@ -1625,7 +1625,7 @@ Host: marketplace.yourdomain.com
   "summary" : "category-01's summary.",
   "description" : "description of this software. create by foo",
   "type" : "Web",
-  "pricePerDay" : 1000,
+  "pricePerMonth" : 1000,
   "version" : "1.0"
 }'</code></pre>
 </div>
@@ -1648,7 +1648,7 @@ Host: marketplace.yourdomain.com
   "summary" : "category-01's summary.",
   "description" : "description of this software. create by foo",
   "type" : "Web",
-  "pricePerDay" : 1000,
+  "pricePerMonth" : 1000,
   "version" : "1.0"
 }' | http POST 'http://marketplace.yourdomain.com/softwares' \
     'Accept:application/json' \
@@ -1674,7 +1674,7 @@ Host: marketplace.yourdomain.com
   "summary" : "category-01's summary.",
   "description" : "description of this software. create by foo",
   "type" : "Web",
-  "pricePerDay" : 1000,
+  "pricePerMonth" : 1000,
   "version" : "1.0"
 }</code></pre>
 </div>
@@ -1763,7 +1763,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
   "summary" : "category-01's summary.",
   "description" : "description of this software. create by foo",
   "type" : "Web",
-  "pricePerDay" : 1000,
+  "pricePerMonth" : 1000,
   "version" : "1.0"
 }</code></pre>
 </div>
@@ -1798,7 +1798,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
   "summary" : "category-01's summary.",
   "description" : "description of this software. create by foo",
   "type" : "Web",
-  "pricePerDay" : 1000,
+  "pricePerMonth" : 1000,
   "version" : "1.0"
 }</code></pre>
 </div>
@@ -1873,9 +1873,9 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 <td class="tableblock halign-left valign-top"><p class="tableblock">detailed description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pricePerDay</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pricePerMonth</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">price per day</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">price per month</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>version</code></p></td>
@@ -1953,7 +1953,7 @@ Host: marketplace.yourdomain.com
   "summary" : "category-01's summary.",
   "description" : "description of this software. create by foo",
   "type" : "Web",
-  "pricePerDay" : 1500,
+  "pricePerMonth" : 1500,
   "version" : "2.0"
 }</code></pre>
 </div>
@@ -1981,7 +1981,7 @@ Host: marketplace.yourdomain.com
   "summary" : "category-01's summary.",
   "description" : "description of this software. create by foo",
   "type" : "Web",
-  "pricePerDay" : 1500,
+  "pricePerMonth" : 1500,
   "version" : "2.0"
 }'</code></pre>
 </div>
@@ -2005,7 +2005,7 @@ Host: marketplace.yourdomain.com
   "summary" : "category-01's summary.",
   "description" : "description of this software. create by foo",
   "type" : "Web",
-  "pricePerDay" : 1500,
+  "pricePerMonth" : 1500,
   "version" : "2.0"
 }' | http PUT 'http://marketplace.yourdomain.com/softwares/1' \
     'Accept:application/json' \
@@ -2032,7 +2032,7 @@ Host: marketplace.yourdomain.com
   "summary" : "category-01's summary.",
   "description" : "description of this software. create by foo",
   "type" : "Web",
-  "pricePerDay" : 1500,
+  "pricePerMonth" : 1500,
   "version" : "2.0"
 }</code></pre>
 </div>
@@ -2121,7 +2121,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
   "summary" : "category-01's summary.",
   "description" : "description of this software. create by foo",
   "type" : "Web",
-  "pricePerDay" : 1500,
+  "pricePerMonth" : 1500,
   "version" : "2.0"
 }</code></pre>
 </div>
@@ -2156,7 +2156,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
   "summary" : "category-01's summary.",
   "description" : "description of this software. create by foo",
   "type" : "Web",
-  "pricePerDay" : 1500,
+  "pricePerMonth" : 1500,
   "version" : "2.0"
 }</code></pre>
 </div>
@@ -2231,9 +2231,9 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 <td class="tableblock halign-left valign-top"><p class="tableblock">detailed description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pricePerDay</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pricePerMonth</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">price per day</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">price per month</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>version</code></p></td>
@@ -2403,7 +2403,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       "summary" : "category-01's summary.",
       "description" : "description of this software. create by foo",
       "type" : "Web",
-      "pricePerDay" : 1000,
+      "pricePerMonth" : 1000,
       "version" : "1.0"
     },
     "status" : "Approval",
@@ -2442,7 +2442,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       "summary" : "category-01's summary.",
       "description" : "description of this software. create by foo",
       "type" : "Web",
-      "pricePerDay" : 1000,
+      "pricePerMonth" : 1000,
       "version" : "1.0"
     },
     "status" : "Approval",
@@ -2516,7 +2516,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       "summary" : "category-01's summary.",
       "description" : "description of this software. create by foo",
       "type" : "Web",
-      "pricePerDay" : 1000,
+      "pricePerMonth" : 1000,
       "version" : "1.0"
     },
     "status" : "Approval",
@@ -2555,7 +2555,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       "summary" : "category-01's summary.",
       "description" : "description of this software. create by foo",
       "type" : "Web",
-      "pricePerDay" : 1000,
+      "pricePerMonth" : 1000,
       "version" : "1.0"
     },
     "status" : "Approval",
@@ -2760,7 +2760,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
     "summary" : "category-01's summary.",
     "description" : "description of this software. create by foo",
     "type" : "Web",
-    "pricePerDay" : 1000,
+    "pricePerMonth" : 1000,
     "version" : "1.0"
   },
   "status" : "Approval",
@@ -2807,7 +2807,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
     "summary" : "category-01's summary.",
     "description" : "description of this software. create by foo",
     "type" : "Web",
-    "pricePerDay" : 1000,
+    "pricePerMonth" : 1000,
     "version" : "1.0"
   },
   "status" : "Approval",
@@ -3031,7 +3031,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
     "summary" : "category-01's summary.",
     "description" : "description of this software. create by foo",
     "type" : "Web",
-    "pricePerDay" : 1000,
+    "pricePerMonth" : 1000,
     "version" : "1.0"
   },
   "status" : "Approval",
@@ -3078,7 +3078,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
     "summary" : "category-01's summary.",
     "description" : "description of this software. create by foo",
     "type" : "Web",
-    "pricePerDay" : 1000,
+    "pricePerMonth" : 1000,
     "version" : "1.0"
   },
   "status" : "Approval",
@@ -3257,7 +3257,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
     "summary" : "category-01's summary.",
     "description" : "description of this software. create by foo",
     "type" : "Web",
-    "pricePerDay" : 1000,
+    "pricePerMonth" : 1000,
     "version" : "1.0"
   },
   "status" : "Deleted",
@@ -3305,7 +3305,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
     "summary" : "category-01's summary.",
     "description" : "description of this software. create by foo",
     "type" : "Web",
-    "pricePerDay" : 1000,
+    "pricePerMonth" : 1000,
     "version" : "1.0"
   },
   "status" : "Deleted",
@@ -4532,7 +4532,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
     "summary" : "category-01's summary.",
     "description" : "description of this software.",
     "type" : "Web",
-    "pricePerDay" : 1000,
+    "pricePerMonth" : 1000,
     "version" : "1.0"
   }, {
     "inUse" : "Y",
@@ -4559,7 +4559,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
     "summary" : "category-01's summary.",
     "description" : "description of this software.",
     "type" : "Web",
-    "pricePerDay" : 1000,
+    "pricePerMonth" : 1000,
     "version" : "1.0"
   } ],
   "pageable" : {
@@ -4621,7 +4621,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
     "summary" : "category-01's summary.",
     "description" : "description of this software.",
     "type" : "Web",
-    "pricePerDay" : 1000,
+    "pricePerMonth" : 1000,
     "version" : "1.0"
   }, {
     "inUse" : "Y",
@@ -4648,7 +4648,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
     "summary" : "category-01's summary.",
     "description" : "description of this software.",
     "type" : "Web",
-    "pricePerDay" : 1000,
+    "pricePerMonth" : 1000,
     "version" : "1.0"
   } ],
   "pageable" : {
@@ -4841,7 +4841,7 @@ Content-Length: 1017
   "summary" : "category-01's summary.",
   "description" : "description of this software.",
   "type" : "Web",
-  "pricePerDay" : 1000,
+  "pricePerMonth" : 1000,
   "version" : "1.0"
 }</code></pre>
 </div>
@@ -4876,7 +4876,7 @@ Content-Length: 1017
   "summary" : "category-01's summary.",
   "description" : "description of this software.",
   "type" : "Web",
-  "pricePerDay" : 1000,
+  "pricePerMonth" : 1000,
   "version" : "1.0"
 }</code></pre>
 </div>
@@ -4946,9 +4946,9 @@ Content-Length: 1017
 <td class="tableblock halign-left valign-top"><p class="tableblock">detailed description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pricePerDay</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pricePerMonth</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">price per day</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">price per month</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>version</code></p></td>
@@ -5190,7 +5190,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
   "summary" : "category-01's summary.",
   "description" : "description of this software.",
   "type" : "Web",
-  "pricePerDay" : 1000,
+  "pricePerMonth" : 1000,
   "version" : "1.0",
   "confirmComment" : "confirm"
 }</code></pre>
@@ -5226,7 +5226,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
   "summary" : "category-01's summary.",
   "description" : "description of this software.",
   "type" : "Web",
-  "pricePerDay" : 1000,
+  "pricePerMonth" : 1000,
   "version" : "1.0",
   "confirmComment" : "confirm"
 }</code></pre>
@@ -5302,9 +5302,9 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 <td class="tableblock halign-left valign-top"><p class="tableblock">detailed description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pricePerDay</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pricePerMonth</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">price per day</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">price per month</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>version</code></p></td>

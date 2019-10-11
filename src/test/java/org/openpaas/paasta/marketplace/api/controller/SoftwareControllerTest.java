@@ -119,7 +119,7 @@ public class SoftwareControllerTest {
         }
         software.setScreenshotList(screenshotList);
         software.setType(Software.Type.Web);
-        software.setPricePerDay(1000L);
+        software.setPricePerMonth(1000L);
         software.setVersion("1.0");
         software.setInUse(Yn.Y);
 
@@ -297,7 +297,7 @@ public class SoftwareControllerTest {
                         fieldWithPath("screenshotList").type(JsonFieldType.ARRAY).description("screenshot files"),
                         fieldWithPath("summary").type(JsonFieldType.STRING).description("brief description"),
                         fieldWithPath("description").type(JsonFieldType.STRING).description("detailed description"),
-                        fieldWithPath("pricePerDay").type(JsonFieldType.NUMBER).description("price per day"),
+                        fieldWithPath("pricePerMonth").type(JsonFieldType.NUMBER).description("price per month"),
                         fieldWithPath("version").type(JsonFieldType.STRING).description("version")
                     )
                 )
@@ -324,7 +324,7 @@ public class SoftwareControllerTest {
         s.setSummary(software.getSummary());
         s.setDescription(software.getDescription());
         s.setType(software.getType());
-        s.setPricePerDay(software.getPricePerDay());
+        s.setPricePerMonth(software.getPricePerMonth());
         s.setVersion(software.getVersion());
         s.setInUse(software.getInUse());
 
@@ -374,7 +374,7 @@ public class SoftwareControllerTest {
                         fieldWithPath("screenshotList").type(JsonFieldType.ARRAY).description("screenshot files"),
                         fieldWithPath("summary").type(JsonFieldType.STRING).description("brief description"),
                         fieldWithPath("description").type(JsonFieldType.STRING).description("detailed description"),
-                        fieldWithPath("pricePerDay").type(JsonFieldType.NUMBER).description("price per day"),
+                        fieldWithPath("pricePerMonth").type(JsonFieldType.NUMBER).description("price per month"),
                         fieldWithPath("version").type(JsonFieldType.STRING).description("version")
                     )
                 )
@@ -387,7 +387,7 @@ public class SoftwareControllerTest {
         Category category = category(2L, "category-02");
         Software software = software(1L, "software-rename-01", category);
         software.setStatus(Software.Status.Pending);
-        software.setPricePerDay(1500L);
+        software.setPricePerMonth(1500L);
         software.setVersion("2.0");
 
         Category c = new Category();
@@ -404,7 +404,7 @@ public class SoftwareControllerTest {
         s.setSummary(software.getSummary());
         s.setDescription(software.getDescription());
         s.setType(software.getType());
-        s.setPricePerDay(software.getPricePerDay());
+        s.setPricePerMonth(software.getPricePerMonth());
         s.setVersion(software.getVersion());
         s.setInUse(software.getInUse());
 
@@ -456,7 +456,7 @@ public class SoftwareControllerTest {
                         fieldWithPath("screenshotList").type(JsonFieldType.ARRAY).description("screenshot files"),
                         fieldWithPath("summary").type(JsonFieldType.STRING).description("brief description"),
                         fieldWithPath("description").type(JsonFieldType.STRING).description("detailed description"),
-                        fieldWithPath("pricePerDay").type(JsonFieldType.NUMBER).description("price per day"),
+                        fieldWithPath("pricePerMonth").type(JsonFieldType.NUMBER).description("price per month"),
                         fieldWithPath("version").type(JsonFieldType.STRING).description("version")
                     )
                 )
