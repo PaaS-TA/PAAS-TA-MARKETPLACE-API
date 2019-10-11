@@ -11,6 +11,8 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -334,4 +336,31 @@ public class StatsService {
 
         return data;
     }
+    
+    public Map<Long, Long> getSalesAmount(String providerId, List<Long> idIn, LocalDateTime start, LocalDateTime end) {
+        int startMonth = start.getMonthValue();
+        int endMonth = end.getMonthValue();
+        int endDay = end.getDayOfMonth();
+
+        if (startMonth != endMonth && (startMonth + 1 != endMonth || endDay != 1)) {
+            throw new IllegalStateException("Invalid term: start=" + start + ", end=" + end);
+        }
+
+        int lengthOfMonth = start.toLocalDate().lengthOfMonth();
+
+        Map<Long, Long> data = new HashMap<>();
+
+        List<Object[]> values = statsRepository.getSalesAmount(providerId, idIn, start, end);
+        for (Object[] value : values) {
+            Long id = (Long) value[0];
+            Long pricePerMonth = (Long) value[1];
+            Long days = (Long) value[2];
+            long price = (long) (Math.ceil(pricePerMonth * ((double) days / lengthOfMonth)));
+
+            data.put(id, price);
+        }
+
+        return data;
+    }
+
 }
