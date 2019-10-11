@@ -182,7 +182,7 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
 
     @Query("SELECT i.software.id, i.software.pricePerMonth, SUM(DATEDIFF( "
             + "CASE WHEN i.usageEndDate IS NOT NULL AND i.usageEndDate <= :end THEN i.usageEndDate ELSE :end END, "
-            + "CASE WHEN i.usageStartDate <= :start THEN :start ELSE i.usageStartDate END) + 1)" + "FROM Instance i "
+            + "CASE WHEN i.usageStartDate <= :start THEN :start ELSE i.usageStartDate END) + 1) " + "FROM Instance i "
             + "WHERE i.software.createdBy = :providerId AND i.software.id IN :idIn "
             + "AND i.usageStartDate IS NOT NULL "
             + "AND ((i.usageStartDate <= :start AND (i.usageEndDate IS NULL OR i.usageEndDate > :start)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end)) "
