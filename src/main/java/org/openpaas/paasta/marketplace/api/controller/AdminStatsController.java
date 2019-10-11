@@ -23,7 +23,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.web.bind.annotation.*;
 
-
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -153,6 +152,7 @@ public class AdminStatsController {
         return countsOfInsts(terms, true);
     }
 
+
     @GetMapping("/instances/counts/months/ids")
     public Map<String, Object> countsOfInstCountMonthlyProvider(
             @RequestParam(name = "idIn", required = false) List<String> idIn,
@@ -182,11 +182,24 @@ public class AdminStatsController {
     }
 
     @GetMapping("/instances/sum/user/months")
-    public Map<String, Object> countsOfInstsUserMonthly(@RequestParam(name = "createdBy") String createdBy, @RequestParam(name = "epoch", required = false) LocalDateTime epoch,
+    public Map<String, Object> countsOfInstsUserMonthly(
+            @RequestParam(name = "createdBy") String createdBy,
+            @RequestParam(name = "epoch", required = false) LocalDateTime epoch,
             @RequestParam(name = "size", required = false, defaultValue = "12") int size) {
         List<Term> terms = Stats.termsOf(epoch, size, ChronoUnit.MONTHS);
 
         return countsOfInstsUser(createdBy, terms, true);
+    }
+
+    //모든 사용자 년(월)도 그래프추이
+    @GetMapping("/instances/sum/users/months")
+    public Map<String, Object> countsOfInstsUsersMonthly(
+            @RequestParam(name = "createdBy", required = false) List<String> createdBy,
+            @RequestParam(name = "epoch", required = false) LocalDateTime epoch,
+            @RequestParam(name = "size", required = false, defaultValue = "12") int size) {
+        List<Term> terms = Stats.termsOf(epoch, size, ChronoUnit.MONTHS);
+
+        return countsOfInstsUsers(createdBy, terms, true);
     }
 
     @GetMapping("/instances/sum/user/days")
@@ -269,6 +282,18 @@ public class AdminStatsController {
         List<String> termStrings = terms.stream().map(t -> Stats.toString(t.getStart())).collect(Collectors.toList());
 
         List<Long> counts = statsService.countsOfInstsUser(createdBy, terms, using);
+
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("terms", termStrings);
+        data.put("counts", counts);
+
+        return data;
+    }
+
+    private Map<String, Object> countsOfInstsUsers(List<String> createdBy, List<Term> terms, boolean using) {
+        List<String> termStrings = terms.stream().map(t -> Stats.toString(t.getStart())).collect(Collectors.toList());
+
+        Map<String, List<Long>> counts = statsService.countsOfInstsUsers(createdBy, terms, using);
 
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("terms", termStrings);

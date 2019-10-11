@@ -196,6 +196,34 @@ public class StatsService {
         return vs;
     }
 
+    //countsOfInstsUser :: countOfInstsUserApprovalList
+    public  Map<String, List<Long>> countsOfInstsUsers(List<String> createdBy, List<Term> terms, boolean using) {
+        Map<Pair<String, String>, Long> values = new HashMap<>();
+        Set<String> ids = new TreeSet<>();
+        terms.forEach(t -> {
+            List<Object[]> vs = statsRepository.countOfInstsUsers(createdBy, t.getStart(), t.getEnd(),using);
+            vs.forEach(v -> {
+                String id =  (String)v[0];
+                Long count = (Long) v[1];
+                ids.add(id);
+                Pair<String, String> pair = Pair.of(id, Stats.toString(t.getStart()));
+                values.put(pair, count);
+            });
+        });
+
+        Map<String, List<Long>> datas = new HashMap<>();
+        ids.forEach(id -> {
+            List<Long> data = new ArrayList<>();
+            terms.forEach(t -> {
+                Long count = values.getOrDefault(Pair.of(id, Stats.toString(t.getStart())), 0L);
+                data.add(count);
+            });
+            datas.put(id, data);
+        });
+
+        return datas;
+    }
+
     public Map<Long, List<Long>> countsOfInsts(List<Long> idIn, List<Term> terms, boolean using) {
         Map<Pair<Long, String>, Long> values = new HashMap<>();
         Set<Long> ids = new TreeSet<>();

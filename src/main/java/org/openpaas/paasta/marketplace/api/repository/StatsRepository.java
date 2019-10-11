@@ -105,12 +105,12 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
             + "AND ((i.usageStartDate <= :start AND (ifnull(i.usageEndDate, now()) >= :start AND ifnull(i.usageEndDate, now()) < :end)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end)) ")
     long countOfInstsUserApproval(@Param("createdBy") String createdBy, @Param("start") LocalDateTime start,  @Param("end") LocalDateTime end);
 
-//    @Query("SELECT i.createdBy, COUNT(*) FROM Instance i WHERE i.createdBy IN :createdByIn "
-//            + "AND i.usageStartDate IS NOT NULL "
-//            + "AND ((i.usageStartDate <= :start AND (i.usageEndDate IS NULL OR i.usageEndDate > :start)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end)) "
-//            + "GROUP BY i.createdBy ASC")
-//    List<Object[]> countOfInstsUserApprovalList(@Param("createdByIn") List<String> createdByIn, @Param("start") LocalDateTime start,
-//                                      @Param("end") LocalDateTime end);
+    @Query("SELECT i.createdBy, COUNT(*) FROM Instance i WHERE i.createdBy IN :createdBy "
+            + "AND i.usageStartDate IS NOT NULL "
+            + "AND ((i.usageStartDate <= :start AND (i.usageEndDate IS NULL OR i.usageEndDate > :start)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end)) "
+            + "GROUP BY i.createdBy")
+    List<Object[]> countOfInstsUserApprovalList(@Param("createdBy") List<String> createdBy, @Param("start") LocalDateTime start,
+                                      @Param("end") LocalDateTime end);
 
     @Query("SELECT COUNT(*) FROM Instance i WHERE i.createdBy = :createdBy " + "AND i.usageStartDate IS NOT NULL "
             + "AND ((i.usageStartDate <= :start AND (i.usageEndDate IS NULL OR i.usageEndDate > :start)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end))")
@@ -193,6 +193,14 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
             return countOfInstsUserUsing(createdBy, start, end);
         } else {
             return countOfInstsUserApproval(createdBy, start, end);
+        }
+    }
+
+    default List<Object[]> countOfInstsUsers(List<String> createdBy , LocalDateTime start, LocalDateTime end, boolean using) {
+        if (using) {
+            return countOfInstsUserApprovalList(createdBy, start, end);
+        } else {
+            return countOfInstsUserApprovalList(createdBy, start, end);
         }
     }
 
