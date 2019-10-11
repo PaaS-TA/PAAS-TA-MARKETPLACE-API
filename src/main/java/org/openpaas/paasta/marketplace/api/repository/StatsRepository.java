@@ -88,17 +88,15 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
             + "i.status = :status GROUP BY i.createdBy ORDER BY COUNT(*) DESC")
     List<Object[]> countsOfInstsUser(@Param("status") Instance.Status status, Pageable page);
 
+    @Query("SELECT i.createdBy, COUNT(*) FROM Instance i GROUP BY i.createdBy ORDER BY COUNT(*) DESC")
+    List<Object[]> countsOfInstsSumUsers(Pageable page);
+
     @Query("SELECT COUNT(*) FROM Instance i WHERE i.usageStartDate >= :start AND i.usageStartDate < :end")
     long countOfInstsApproval(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
     @Query("SELECT COUNT(*) FROM Instance i WHERE i.usageStartDate IS NOT NULL "
             + "AND ((i.usageStartDate <= :start AND (i.usageEndDate IS NULL OR i.usageEndDate > :start)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end))")
     long countOfInstsUsing(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
-
-//    @Query("SELECT COUNT(*) FROM Instance i WHERE i.createdBy = :createdBy "
-//            + "AND i.usageStartDate >= :start AND i.usageStartDate < :end")
-//    long countOfInstsUserApproval(@Param("createdBy") String createdBy, @Param("start") LocalDateTime start,
-//            @Param("end") LocalDateTime end);
 
     @Query("SELECT COUNT(*) FROM Instance i WHERE i.createdBy = :createdBy "
             + "AND i.usageStartDate IS NOT NULL "

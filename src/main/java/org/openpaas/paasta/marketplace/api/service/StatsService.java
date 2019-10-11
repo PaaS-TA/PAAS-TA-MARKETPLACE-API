@@ -148,6 +148,20 @@ public class StatsService {
         return data;
     }
 
+    public Map<String, Long> countsOfInstsSumUser(int maxResults) {
+        if (maxResults == -1) {
+            maxResults = Integer.MAX_VALUE;
+        }
+
+        List<Object[]> values = statsRepository.countsOfInstsSumUsers(PageRequest.of(0, maxResults));
+        Map<String, Long> data = new LinkedHashMap<>();
+        for (Object[] v : values) {
+            data.put((String) v[0], (Long) v[1]);
+        }
+
+        return data;
+    }
+
     public Map<Long, Long> countsOfInstsCurrent(int maxResults) {
         if (maxResults == -1) {
             maxResults = Integer.MAX_VALUE;
@@ -364,7 +378,7 @@ public class StatsService {
 
         return data;
     }
-    
+
     public Map<Long, Long> getSalesAmount(String providerId, List<Long> idIn, LocalDateTime start, LocalDateTime end) {
         int startMonth = start.getMonthValue();
         int endMonth = end.getMonthValue();

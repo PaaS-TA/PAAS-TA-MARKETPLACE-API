@@ -111,10 +111,18 @@ public class AdminStatsController {
         return statsService.countsOfInstsProvider(maxResults);
     }
 
+    //[Admin] 사용자 (status = Approval)인 상품 수
     @GetMapping("/users/instances/counts")
     public Map<String, Long> countsOfInstsUser(
             @RequestParam(name = "maxResults", required = false, defaultValue = "-1") int maxResults) {
         return statsService.countsOfInstsUser(maxResults);
+    }
+
+    //[Admin] 사용자 (status = Approval,Deleted)인 상품 수
+    @GetMapping("/users/sum/instances/counts")
+    public Map<String, Long> countsOfInstsSumUser(
+            @RequestParam(name = "maxResults", required = false, defaultValue = "-1") int maxResults) {
+        return statsService.countsOfInstsSumUser(maxResults);
     }
 
     @GetMapping("/providers/instances/counts/ids")
