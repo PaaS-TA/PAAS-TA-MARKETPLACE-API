@@ -380,11 +380,10 @@ public class StatsService {
     }
 
     public Map<Long, Long> getSalesAmount(String providerId, List<Long> idIn, LocalDateTime start, LocalDateTime end) {
-        int startMonth = start.getMonthValue();
-        int endMonth = end.getMonthValue();
-        int endDay = end.getDayOfMonth();
+        LocalDateTime startDate = start;
+        LocalDateTime endDate = end.minusDays(1);
 
-        if (startMonth != endMonth && (startMonth + 1 != endMonth || endDay != 1)) {
+        if (startDate.getMonthValue() != endDate.getMonthValue()) {
             throw new IllegalStateException("Invalid term: start=" + start + ", end=" + end);
         }
 
@@ -392,7 +391,7 @@ public class StatsService {
 
         Map<Long, Long> data = new HashMap<>();
 
-        List<Object[]> values = statsRepository.getSalesAmount(providerId, idIn, start, end);
+        List<Object[]> values = statsRepository.getSalesAmount(providerId, idIn, startDate, endDate);
         for (Object[] value : values) {
             Long id = (Long) value[0];
             Long pricePerMonth = (Long) value[1];
