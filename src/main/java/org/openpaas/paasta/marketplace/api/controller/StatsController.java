@@ -158,7 +158,7 @@ public class StatsController {
     }
 
     @GetMapping("/softwares/sales-amount")
-    public Map<Long, Long> _amount(@RequestParam(name = "idIn", required = false) List<Long> idIn,
+    public Map<Long, Long> getSalesAmount(@RequestParam(name = "idIn", required = false) List<Long> idIn,
             @RequestParam(name = "start", required = true) LocalDateTime start,
             @RequestParam(name = "end", required = true) LocalDateTime end) {
         String providerId = SecurityUtils.getUserId();
