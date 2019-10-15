@@ -225,6 +225,7 @@ public class PlatformService {
             }
             if(application.getPackageState().equals("STAGED")) {
                 log.info("============== 앱 START END================");
+                log.info("TTA 시간 검증 완료 ::: ");
                 return application;
             }
         }
