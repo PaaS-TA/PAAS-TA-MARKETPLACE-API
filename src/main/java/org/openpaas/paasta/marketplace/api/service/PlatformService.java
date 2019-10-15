@@ -218,9 +218,9 @@ public class PlatformService {
             appService.timer(30);
             application = appService.getApplicationNameExists(appName);
             tryCount++;
-            System.err.println("app state ::: appName=" + appName + ", appState=" + application.getPackageState());
+            log.info("app state ::: appName=" + appName + ", appState=" + application.getPackageState());
             if(tryCount == 6 && !application.getPackageState().equals("STAGED")) { //3분
-                System.err.println("Not started ::: appName=" + appName + ", appState=" + application.getPackageState());
+                log.info("Not started ::: appName=" + appName + ", appState=" + application.getPackageState());
                 throw new PlatformException("앱이 시작되지 않네요...! 시작중일지도 모르지만용");
             }
             if(application.getPackageState().equals("STAGED")) {
