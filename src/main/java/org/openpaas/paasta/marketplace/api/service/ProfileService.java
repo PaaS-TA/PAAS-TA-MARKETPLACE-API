@@ -21,6 +21,7 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
 
     public Profile create(Profile profile) {
+    	profile.setStatus(Profile.Status.Request);
         return profileRepository.save(profile);
     }
 
