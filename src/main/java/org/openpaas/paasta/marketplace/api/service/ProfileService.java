@@ -1,5 +1,7 @@
 package org.openpaas.paasta.marketplace.api.service;
 
+import java.time.LocalDateTime;
+
 import javax.transaction.Transactional;
 
 import org.openpaas.paasta.marketplace.api.domain.Profile;
@@ -37,6 +39,10 @@ public class ProfileService {
         saved.setManager(profile.getManager());
         saved.setEmail(profile.getEmail());
         saved.setSiteUrl(profile.getSiteUrl());
+        if (profile.getStatus() != saved.getStatus()) {
+            saved.setStatusModifiedDate(LocalDateTime.now());
+        }
+        saved.setStatus(profile.getStatus());
 
         return saved;
     }
