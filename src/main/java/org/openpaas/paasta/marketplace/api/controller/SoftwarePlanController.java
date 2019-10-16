@@ -8,6 +8,7 @@ import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
@@ -31,6 +32,21 @@ public class SoftwarePlanController {
         spec.setSoftwareId(id);
 
         return softwarePlanService.getSoftwarePlanList(spec, sort);
+    }
+
+    @PostMapping
+    public SoftwarePlan create(@NotNull @Validated @RequestBody SoftwarePlan softwarePlan,
+                           BindingResult bindingResult) throws BindException {
+        SoftwarePlan sameName = softwarePlanService.getByName(softwarePlan.getName());
+        if (sameName != null) {
+            bindingResult.rejectValue("name", "Unique");
+        }
+
+        if (bindingResult.hasErrors()) {
+            throw new BindException(bindingResult);
+        }
+
+        return softwarePlanService.create(softwarePlan);
     }
 
     @PutMapping("/{id}")
