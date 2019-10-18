@@ -3,6 +3,7 @@ package org.openpaas.paasta.marketplace.api.controller;
 import lombok.RequiredArgsConstructor;
 import org.openpaas.paasta.marketplace.api.domain.*;
 import org.openpaas.paasta.marketplace.api.domain.Software.Status;
+import org.openpaas.paasta.marketplace.api.service.SoftwarePlanService;
 import org.openpaas.paasta.marketplace.api.service.SoftwareService;
 import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
 import org.springframework.data.domain.Page;
@@ -24,7 +25,7 @@ public class SoftwareController {
 
     private final SoftwareService softwareService;
 
-
+    private final SoftwarePlanService softwarePlanService;
 
     @GetMapping("/page")
     public Page<Software> getPage(SoftwareSpecification spec, Pageable pageable, HttpServletRequest httpServletRequest) {
@@ -60,7 +61,14 @@ public class SoftwareController {
             throw new BindException(bindingResult);
         }
 
-        return softwareService.create(software);
+        Software software1 = softwareService.create(software);
+
+        //create plan
+        for(int i = 0; i < software.getSoftwarePlanList().size(); i++) {
+            software.getSoftwarePlanList().get(i).setSoftwareId(software1.getId());
+            softwarePlanService.create(software.getSoftwarePlanList().get(i));
+        }
+        return software1;
     }
 
     @PutMapping("/{id}")
@@ -94,8 +102,5 @@ public class SoftwareController {
 
         return softwareService.getHistoryList(spec, sort);
     }
-
-
-
 
 }
