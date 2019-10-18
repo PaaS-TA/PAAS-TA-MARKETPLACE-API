@@ -66,11 +66,12 @@ public class SoftwareService {
 
         SoftwareHistory history = new SoftwareHistory();
         history.setSoftware(saved);
+        history.setDescription(software.getHistoryDescription());
         softwareHistoryRepository.save(history);
 
         return saved;
     }
-
+    
     public Software updateMetadata(Software software) {
         Software saved = softwareRepository.findById(software.getId()).get();
         saved.setName(software.getName());
