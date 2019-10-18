@@ -122,8 +122,9 @@ public class AppService extends Common {
                 instance = (Integer) resultMap.get("instances");
             }
 
-            if(resultMap.containsKey("buildpack")){
-                buildPack = resultMap.get("buildpack").toString();
+            if(resultMap.containsKey("buildpacks")){
+                List<String> buildpacks = (List) resultMap.get("buildpacks");
+                buildPack = buildpacks.get(0);
             }
 
             app.setInstances(instance);
