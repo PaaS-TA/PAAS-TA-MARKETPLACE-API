@@ -85,6 +85,7 @@ public class SoftwareService {
 
         SoftwareHistory history = new SoftwareHistory();
         history.setSoftware(saved);
+        history.setDescription(software.getHistoryDescription());
         softwareHistoryRepository.save(history);
 
         return saved;
