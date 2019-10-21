@@ -109,14 +109,6 @@ public class AppService extends Common {
                 }
             }
 
-//            if(resultMap.get("memory").toString().toLowerCase().contains("g")){
-//                memorySize = memorySize * 1024;
-//            }
-
-
-//            if(resultMap.get("disk_quota").toString().toLowerCase().contains("g")){
-//                diskSize = diskSize * 1024;
-//            }
 
             if(resultMap.containsKey("instances")){
                 instance = (Integer) resultMap.get("instances");
@@ -143,12 +135,6 @@ public class AppService extends Common {
             routeMapping(applicationid, routeid, reactorCloudFoundryClient); // app와 route를 mapping합니다.
             fileUpload(file, applicationid, reactorCloudFoundryClient); // app에 파일 업로드 작업을 합니다.
 
-            // TODO (1) :::
-            //updateApp((Map) resultMap.get("env"), applicationid); // 환경변수를 넣어준다.
-
-            // TODO (2) ::: 마지막 단계
-            //procStartApplication(applicationid, reactorCloudFoundryClient); //앱 시작
-
             String finalApplicationid = applicationid;
 
             log.info("================= 앱 생성 END - APP_GUID ::: " + finalApplicationid);
@@ -158,7 +144,7 @@ public class AppService extends Common {
                 put("env", resultMap);
             }};
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.info(e.getMessage());
             if (!applicationid.equals("applicationID")) {
                 if (!routeid.equals("route ID")) {
                     reactorCloudFoundryClient.routes().delete(DeleteRouteRequest.builder().routeId(routeid).build()).block();
@@ -198,7 +184,7 @@ public class AppService extends Common {
             IOUtils.copy(is, out);
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(out);
-            System.out.println("file ::: " + file.getPath());
+            log.info("file ::: " + file.getPath());
             return file;
         } catch (Exception e) {
             log.info(e.getMessage());
@@ -222,7 +208,7 @@ public class AppService extends Common {
             file = File.createTempFile(manifestName.substring(0, index), manifestName.substring(index , manifestName.length()));
             int pathIndex = param.getManifestPath().lastIndexOf("/");
             String FileName = param.getManifestPath().substring(pathIndex + 1, param.getManifestPath().length());
-            System.out.println(FileName);
+            log.info(FileName);
             final StoredObject object = container.getObject(FileName);
             byte[] bytes = object.downloadObject();
 
@@ -231,7 +217,7 @@ public class AppService extends Common {
             IOUtils.copy(is, out);
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(out);
-            System.out.println("file ::: " + file.getPath());
+            log.info("file ::: " + file.getPath());
         } catch (Exception e) {
             log.info(e.getMessage());
         }
@@ -250,8 +236,6 @@ public class AppService extends Common {
         }
 
         Map<String, Object> yamlMaps = yaml.load(yamlFile);
-
-        System.out.println(yamlMaps);
 
         return yamlMaps;
     }
@@ -455,18 +439,6 @@ public class AppService extends Common {
     public Map deleteApp(String appGuid) {
         HashMap result = new HashMap();
         try {
-//            try {
-//                ListApplicationServiceBindingsResponse listApplicationServiceBindingsResponse = cloudFoundryClient(tokenProvider()).applicationsV2().listServiceBindings(ListApplicationServiceBindingsRequest.builder().applicationId(appGuid).build()).block();
-//                for (ServiceBindingResource resource : listApplicationServiceBindingsResponse.getResources()) {
-//                    cloudFoundryClient(tokenProvider()).serviceBindingsV2().delete(DeleteServiceBindingRequest.builder().serviceBindingId(resource.getMetadata().getId()).build()).block();
-//                }
-//            } catch (Exception e) {
-//
-//            }
-//            List<Route> routes = cloudFoundryClient(tokenProvider()).applicationsV2().summary(SummaryApplicationRequest.builder().applicationId(appGuid).build()).block().getRoutes();
-//            for (Route route : routes) {
-//                cloudFoundryClient(tokenProvider()).routes().delete(DeleteRouteRequest.builder().routeId(route.getId()).build()).block();
-//            }
             cloudFoundryClient(tokenProvider()).applicationsV2().delete(DeleteApplicationRequest.builder().applicationId(appGuid).build()).block();
             result.put("result", true);
             result.put("msg", "You have successfully completed the task.");

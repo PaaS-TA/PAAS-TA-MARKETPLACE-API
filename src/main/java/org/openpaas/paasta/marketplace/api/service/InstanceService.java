@@ -61,9 +61,6 @@ public class InstanceService {
         return instanceRepository.findAll(spec, pageable);
     }
 
-//    public Page<Instance> getPage2(String userId, LocalDateTime usageStartDate, LocalDateTime usageEndDate, Pageable pageable) {
-//        return statsRepository.countsOfInstsUsingMonth(userId, usageStartDate, usageEndDate, pageable);
-//    }
 
     public Instance get(Long id) {
         return instanceRepository.findById(id).get();

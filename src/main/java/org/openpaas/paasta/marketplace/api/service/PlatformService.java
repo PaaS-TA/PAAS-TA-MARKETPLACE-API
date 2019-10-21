@@ -58,6 +58,10 @@ public class PlatformService {
 
             // 1) 앱 생성하는 CF 호출(처음에는 app no start)
             Map<String, Object> result = appService.createApp(software, name);
+            if(result.get("appId") == null) {
+                throw new PlatformException("Provisioning fail.\n" + result.get("msg"));
+            }
+
             String appGuid = result.get("appId").toString();
 
 
@@ -85,6 +89,8 @@ public class PlatformService {
             // 4) 앱 시작 및 상태 체크
             getAppStats(appGuid, name);
 
+        }catch(PlatformException pe) {
+            throw pe;
         } catch (Throwable t) {
             log.error(t.getMessage(), t);
             throw new PlatformException(t);
@@ -183,7 +189,7 @@ public class PlatformService {
         if(planMap.size() > 0){
             for(int i = 0; i < planMap.size(); i++) {
                 String planId = planMap.get(i+1).get(0).toString();
-                System.out.println("service instance id ::: " + planId);
+                log.info("service instance id ::: " + planId);
                 String serviceName = String.format("service-%d-%d", instance.getId(), i);
 
                 createdService.add(i, serviceService.createServiceInstance(serviceName, appGuid, planId));
