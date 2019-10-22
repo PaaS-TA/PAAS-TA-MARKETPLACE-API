@@ -24,6 +24,11 @@ public class SoftwarePlanController {
     private final SoftwarePlanService softwarePlanService;
 
     @GetMapping("/{id}")
+    public SoftwarePlan get(@NotNull @PathVariable Long id) {
+        return softwarePlanService.get(id);
+    }
+/*
+    @GetMapping("/{id}")
     public List<SoftwarePlan> getSoftwarePlanList(@NotNull @PathVariable Long id, Sort sort) {
         SoftwarePlan softwarePlan = softwarePlanService.get(id);
         SecurityUtils.assertCreator(softwarePlan);
@@ -33,6 +38,8 @@ public class SoftwarePlanController {
 
         return softwarePlanService.getSoftwarePlanList(spec, sort);
     }
+
+ */
 
     @PostMapping
     public SoftwarePlan create(@NotNull @Validated @RequestBody SoftwarePlan softwarePlan,

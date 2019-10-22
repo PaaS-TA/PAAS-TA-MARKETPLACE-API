@@ -7,5 +7,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 public interface SoftwarePlanRepository extends JpaRepository<SoftwarePlan, Long>, JpaSpecificationExecutor<SoftwarePlan> {
 
     SoftwarePlan findByName(String name);
+    SoftwarePlan findBySoftwareId(Long softwareId);
 
 }

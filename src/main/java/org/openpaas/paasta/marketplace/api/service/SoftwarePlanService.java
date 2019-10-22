@@ -24,7 +24,7 @@ public class SoftwarePlanService {
     private final SoftwarePlanRepository softwarePlanRepository;
 
     public SoftwarePlan get(Long id) {
-        return softwarePlanRepository.findById(id).get();
+        return softwarePlanRepository.findBySoftwareId(id);
     }
 
     public SoftwarePlan create(SoftwarePlan softwarePlan) {
