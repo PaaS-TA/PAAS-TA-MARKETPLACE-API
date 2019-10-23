@@ -150,7 +150,7 @@ public class PlatformService {
 
 
 
-    private void procServiceBinding(Instance instance, Map env, String appGuid){
+    private void procServiceBinding(Instance instance, Map env, String appGuid) throws PlatformException {
         List<String> services = (List) env.get("services");
         log.info("services ::: " + services.toString());
 
@@ -159,6 +159,10 @@ public class PlatformService {
 
         // services 에 서비스 타입 판별 후 해당하는 서비스 브로커 존재 여부 -> 있으면 서비스 플랜 아이디 조회
         ListServiceBrokersResponse brokers = serviceService.getServiceBrokers();
+        if(brokers == null) {
+            throw new PlatformException("Get Service Broker Failed.");
+        }
+
         ServiceBrokerResource broker = null;
         Map<Integer, List> planMap = new HashMap();
 
@@ -173,6 +177,10 @@ public class PlatformService {
                     log.info("서비스 플랜들..." + serviceService.getServicePlans(broker.getMetadata().getId()).getResources().toString());
 
                     ListServicePlansResponse planList = serviceService.getServicePlans(broker.getMetadata().getId());
+                    if(planList == null) {
+                        throw new PlatformException("Get Service Plan Failed.");
+                    }
+
                     for (ServicePlanResource plan : planList.getResources()) {
                         planIdList.add(plan.getMetadata().getId());
                     }
