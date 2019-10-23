@@ -1,12 +1,10 @@
 package org.openpaas.paasta.marketplace.api.service;
 
 import lombok.RequiredArgsConstructor;
-import org.openpaas.paasta.marketplace.api.domain.Software;
+import org.openpaas.paasta.marketplace.api.domain.*;
 import org.openpaas.paasta.marketplace.api.domain.Software.Status;
-import org.openpaas.paasta.marketplace.api.domain.SoftwareHistory;
-import org.openpaas.paasta.marketplace.api.domain.SoftwareHistorySpecification;
-import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
 import org.openpaas.paasta.marketplace.api.repository.SoftwareHistoryRepository;
+import org.openpaas.paasta.marketplace.api.repository.SoftwarePlanRepository;
 import org.openpaas.paasta.marketplace.api.repository.SoftwareRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +23,8 @@ public class SoftwareService {
     //private final SwiftOSService swiftOSService;
 
     private final SoftwareRepository softwareRepository;
+
+    private final SoftwarePlanRepository softwarePlanRepository;
 
     private final SoftwareHistoryRepository softwareHistoryRepository;
 
@@ -48,6 +48,9 @@ public class SoftwareService {
 
     public Software update(Software software) {
         Software saved = softwareRepository.findById(software.getId()).get();
+
+        List<SoftwarePlan> origin = software.getSoftwarePlanList();
+
         saved.setName(software.getName());
         saved.setCategory(software.getCategory());
         saved.setApp(software.getApp());
@@ -69,9 +72,27 @@ public class SoftwareService {
         history.setDescription(software.getHistoryDescription());
         softwareHistoryRepository.save(history);
 
+        Long originPlanId;
+        SoftwarePlan plan = new SoftwarePlan();
+
+        for(int i = 0; i < origin.size(); i++) {
+            originPlanId = origin.get(i).getId();
+            plan = softwarePlanRepository.findById(originPlanId).get();
+            plan.setName(software.getSoftwarePlanList().get(i).getName());
+            plan.setDescription(software.getSoftwarePlanList().get(i).getDescription());
+            plan.setCpuAmt(software.getSoftwarePlanList().get(i).getCpuAmt());
+            plan.setMemorySize(software.getSoftwarePlanList().get(i).getMemorySize());
+            plan.setMemoryAmt(software.getSoftwarePlanList().get(i).getMemoryAmt());
+            plan.setDiskAmt(software.getSoftwarePlanList().get(i).getDiskAmt());
+            plan.setDiskSize(software.getSoftwarePlanList().get(i).getDiskSize());
+
+            System.out.println("[API SoftwareService init]: " +plan.toString());
+            softwarePlanRepository.save(plan);
+        }
+
         return saved;
     }
-    
+
     public Software updateMetadata(Software software) {
         Software saved = softwareRepository.findById(software.getId()).get();
         saved.setName(software.getName());

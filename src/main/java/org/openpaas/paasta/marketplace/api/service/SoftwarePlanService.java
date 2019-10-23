@@ -10,7 +10,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -30,6 +29,7 @@ public class SoftwarePlanService {
     public SoftwarePlan create(SoftwarePlan softwarePlan) {
         return softwarePlanRepository.save(softwarePlan);
     }
+
     public SoftwarePlan getByName(String name) {
         return softwarePlanRepository.findByName(name);
     }
@@ -43,9 +43,8 @@ public class SoftwarePlanService {
     }
 
     public SoftwarePlan update(SoftwarePlan softwarePlan) {
-
         System.out.println(">> update Init");
-        SoftwarePlan saved = softwarePlanRepository.findById(softwarePlan.getId()).get();
+        SoftwarePlan saved = softwarePlanRepository.findBySoftwareId(softwarePlan.getSoftwareId());
         saved.setName(softwarePlan.getName());
         saved.setId(softwarePlan.getId());
         saved.setApplyMonth(softwarePlan.getApplyMonth());

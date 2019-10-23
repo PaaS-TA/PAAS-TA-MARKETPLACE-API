@@ -61,20 +61,27 @@ public class SoftwareController {
             throw new BindException(bindingResult);
         }
 
-        Software software1 = softwareService.create(software);
+        Software softwareAll = softwareService.create(software);
 
         //create plan
         for(int i = 0; i < software.getSoftwarePlanList().size(); i++) {
-            software.getSoftwarePlanList().get(i).setSoftwareId(software1.getId());
+            software.getSoftwarePlanList().get(i).setSoftwareId(softwareAll.getId());
             softwarePlanService.create(software.getSoftwarePlanList().get(i));
         }
-        return software1;
+        return softwareAll;
     }
 
     @PutMapping("/{id}")
     public Software update(@PathVariable @NotNull Long id,
             @NotNull @Validated(Software.Update.class) @RequestBody Software software, BindingResult bindingResult)
             throws BindException {
+        System.out.println("[Init]: " + software.toString());
+        List<SoftwarePlan> softwarePlans =software.getSoftwarePlanList();
+
+        for (SoftwarePlan softwarePlan:softwarePlans) {
+            System.out.println("[softwarePlan.toString() For] " + softwarePlan.toString());
+        }
+
         Software saved = softwareService.get(id);
         SecurityUtils.assertCreator(saved);
 

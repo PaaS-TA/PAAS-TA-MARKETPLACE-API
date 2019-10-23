@@ -5,14 +5,12 @@ import org.openpaas.paasta.marketplace.api.domain.*;
 import org.openpaas.paasta.marketplace.api.service.SoftwarePlanService;
 import org.openpaas.paasta.marketplace.api.service.SoftwareService;
 import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
-import org.springframework.data.domain.Sort;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/softwares/plan")
@@ -27,19 +25,6 @@ public class SoftwarePlanController {
     public SoftwarePlan get(@NotNull @PathVariable Long id) {
         return softwarePlanService.get(id);
     }
-/*
-    @GetMapping("/{id}")
-    public List<SoftwarePlan> getSoftwarePlanList(@NotNull @PathVariable Long id, Sort sort) {
-        SoftwarePlan softwarePlan = softwarePlanService.get(id);
-        SecurityUtils.assertCreator(softwarePlan);
-
-        SoftwarePlanSpecification spec = new SoftwarePlanSpecification();
-        spec.setSoftwareId(id);
-
-        return softwarePlanService.getSoftwarePlanList(spec, sort);
-    }
-
- */
 
     @PostMapping
     public SoftwarePlan create(@NotNull @Validated @RequestBody SoftwarePlan softwarePlan,
@@ -57,21 +42,14 @@ public class SoftwarePlanController {
     }
 
     @PutMapping("/{id}")
-    public SoftwarePlan update(@PathVariable @NotNull Long id,@RequestBody SoftwarePlan softwarePlan, BindingResult bindingResult) throws BindException {
+    public SoftwarePlan update(@PathVariable @NotNull Long id, @NotNull @Validated(SoftwarePlan.Update.class)
+                               @RequestBody SoftwarePlan softwarePlan) {
         SoftwarePlan saved = softwarePlanService.get(id);
         SecurityUtils.assertCreator(saved);
 
-        SoftwarePlan samePlanName = softwarePlanService.getByName(softwarePlan.getName());
-        if (samePlanName != null && id != samePlanName.getId()) {
-            bindingResult.rejectValue("name", "Unique");
-        }
-
-        if (bindingResult.hasErrors()) {
-            throw new BindException(bindingResult);
-        }
-
+        softwarePlan.setSoftwareId(id);
         System.out.println(">> softwarePlanService.update");
-        softwarePlanService.update(softwarePlan);
-        return saved;
+        return softwarePlanService.update(softwarePlan);
     }
+
 }
