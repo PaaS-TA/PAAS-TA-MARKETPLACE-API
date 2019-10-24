@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.openpaas.paasta.marketplace.api.domain.*;
 import org.openpaas.paasta.marketplace.api.domain.Software.Status;
 import org.openpaas.paasta.marketplace.api.repository.SoftwareHistoryRepository;
+import org.openpaas.paasta.marketplace.api.repository.SoftwarePlanHistoryRepository;
 import org.openpaas.paasta.marketplace.api.repository.SoftwarePlanRepository;
 import org.openpaas.paasta.marketplace.api.repository.SoftwareRepository;
 import org.springframework.data.domain.Page;
@@ -27,6 +28,8 @@ public class SoftwareService {
     private final SoftwarePlanRepository softwarePlanRepository;
 
     private final SoftwareHistoryRepository softwareHistoryRepository;
+
+    private final SoftwarePlanHistoryRepository softwarePlanHistoryRepository;
 
     public Software create(Software software) {
         software.setStatus(Status.Pending);
@@ -66,6 +69,7 @@ public class SoftwareService {
         saved.setPricePerMonth(software.getPricePerMonth());
         saved.setVersion(software.getVersion());
         saved.setInUse(software.getInUse());
+        saved.setSoftwarePlanList(software.getSoftwarePlanList());
 
         SoftwareHistory history = new SoftwareHistory();
         history.setSoftware(saved);
@@ -86,8 +90,22 @@ public class SoftwareService {
             plan.setDiskAmt(software.getSoftwarePlanList().get(i).getDiskAmt());
             plan.setDiskSize(software.getSoftwarePlanList().get(i).getDiskSize());
 
-            System.out.println("[API SoftwareService init]: " +plan.toString());
             softwarePlanRepository.save(plan);
+        }
+
+        SoftwarePlanHistory softwarePlanHistory = new SoftwarePlanHistory();
+        for(int i = 0; i < origin.size(); i++) {
+            softwarePlanHistory.setSoftware(saved);
+            softwarePlanHistory.setName(software.getSoftwarePlanList().get(i).getName());
+            softwarePlanHistory.setDescription(software.getSoftwarePlanList().get(i).getDescription());
+            softwarePlanHistory.setCpuAmt(software.getSoftwarePlanList().get(i).getCpuAmt());
+            softwarePlanHistory.setMemorySize(software.getSoftwarePlanList().get(i).getMemorySize());
+            softwarePlanHistory.setMemoryAmt(software.getSoftwarePlanList().get(i).getMemoryAmt());
+            softwarePlanHistory.setDiskAmt(software.getSoftwarePlanList().get(i).getDiskAmt());
+            softwarePlanHistory.setDiskSize(software.getSoftwarePlanList().get(i).getDiskSize());
+            softwarePlanHistory.setApplyMonth(software.getSoftwarePlanList().get(i).getApplyMonth());
+
+            softwarePlanHistoryRepository.save(softwarePlanHistory);
         }
 
         return saved;
