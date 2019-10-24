@@ -5,12 +5,14 @@ import org.openpaas.paasta.marketplace.api.domain.*;
 import org.openpaas.paasta.marketplace.api.service.SoftwarePlanService;
 import org.openpaas.paasta.marketplace.api.service.SoftwareService;
 import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/softwares/plan")
@@ -50,6 +52,17 @@ public class SoftwarePlanController {
         softwarePlan.setSoftwareId(id);
         System.out.println(">> softwarePlanService.update");
         return softwarePlanService.update(softwarePlan);
+    }
+
+    @GetMapping("/{id}/histories")
+    public List<SoftwarePlanHistory> getHistoryList(@NotNull @PathVariable Long id, Sort sort) {
+        SoftwarePlan softwarePlan = softwarePlanService.get(id);
+        SecurityUtils.assertCreator(softwarePlan);
+
+        SoftwarePlanHistorySpecification spec = new SoftwarePlanHistorySpecification();
+        spec.setSoftwareId(id);
+
+        return softwarePlanService.getHistoryList(spec, sort);
     }
 
 }

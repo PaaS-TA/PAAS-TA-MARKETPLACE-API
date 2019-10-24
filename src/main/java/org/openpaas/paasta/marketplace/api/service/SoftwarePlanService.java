@@ -2,6 +2,7 @@ package org.openpaas.paasta.marketplace.api.service;
 
 import lombok.RequiredArgsConstructor;
 import org.openpaas.paasta.marketplace.api.domain.*;
+import org.openpaas.paasta.marketplace.api.repository.SoftwarePlanHistoryRepository;
 import org.openpaas.paasta.marketplace.api.repository.SoftwarePlanRepository;
 import org.openpaas.paasta.marketplace.api.repository.SoftwareRepository;
 import org.springframework.data.domain.Page;
@@ -18,9 +19,10 @@ import java.util.List;
 public class SoftwarePlanService {
 
     //private final SwiftOSService swiftOSService;
-    private final SoftwareRepository softwareRepository;
 
     private final SoftwarePlanRepository softwarePlanRepository;
+
+    private final SoftwarePlanHistoryRepository softwarePlanHistoryRepository;
 
     public SoftwarePlan get(Long id) {
         return softwarePlanRepository.findBySoftwareId(id);
@@ -36,10 +38,6 @@ public class SoftwarePlanService {
 
     public Page<SoftwarePlan> getPage(SoftwarePlanSpecification spec, Pageable pageable) {
         return softwarePlanRepository.findAll(spec, pageable);
-    }
-
-    public List<SoftwarePlan> getSoftwarePlanList(SoftwarePlanSpecification spec, Sort sort) {
-        return softwarePlanRepository.findAll(spec, sort);
     }
 
     public SoftwarePlan update(SoftwarePlan softwarePlan) {
@@ -58,5 +56,11 @@ public class SoftwarePlanService {
         System.out.println(">> save" + saved.toString());
         return saved;
     }
+
+
+    public List<SoftwarePlanHistory> getHistoryList(SoftwarePlanHistorySpecification spec, Sort sort) {
+        return softwarePlanHistoryRepository.findAll(spec, sort);
+    }
+
 
 }
