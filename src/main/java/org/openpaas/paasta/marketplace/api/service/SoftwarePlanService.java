@@ -61,6 +61,8 @@ public class SoftwarePlanService {
     public List<SoftwarePlanHistory> getHistoryList(SoftwarePlanHistorySpecification spec, Sort sort) {
         return softwarePlanHistoryRepository.findAll(spec, sort);
     }
-
-
+    
+    public List<SoftwarePlan> getList(SoftwarePlanSpecification spec, Sort sort) {
+    	return softwarePlanRepository.findAll(spec, sort);
+    }
 }

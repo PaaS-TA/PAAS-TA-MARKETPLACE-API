@@ -64,5 +64,13 @@ public class SoftwarePlanController {
 
         return softwarePlanService.getHistoryList(spec, sort);
     }
+    
+    @GetMapping("/{id}/list")
+    public List<SoftwarePlan> getList(@NotNull @PathVariable Long id, Sort sort) {
+    	SoftwarePlanSpecification spec = new SoftwarePlanSpecification();
+    	spec.setSoftwareId(id);
+    	
+    	return softwarePlanService.getList(spec, sort);
+    }
 
 }
