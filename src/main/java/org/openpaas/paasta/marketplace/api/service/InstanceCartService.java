@@ -1,0 +1,47 @@
+package org.openpaas.paasta.marketplace.api.service;
+
+import java.time.LocalDateTime;
+
+import javax.transaction.Transactional;
+
+import org.openpaas.paasta.marketplace.api.domain.InstanceCart;
+import org.openpaas.paasta.marketplace.api.domain.Yn;
+import org.openpaas.paasta.marketplace.api.repository.InstanceCartRepository;
+import org.openpaas.paasta.marketplace.api.util.HostUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Service
+@RequiredArgsConstructor
+@Transactional
+@Slf4j
+public class InstanceCartService {
+
+    @Value("${provisioning.try-count}")
+    private int provisioningTryCount;
+
+    @Value("${provisioning.timeout}")
+    private long provisioningTimeout;
+
+    @Value("${deprovisioning.try-count}")
+    private int deprovisioningTryCount;
+
+    @Value("${deprovisioning.timeout}")
+    private long deprovisioningTimeout;
+
+    private final InstanceCartRepository instanceCartRepository;
+    
+
+    public InstanceCart create(InstanceCart instanceCart) {
+//    	instanceCart.setStatus(InstanceCart.Status.Approval);
+//    	instanceCart.setProvisionStatus(InstanceCart.ProvisionStatus.Pending);
+//    	instanceCart.setUsageStartDate(LocalDateTime.now());
+        instanceCart.setHost(HostUtils.getHostName());
+        instanceCart.setInUse(Yn.N);
+    	
+        return instanceCartRepository.save(instanceCart);
+    }
+}
