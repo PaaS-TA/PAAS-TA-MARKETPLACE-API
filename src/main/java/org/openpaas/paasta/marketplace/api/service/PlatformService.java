@@ -105,6 +105,10 @@ public class PlatformService {
 
         try {
             String appGuid = appService.getApp(instance).getMetadata().getId();
+            if(appGuid == null) {
+                throw new PlatformException("appGuid not found yet.\n");
+            }
+
             log.info("어풀리케이쇼온~~~ " + appGuid);
 
 
@@ -226,14 +230,17 @@ public class PlatformService {
         log.info("============== 앱 START ================");
         // 앱 스타뚜가 여기서 되어야하는군!!!!
         Map result = appService.procStartApplication(appGuid);
+        if(result == null) {
+            throw new PlatformException("application no start...");
+        }
         log.info("result ::: " + result.toString());
 
-        while(tryCount < 7) {
+        while(tryCount < 11) {
             appService.timer(30);
             application = appService.getApplicationNameExists(appName);
             tryCount++;
             log.info("app state ::: appName=" + appName + ", appState=" + application.getPackageState());
-            if(tryCount == 6 && !application.getPackageState().equals("STAGED")) { //3분
+            if(tryCount == 10 && !application.getPackageState().equals("STAGED")) { //3분
                 log.info("Not started ::: appName=" + appName + ", appState=" + application.getPackageState());
                 throw new PlatformException("앱이 시작되지 않네요...! 시작중일지도 모르지만용");
             }
