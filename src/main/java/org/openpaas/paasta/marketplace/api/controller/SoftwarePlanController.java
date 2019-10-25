@@ -56,20 +56,18 @@ public class SoftwarePlanController {
 
     @GetMapping("/{id}/histories")
     public List<SoftwarePlanHistory> getHistoryList(@NotNull @PathVariable Long id, Sort sort) {
-        SoftwarePlan softwarePlan = softwarePlanService.get(id);
-        SecurityUtils.assertCreator(softwarePlan);
 
         SoftwarePlanHistorySpecification spec = new SoftwarePlanHistorySpecification();
         spec.setSoftwareId(id);
 
         return softwarePlanService.getHistoryList(spec, sort);
     }
-    
+
     @GetMapping("/{id}/list")
     public List<SoftwarePlan> getList(@NotNull @PathVariable Long id, Sort sort) {
     	SoftwarePlanSpecification spec = new SoftwarePlanSpecification();
     	spec.setSoftwareId(id);
-    	
+
     	return softwarePlanService.getList(spec, sort);
     }
 
