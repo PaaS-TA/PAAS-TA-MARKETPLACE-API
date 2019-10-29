@@ -9,7 +9,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -20,9 +22,12 @@ public class SoftwarePlanService {
 
     private final SoftwarePlanRepository softwarePlanRepository;
 
-
     public SoftwarePlan get(Long id) {
         return softwarePlanRepository.findBySoftwareId(id);
+    }
+
+    public SoftwarePlan getSWPId(Long id) {
+        return softwarePlanRepository.findById(id).get();
     }
 
     public SoftwarePlan create(SoftwarePlan softwarePlan) {
@@ -56,6 +61,10 @@ public class SoftwarePlanService {
 
     public List<SoftwarePlan> getList(SoftwarePlanSpecification spec, Sort sort) {
     	return softwarePlanRepository.findAll(spec, sort);
+    }
+
+    public void delete(Long id) {
+        softwarePlanRepository.deleteById(id);
     }
 
 }

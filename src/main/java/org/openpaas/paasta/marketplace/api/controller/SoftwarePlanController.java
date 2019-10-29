@@ -3,7 +3,6 @@ package org.openpaas.paasta.marketplace.api.controller;
 import lombok.RequiredArgsConstructor;
 import org.openpaas.paasta.marketplace.api.domain.*;
 import org.openpaas.paasta.marketplace.api.service.SoftwarePlanService;
-import org.openpaas.paasta.marketplace.api.service.SoftwareService;
 import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.validation.BindException;
@@ -18,8 +17,6 @@ import java.util.List;
 @RequestMapping(value = "/softwares/plan")
 @RequiredArgsConstructor
 public class SoftwarePlanController {
-
-    private final SoftwareService softwareService;
 
     private final SoftwarePlanService softwarePlanService;
 
@@ -60,6 +57,11 @@ public class SoftwarePlanController {
     	spec.setSoftwareId(id);
 
     	return softwarePlanService.getList(spec, sort);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        softwarePlanService.delete(id);
     }
 
 }
