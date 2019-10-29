@@ -75,7 +75,7 @@ public class PlatformService {
 
                 int tryCnt = 0;
                 boolean isUpdated = false;
-                while(tryCnt++ < 5 && !isUpdated) {
+                while(tryCnt++ < 10 && !isUpdated) {
                     Map res = appService.updateApp(env, appGuid);
                     isUpdated = (boolean) res.get("result");
                     if(!isUpdated) {
@@ -105,11 +105,11 @@ public class PlatformService {
 
         }catch(PlatformException pe) {
             // todo ::: to delete
-            pe.printStackTrace();
+            //pe.printStackTrace();
             throw pe;
         } catch (Exception e) {
             // todo ::: to delete
-            e.printStackTrace();
+            //e.printStackTrace();
             throw new PlatformException(e);
         }
     }
@@ -141,14 +141,14 @@ public class PlatformService {
             int tryCnt = 0;
             boolean isSuccess = false;
             
-            while(tryCnt++ < 5 && !isSuccess) {
+            while(tryCnt++ < 10 && !isSuccess) {
             	isSuccess = true;
             	try{
             		bindingList = serviceService.getServiceBindings(appGuid);
             	}catch(Exception e) {
             		isSuccess = false;
             		log.info("bindingList try cound ::: {}", tryCnt);
-            		e.printStackTrace();
+            		//e.printStackTrace();
             		Thread.sleep(1000);
             	}
             	
@@ -210,7 +210,7 @@ public class PlatformService {
         ListServiceBrokersResponse brokers = null;
         int tryCnt = 0;
         boolean isFound = false;
-        while(tryCnt++ < 5 && !isFound && brokers == null) {
+        while(tryCnt++ < 10 && !isFound && brokers == null) {
             isFound = true;
             try {
                 brokers = serviceService.getServiceBrokers();
@@ -219,7 +219,7 @@ public class PlatformService {
 
                 // todo ::: to delete
                 log.info("broker list try count ::: " + tryCnt);
-                npe.printStackTrace();
+                //npe.printStackTrace();
                 Thread.sleep(1000);
             }
 
@@ -244,13 +244,13 @@ public class PlatformService {
                     ListServicePlansResponse planList = null;
                     tryCnt = 0;
                     isFound = false;
-                    while(tryCnt++ < 5 && !isFound) {
+                    while(tryCnt++ < 10 && !isFound) {
                     	try {
                     		planList = serviceService.getServicePlans(broker.getMetadata().getId());
                     		isFound = true;
                     	}catch(Exception e) {
                     		isFound = false;
-                    		e.printStackTrace();
+                    		//e.printStackTrace();
                     		Thread.sleep(1000);
                     	}
                     }
@@ -282,13 +282,13 @@ public class PlatformService {
                 
                 tryCnt = 0;
                 isFound = false;
-                while(tryCnt++ < 5 && !isFound) {
+                while(tryCnt++ < 10 && !isFound) {
                 	try {
                 		svcInstanceId = serviceService.createServiceInstance(serviceName, appGuid, planId);
                 		isFound = true;
                 	}catch(Exception e) {
                 		isFound = false;
-                		e.printStackTrace();
+                		//e.printStackTrace();
                 		Thread.sleep(1000);
                 	}
                 }
@@ -309,13 +309,13 @@ public class PlatformService {
                 
                 tryCnt = 0;
                 isFound = false;
-                while(tryCnt++ < 5 && !isFound) {
+                while(tryCnt++ < 10 && !isFound) {
                 	try {
                 		serviceService.createBindService(appGuid, serviceInstanceId);
                 		isFound = true;
                 	}catch(Exception e) {
                 		isFound = false;
-                		e.printStackTrace();
+                		//e.printStackTrace();
                 		Thread.sleep(1000);
                 	}
                 }                
@@ -343,7 +343,7 @@ public class PlatformService {
 
             int tryCnt = 0;
             boolean isExist = false;
-            while(tryCnt++ < 5 && !isExist) {
+            while(tryCnt++ < 10 && !isExist) {
                 isExist = true;
                 try {
                     application = appService.getApplicationNameExists(appName);
@@ -364,7 +364,7 @@ public class PlatformService {
             }
             if(application.getPackageState().equals("STAGED")) {
                 log.info("============== 앱 START END================");
-                log.info("TTA 시간 검증 완료 ::: " + "app 번호 ::: " + appName);
+                log.info("TTA [{}] ::: 시간 검증 완료", appName);
                 return application;
             }
         }
@@ -379,13 +379,13 @@ public class PlatformService {
         
         int tryCnt = 0;
         boolean isFound = false;
-        while(tryCnt++ < 5 && !isFound) {
+        while(tryCnt++ < 10 && !isFound) {
         	try {
         		unbindResult = serviceService.unbindService(serviceInstanceId, appGuid);
         		isFound = true;
         	}catch(Exception e) {
         		isFound = false;
-        		e.printStackTrace();
+        		//e.printStackTrace();
         		Thread.sleep(1000);
         	}
         }
@@ -396,13 +396,13 @@ public class PlatformService {
         
         tryCnt = 0;
         isFound = false;
-        while(tryCnt++ < 5 && !isFound) {
+        while(tryCnt++ < 10 && !isFound) {
         	try {
         		deleteResult = serviceService.deleteInstance(serviceInstanceId);
         		isFound = true;
         	}catch(Exception e) {
         		isFound = false;
-        		e.printStackTrace();
+        		//e.printStackTrace();
         		Thread.sleep(1000);
         	}
         }        

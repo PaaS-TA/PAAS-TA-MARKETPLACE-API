@@ -130,10 +130,10 @@ public class AppService extends Common {
 
             log.info("================= 앱 생성 START =================");
 
-            log.info("TTA app name ::: {} & 임시파일을 생성합니다.", name);
+            log.info("TTA [{}] ::: 임시파일을 생성합니다.", name);
             file = createTempFile(param); // 임시파일을 생성합니다.
 
-            log.info("TTA app name ::: {} & App을 만들고 guid를 return 합니다.", name);
+            log.info("TTA [{}] ::: App을 만들고 guid를 return 합니다.", name);
 
             try {
                 applicationid = createApplication(app, reactorCloudFoundryClient); // App을 만들고 guid를 return 합니다.
@@ -142,13 +142,13 @@ public class AppService extends Common {
                 applicationid = createApplication(app, reactorCloudFoundryClient); // App을 만들고 guid를 return 합니다.
             }
 
-            log.info("TTA app name ::: {} & route를 생성후 guid를 return 합니다.", name);
+            log.info("TTA [{}] ::: route를 생성후 guid를 return 합니다.", name);
             routeid = createRoute(app, reactorCloudFoundryClient); //route를 생성후 guid를 return 합니다.
 
-            log.info("TTA app name ::: {} & app와 route를 mapping합니다.", name);
+            log.info("TTA [{}] ::: app와 route를 mapping합니다.", name);
             routeMapping(applicationid, routeid, reactorCloudFoundryClient); // app와 route를 mapping합니다.
 
-            log.info("TTA app name ::: {} & app에 파일 업로드 작업을 합니다.", name);
+            log.info("TTA [{}] ::: app에 파일 업로드 작업을 합니다.", name);
             fileUpload(file, applicationid, reactorCloudFoundryClient); // app에 파일 업로드 작업을 합니다.
 
             String finalApplicationid = applicationid;
@@ -162,7 +162,7 @@ public class AppService extends Common {
         } catch (Exception e) {
 
             log.info("Exception Class:::{}", e.getClass().getName());
-            e.printStackTrace();
+            //e.printStackTrace();
             log.info(e.getMessage());
             if (!applicationid.equals("applicationID")) {
                 if (!routeid.equals("route ID")) {
