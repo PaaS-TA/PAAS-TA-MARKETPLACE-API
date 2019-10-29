@@ -136,8 +136,24 @@ public class PlatformService {
 
 
             // 1) appGuid 로 서비스 바인딩 id 모두 찾는다.
-            ListApplicationServiceBindingsResponse bindingList = serviceService.getServiceBindings(appGuid);
+            ListApplicationServiceBindingsResponse bindingList = null;
+            
+            int tryCnt = 0;
+            boolean isSuccess = false;
+            
+            while(tryCnt++ < 5 && !isSuccess) {
+            	isSuccess = true;
+            	try{
+            		bindingList = serviceService.getServiceBindings(appGuid);
+            	}catch(Exception e) {
+            		isSuccess = false;
+            		log.info("bindingList try cound ::: {}", tryCnt);
+            		e.printStackTrace();
+            		Thread.sleep(1000);
+            	}
+            	
 
+            }
             if (bindingList.getTotalResults() > 0) {
                 for (int i = 0; i < bindingList.getResources().size(); i++) {
                     String serviceInstanceId = bindingList.getResources().get(i).getEntity().getServiceInstanceId();
@@ -223,9 +239,22 @@ public class PlatformService {
 
                 if(broker.getEntity().getName().toLowerCase().contains(serviceName.toLowerCase())){
                     log.info("브로커 아이디이이이 ::: " + broker.getMetadata().getId());
-                    log.info("서비스 플랜들..." + serviceService.getServicePlans(broker.getMetadata().getId()).getResources().toString());
+                    //log.info("서비스 플랜들..." + serviceService.getServicePlans(broker.getMetadata().getId()).getResources().toString());
 
-                    ListServicePlansResponse planList = serviceService.getServicePlans(broker.getMetadata().getId());
+                    ListServicePlansResponse planList = null;
+                    tryCnt = 0;
+                    isFound = false;
+                    while(tryCnt++ < 5 && !isFound) {
+                    	try {
+                    		planList = serviceService.getServicePlans(broker.getMetadata().getId());
+                    		isFound = true;
+                    	}catch(Exception e) {
+                    		isFound = false;
+                    		e.printStackTrace();
+                    		Thread.sleep(1000);
+                    	}
+                    }
+                    	
                     if(planList == null) {
                         throw new PlatformException("Get Service Plan Failed.");
                     }
@@ -249,7 +278,22 @@ public class PlatformService {
                 log.info("service instance id ::: " + planId);
                 String serviceName = String.format("service-%d-%d", instance.getId(), i);
 
-                createdService.add(i, serviceService.createServiceInstance(serviceName, appGuid, planId));
+                String svcInstanceId = null;
+                
+                tryCnt = 0;
+                isFound = false;
+                while(tryCnt++ < 5 && !isFound) {
+                	try {
+                		svcInstanceId = serviceService.createServiceInstance(serviceName, appGuid, planId);
+                		isFound = true;
+                	}catch(Exception e) {
+                		isFound = false;
+                		e.printStackTrace();
+                		Thread.sleep(1000);
+                	}
+                }
+                createdService.add(i, svcInstanceId);
+                
             }
         }
 
@@ -262,7 +306,19 @@ public class PlatformService {
             for (int j = 0; j < createdService.size(); j++){
                 String serviceInstanceId = createdService.get(j).toString();
                 log.info("service instance id ::: " + serviceInstanceId);
-                serviceService.createBindService(appGuid, serviceInstanceId);
+                
+                tryCnt = 0;
+                isFound = false;
+                while(tryCnt++ < 5 && !isFound) {
+                	try {
+                		serviceService.createBindService(appGuid, serviceInstanceId);
+                		isFound = true;
+                	}catch(Exception e) {
+                		isFound = false;
+                		e.printStackTrace();
+                		Thread.sleep(1000);
+                	}
+                }                
             }
         }
     }
@@ -317,12 +373,39 @@ public class PlatformService {
     }
 
 
-    private void procServiceUnBind(String serviceInstanceId, String appGuid) {
+    private void procServiceUnBind(String serviceInstanceId, String appGuid) throws InterruptedException {
         // 2) 언바인드
-        Map unbindResult = serviceService.unbindService(serviceInstanceId, appGuid);
+        Map unbindResult = null;
+        
+        int tryCnt = 0;
+        boolean isFound = false;
+        while(tryCnt++ < 5 && !isFound) {
+        	try {
+        		unbindResult = serviceService.unbindService(serviceInstanceId, appGuid);
+        		isFound = true;
+        	}catch(Exception e) {
+        		isFound = false;
+        		e.printStackTrace();
+        		Thread.sleep(1000);
+        	}
+        }
         log.info("언바인드 ::: " + unbindResult.toString());
+        
         // 3) 서비스 인스턴스 삭제
-        Map deleteResult = serviceService.deleteInstance(serviceInstanceId);
+        Map deleteResult = null;
+        
+        tryCnt = 0;
+        isFound = false;
+        while(tryCnt++ < 5 && !isFound) {
+        	try {
+        		deleteResult = serviceService.deleteInstance(serviceInstanceId);
+        		isFound = true;
+        	}catch(Exception e) {
+        		isFound = false;
+        		e.printStackTrace();
+        		Thread.sleep(1000);
+        	}
+        }        
         log.info("서비스 인스턴스 ::: " + deleteResult.toString());
     }
 }
