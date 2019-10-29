@@ -17,6 +17,7 @@ import org.openpaas.paasta.marketplace.api.cloudFoundryModel.NameType;
 import org.openpaas.paasta.marketplace.api.config.common.Common;
 import org.openpaas.paasta.marketplace.api.domain.Instance;
 import org.openpaas.paasta.marketplace.api.domain.Software;
+import org.openpaas.paasta.marketplace.api.exception.PlatformException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,6 @@ public class AppService extends Common {
 
     @Autowired
     private final Container container;
-
 
     /**
      * 앱 목록 조회
@@ -129,21 +129,40 @@ public class AppService extends Common {
             app.setHostName(name);
 
             log.info("================= 앱 생성 START =================");
+
+            log.info("TTA app name ::: {} & 임시파일을 생성합니다.", name);
             file = createTempFile(param); // 임시파일을 생성합니다.
-            applicationid = createApplication(app, reactorCloudFoundryClient); // App을 만들고 guid를 return 합니다.
+
+            log.info("TTA app name ::: {} & App을 만들고 guid를 return 합니다.", name);
+
+            try {
+                applicationid = createApplication(app, reactorCloudFoundryClient); // App을 만들고 guid를 return 합니다.
+            }catch(NullPointerException npe) {
+                //log.info("TTA:::App을 만들고 guid를 return 합니다.(2)");
+                applicationid = createApplication(app, reactorCloudFoundryClient); // App을 만들고 guid를 return 합니다.
+            }
+
+            log.info("TTA app name ::: {} & route를 생성후 guid를 return 합니다.", name);
             routeid = createRoute(app, reactorCloudFoundryClient); //route를 생성후 guid를 return 합니다.
+
+            log.info("TTA app name ::: {} & app와 route를 mapping합니다.", name);
             routeMapping(applicationid, routeid, reactorCloudFoundryClient); // app와 route를 mapping합니다.
+
+            log.info("TTA app name ::: {} & app에 파일 업로드 작업을 합니다.", name);
             fileUpload(file, applicationid, reactorCloudFoundryClient); // app에 파일 업로드 작업을 합니다.
 
             String finalApplicationid = applicationid;
 
-            log.info("================= 앱 생성 END - APP_GUID ::: " + finalApplicationid);
+            log.info("================= 앱 생성 END app name ::: {} - APP_GUID ::: {}" ,name, finalApplicationid);
 
             return new HashMap<String, Object>() {{
                 put("appId", finalApplicationid);
                 put("env", resultMap);
             }};
         } catch (Exception e) {
+
+            log.info("Exception Class:::{}", e.getClass().getName());
+            e.printStackTrace();
             log.info(e.getMessage());
             if (!applicationid.equals("applicationID")) {
                 if (!routeid.equals("route ID")) {
@@ -156,9 +175,9 @@ public class AppService extends Common {
                 put("msg", e.getMessage());
             }};
         } finally {
-//            if (file != null) {
-//                file.delete();
-//            }
+            if (file != null) {
+                file.delete();
+            }
         }
     }
 
@@ -188,8 +207,8 @@ public class AppService extends Common {
             return file;
         } catch (Exception e) {
             log.info(e.getMessage());
+            throw new PlatformException("createTempFile", e);
         }
-        return null;
     }
 
     /**
@@ -284,8 +303,12 @@ public class AppService extends Common {
     }
 
     private String createApplication(App param, ReactorCloudFoundryClient reactorCloudFoundryClient) throws Exception {
-        return reactorCloudFoundryClient.
-                applicationsV2().create(CreateApplicationRequest.builder().buildpack(param.getBuildpack()).memory(param.getMemory()).name(param.getAppName()).diskQuota(param.getDiskQuota()).spaceId(param.getSpaceGuid()).build()).block().getMetadata().getId();
+        CreateApplicationResponse applicationRes =  reactorCloudFoundryClient.
+                applicationsV2().create(CreateApplicationRequest.builder().buildpack(param.getBuildpack()).memory(param.getMemory()).name(param.getAppName()).diskQuota(param.getDiskQuota()).spaceId(param.getSpaceGuid()).build()).block();
+
+        Thread.sleep(5000);
+
+        return  applicationRes.getMetadata().getId();
 
     }
 
@@ -332,6 +355,7 @@ public class AppService extends Common {
                     applicationsV2().upload(UploadApplicationRequest.builder().applicationId(applicationid).application(file.toPath()).build()).block();
         } catch (Exception e) {
             log.info(e.toString());
+            throw new PlatformException("fileUpload", e);
         }
     }
 
@@ -344,9 +368,9 @@ public class AppService extends Common {
             } else if (envJson != null && envJson.size() == 0) {
                 cloudFoundryClient.applicationsV2().update(UpdateApplicationRequest.builder().applicationId(appGuid).environmentJsons(new HashMap<>()).build()).block();
             }
-
             resultMap.put("result", true);
         } catch (Exception e) {
+            // todo ::: to delete
             e.printStackTrace();
             resultMap.put("result", false);
             resultMap.put("msg", e);
@@ -382,21 +406,29 @@ public class AppService extends Common {
 
 
 
-    public ApplicationEntity getApplicationNameExists(String name) {
+    public ApplicationEntity getApplicationNameExists(String name) throws PlatformException {
         int count = 0;
-        ListApplicationsResponse listApplicationsResponse = cloudFoundryClient(tokenProvider()).applicationsV2().list(ListApplicationsRequest.builder().organizationId(marketOrgGuid).spaceId(marketSpaceGuid).build()).block();
+        ListApplicationsResponse listApplicationsResponse;
         ApplicationEntity app = null;
+        try{
+            listApplicationsResponse = cloudFoundryClient(tokenProvider()).applicationsV2().list(ListApplicationsRequest.builder().organizationId(marketOrgGuid).spaceId(marketSpaceGuid).build()).block();
 
-        for (ApplicationResource applicationResource : listApplicationsResponse.getResources()) {
-            if (applicationResource.getEntity().getName().equals(name)) {
-                app = applicationResource.getEntity();
-                count++;
+            for (ApplicationResource applicationResource : listApplicationsResponse.getResources()) {
+                if (applicationResource.getEntity().getName().equals(name)) {
+                    app = applicationResource.getEntity();
+                    count++;
+                }
             }
+
+        }catch (Exception e) {
+            throw new PlatformException("getApplicationNameExist", e);
         }
-        return (count > 0)? app : null;
+
+        return app;
     }
 
     public GetApplicationResponse getApp(Instance instance) {
+        log.info("get app for deprovision");
         return cloudFoundryClient(tokenProvider()).applicationsV2().get(GetApplicationRequest.builder().applicationId(instance.getAppGuid()).build()).block();
     }
 

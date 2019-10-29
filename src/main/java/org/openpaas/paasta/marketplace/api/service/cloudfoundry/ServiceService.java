@@ -31,18 +31,18 @@ public class ServiceService extends Common {
     public String marketSpaceGuid;
 
     public ListServiceBrokersResponse getServiceBrokers() {
-        return cloudFoundryClient().serviceBrokers().list(ListServiceBrokersRequest.builder().build()).block();
+        return cloudFoundryClient(tokenProvider()).serviceBrokers().list(ListServiceBrokersRequest.builder().build()).block();
     }
 
     public ListServicePlansResponse getServicePlans(String serviceBrokerId) {
-        return cloudFoundryClient().servicePlans().list(ListServicePlansRequest.builder().serviceBrokerId(serviceBrokerId).build()).block();
+        return cloudFoundryClient(tokenProvider()).servicePlans().list(ListServicePlansRequest.builder().serviceBrokerId(serviceBrokerId).build()).block();
     }
 
     public String createServiceInstance(String  serviceName, String appGuid, String planGuid) {
         Map<String, Object> parameterMap = new HashMap<String, Object>();
         parameterMap.put("app_guid", appGuid);
 
-        CreateServiceInstanceResponse createserviceinstanceresponse = cloudFoundryClient().serviceInstances()
+        CreateServiceInstanceResponse createserviceinstanceresponse = cloudFoundryClient(tokenProvider()).serviceInstances()
                 .create(CreateServiceInstanceRequest.builder()
                         .name(serviceName)
                         .spaceId(marketSpaceGuid)
@@ -55,7 +55,7 @@ public class ServiceService extends Common {
     }
 
     public CreateServiceBindingResponse createBindService(String appGuid, String serviceInstanceId) {
-        return cloudFoundryClient().serviceBindingsV2()
+        return cloudFoundryClient(tokenProvider()).serviceBindingsV2()
                 .create(CreateServiceBindingRequest.builder()
                         .applicationId(appGuid)
                         .serviceInstanceId(serviceInstanceId).build())
@@ -79,7 +79,7 @@ public class ServiceService extends Common {
         Map resultMap = new HashMap();
 
         try {
-            ListServiceInstanceServiceBindingsResponse listServiceInstanceServiceBindingsResponse = cloudFoundryClient().serviceInstances().listServiceBindings(ListServiceInstanceServiceBindingsRequest.builder().applicationId(applicationId).serviceInstanceId(serviceInstanceId).build()).block();
+            ListServiceInstanceServiceBindingsResponse listServiceInstanceServiceBindingsResponse = cloudFoundryClient(tokenProvider()).serviceInstances().listServiceBindings(ListServiceInstanceServiceBindingsRequest.builder().applicationId(applicationId).serviceInstanceId(serviceInstanceId).build()).block();
             String instancesServiceBindingGuid = listServiceInstanceServiceBindingsResponse.getResources().get(0).getMetadata().getId();
 
             DeleteServiceBindingResponse deleteServiceBindingResponse = cloudFoundryClient(tokenProvider()).serviceBindingsV2().delete(DeleteServiceBindingRequest.builder().serviceBindingId(instancesServiceBindingGuid).build()).block();

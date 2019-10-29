@@ -6,6 +6,7 @@ import org.openpaas.paasta.marketplace.api.domain.Instance;
 import org.openpaas.paasta.marketplace.api.domain.Instance.ProvisionStatus;
 import org.openpaas.paasta.marketplace.api.domain.Instance.Status;
 import org.openpaas.paasta.marketplace.api.domain.InstanceSpecification;
+import org.openpaas.paasta.marketplace.api.exception.PlatformException;
 import org.openpaas.paasta.marketplace.api.repository.InstanceRepository;
 import org.openpaas.paasta.marketplace.api.util.HostUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -82,16 +83,23 @@ public class InstanceService {
         try {
             log.info("provision start: {}", instance.getId());
 
-            platformService.deprovision(instance);
+            try {
+                platformService.deprovision(instance);
+            }catch(PlatformException pe) {
+                if(!"noCfAppInstance".equals(pe.getMessage())) {
+                    throw pe;
+                }
+            }
             platformService.provision(instance);
 
             instance.setProvisionStatus(Instance.ProvisionStatus.Successful);
             instance.setProvisionEndDate(LocalDateTime.now());
 
-            log.info("provision success: {}", instance.getId());
+                log.info("provision success: {}", instance.getId());
         } catch (Exception e) {
             log.info("provision failed: {}", instance.getId());
-
+            log.info("이놈의 익셉션!!!!!!!!!!!!! " + e.getMessage());
+            e.printStackTrace();
             instance.setProvisionTryCount(instance.getProvisionTryCount() + 1);
             if (instance.getProvisionTryCount() >= provisioningTryCount) {
                 instance.setProvisionStatus(Instance.ProvisionStatus.Failed);

@@ -2,7 +2,9 @@ package org.openpaas.paasta.marketplace.api.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.cloudfoundry.client.v2.ClientV2Exception;
 import org.cloudfoundry.client.v2.applications.ApplicationEntity;
+import org.cloudfoundry.client.v2.applications.GetApplicationResponse;
 import org.cloudfoundry.client.v2.applications.ListApplicationServiceBindingsResponse;
 import org.cloudfoundry.client.v2.routemappings.ListRouteMappingsResponse;
 import org.cloudfoundry.client.v2.servicebrokers.ListServiceBrokersResponse;
@@ -70,7 +72,19 @@ public class PlatformService {
             if(result.get("env") != null) {
                 log.info("매니페스트에 env 있음!!!!!!!!!!");
                 env = (Map) result.get("env");
-                appService.updateApp(env, appGuid);
+
+                int tryCnt = 0;
+                boolean isUpdated = false;
+                while(tryCnt++ < 5 && !isUpdated) {
+                    Map res = appService.updateApp(env, appGuid);
+                    isUpdated = (boolean) res.get("result");
+                    if(!isUpdated) {
+                        Thread.sleep(1000);
+                    }
+
+                    // todo :: to delete
+                    log.info("env count ::: " + tryCnt);
+                }
                 log.info("env 업뎃 완료!!!!!!!!!!");
             }
 
@@ -90,10 +104,13 @@ public class PlatformService {
             getAppStats(appGuid, name);
 
         }catch(PlatformException pe) {
+            // todo ::: to delete
+            pe.printStackTrace();
             throw pe;
-        } catch (Throwable t) {
-            log.error(t.getMessage(), t);
-            throw new PlatformException(t);
+        } catch (Exception e) {
+            // todo ::: to delete
+            e.printStackTrace();
+            throw new PlatformException(e);
         }
     }
 
@@ -104,8 +121,14 @@ public class PlatformService {
         }
 
         try {
-            String appGuid = appService.getApp(instance).getMetadata().getId();
-            if(appGuid == null) {
+            log.info("deprovision startuuu!!!");
+            GetApplicationResponse getAppRes = appService.getApp(instance);
+            if (getAppRes == null) {
+                throw new PlatformException("appGuid not found yet.\n");
+            }
+
+            String appGuid = getAppRes.getMetadata().getId();
+            if (appGuid == null) {
                 throw new PlatformException("appGuid not found yet.\n");
             }
 
@@ -139,6 +162,12 @@ public class PlatformService {
             // 5) 앱 삭제
             appService.deleteApp(appGuid);
 
+        }catch(ClientV2Exception cv2e) {
+            if("100004".equals(cv2e.getCode()) || "100004".equals(cv2e.getErrorCode()) || cv2e.getMessage().indexOf("CF-AppNotFound") > -1 || cv2e.getDescription().indexOf("CF-AppNotFound") > -1) {
+                throw new PlatformException("noCfAppInstance",cv2e);
+            }
+            log.error(cv2e.getMessage(), cv2e);
+            throw new PlatformException(cv2e);
         }catch (Throwable t) {
             log.error(t.getMessage(), t);
             throw new PlatformException(t);
@@ -154,7 +183,7 @@ public class PlatformService {
 
 
 
-    private void procServiceBinding(Instance instance, Map env, String appGuid) throws PlatformException {
+    private void procServiceBinding(Instance instance, Map env, String appGuid) throws PlatformException, InterruptedException {
         List<String> services = (List) env.get("services");
         log.info("services ::: " + services.toString());
 
@@ -162,7 +191,23 @@ public class PlatformService {
         int index = 0;
 
         // services 에 서비스 타입 판별 후 해당하는 서비스 브로커 존재 여부 -> 있으면 서비스 플랜 아이디 조회
-        ListServiceBrokersResponse brokers = serviceService.getServiceBrokers();
+        ListServiceBrokersResponse brokers = null;
+        int tryCnt = 0;
+        boolean isFound = false;
+        while(tryCnt++ < 5 && !isFound && brokers == null) {
+            isFound = true;
+            try {
+                brokers = serviceService.getServiceBrokers();
+            }catch(Exception npe) {
+                isFound = false;
+
+                // todo ::: to delete
+                log.info("broker list try count ::: " + tryCnt);
+                npe.printStackTrace();
+                Thread.sleep(1000);
+            }
+
+        }
         if(brokers == null) {
             throw new PlatformException("Get Service Broker Failed.");
         }
@@ -222,10 +267,10 @@ public class PlatformService {
         }
     }
 
-    private ApplicationEntity getAppStats(String appGuid, String appName) throws PlatformException {
+    private ApplicationEntity getAppStats(String appGuid, String appName) throws PlatformException, InterruptedException {
         ApplicationEntity application = null;
         int tryCount = 0;
-        appService.timer(10);
+        appService.timer(5);
 
         log.info("============== 앱 START ================");
         // 앱 스타뚜가 여기서 되어야하는군!!!!
@@ -235,18 +280,35 @@ public class PlatformService {
         }
         log.info("result ::: " + result.toString());
 
-        while(tryCount < 11) {
-            appService.timer(30);
-            application = appService.getApplicationNameExists(appName);
+        while(tryCount < 51) {
+            appService.timer(5);
+
             tryCount++;
+
+            int tryCnt = 0;
+            boolean isExist = false;
+            while(tryCnt++ < 5 && !isExist) {
+                isExist = true;
+                try {
+                    application = appService.getApplicationNameExists(appName);
+                } catch (Exception e) {
+                    // todo :: to delete
+                    log.info("app exist count ::: " + tryCnt);
+
+                    isExist = false;
+                    Thread.sleep(1000);
+                }
+
+            }
+
             log.info("app state ::: appName=" + appName + ", appState=" + application.getPackageState());
-            if(tryCount == 10 && !application.getPackageState().equals("STAGED")) { //3분
+            if(tryCount == 50 && !application.getPackageState().equals("STAGED")) { //3분
                 log.info("Not started ::: appName=" + appName + ", appState=" + application.getPackageState());
                 throw new PlatformException("앱이 시작되지 않네요...! 시작중일지도 모르지만용");
             }
             if(application.getPackageState().equals("STAGED")) {
                 log.info("============== 앱 START END================");
-                log.info("TTA 시간 검증 완료 ::: ");
+                log.info("TTA 시간 검증 완료 ::: " + "app 번호 ::: " + appName);
                 return application;
             }
         }
