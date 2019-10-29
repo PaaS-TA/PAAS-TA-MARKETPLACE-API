@@ -54,15 +54,6 @@ public class SoftwarePlanController {
         return softwarePlanService.update(softwarePlan);
     }
 
-    @GetMapping("/{id}/histories")
-    public List<SoftwarePlanHistory> getHistoryList(@NotNull @PathVariable Long id, Sort sort) {
-
-        SoftwarePlanHistorySpecification spec = new SoftwarePlanHistorySpecification();
-        spec.setSoftwareId(id);
-
-        return softwarePlanService.getHistoryList(spec, sort);
-    }
-
     @GetMapping("/{id}/list")
     public List<SoftwarePlan> getList(@NotNull @PathVariable Long id, Sort sort) {
     	SoftwarePlanSpecification spec = new SoftwarePlanSpecification();

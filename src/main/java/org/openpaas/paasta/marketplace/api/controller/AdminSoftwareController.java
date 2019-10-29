@@ -80,12 +80,4 @@ public class AdminSoftwareController {
     }
 
 
-    @GetMapping("/plan/{id}/histories")
-    public List<SoftwarePlanHistory> getPlanHistoryList(@NotNull @PathVariable Long id, Sort sort) {
-        SoftwarePlanHistorySpecification spec = new SoftwarePlanHistorySpecification();
-        spec.setSoftwareId(id);
-
-        return softwarePlanService.getHistoryList(spec, sort);
-    }
-
 }
