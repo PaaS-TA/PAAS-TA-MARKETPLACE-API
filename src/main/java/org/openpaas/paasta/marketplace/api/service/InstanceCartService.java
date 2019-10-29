@@ -1,10 +1,12 @@
 package org.openpaas.paasta.marketplace.api.service;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openpaas.paasta.marketplace.api.domain.InstanceCart;
+import org.openpaas.paasta.marketplace.api.domain.InstanceCartSpecification;
 import org.openpaas.paasta.marketplace.api.domain.Yn;
 import org.openpaas.paasta.marketplace.api.repository.InstanceCartRepository;
 import org.openpaas.paasta.marketplace.api.util.HostUtils;
@@ -36,12 +38,19 @@ public class InstanceCartService {
     
 
     public InstanceCart create(InstanceCart instanceCart) {
-//    	instanceCart.setStatus(InstanceCart.Status.Approval);
-//    	instanceCart.setProvisionStatus(InstanceCart.ProvisionStatus.Pending);
-//    	instanceCart.setUsageStartDate(LocalDateTime.now());
         instanceCart.setHost(HostUtils.getHostName());
         instanceCart.setInUse(Yn.N);
-    	
         return instanceCartRepository.save(instanceCart);
+    }
+    
+    public List<InstanceCart> getAllList(InstanceCartSpecification spec) {
+        return instanceCartRepository.findAll(spec);
+    }
+    
+    public Integer allDelete(InstanceCartSpecification spec) {
+    	if (StringUtils.isBlank(spec.getCreatedBy())) {
+    		return 0;
+    	}
+    	return instanceCartRepository.deleteAllByUserIdInQuery(spec.getCreatedBy());
     }
 }
