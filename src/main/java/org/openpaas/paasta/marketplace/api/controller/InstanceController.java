@@ -1,12 +1,16 @@
 package org.openpaas.paasta.marketplace.api.controller;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openpaas.paasta.marketplace.api.domain.Instance;
+import org.openpaas.paasta.marketplace.api.domain.InstanceCartSpecification;
 import org.openpaas.paasta.marketplace.api.domain.InstanceSpecification;
 import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.service.InstanceService;
+import org.openpaas.paasta.marketplace.api.service.SoftwarePlanService;
 import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class InstanceController {
 
     private final InstanceService instanceService;
+    private final SoftwarePlanService softwarePlanService;
 
     @GetMapping("/page")
     public Page<Instance> getPage(InstanceSpecification spec, Pageable pageable) {
@@ -39,13 +44,35 @@ public class InstanceController {
     public Page<Instance> getMyPage(InstanceSpecification spec, Pageable pageable) {
         spec.setCreatedBy(SecurityUtils.getUserId());
         spec.setStatus(Instance.Status.Approval);
-        return instanceService.getPage(spec, pageable);
+//        return instanceService.getPage(spec, pageable);
+        
+        Page<Instance> result = instanceService.getPage(spec, pageable);
+        
+        // softwarePlan의 가격정보 조회
+        List<Instance> instanceList = result.getContent();
+        Long pricePerMonth = 0L;
+        for (Instance instance : instanceList) {
+        	pricePerMonth = softwarePlanService.getPricePerMonth(String.valueOf(instance.getSoftware().getId()), instance.getSoftwarePlanId());
+        	instance.getSoftware().setPricePerMonth(pricePerMonth);
+        }
+        
+        return result;
     }
 
     @GetMapping("/my/totalPage")
     public Page<Instance> getMyTotalPage(InstanceSpecification spec, Pageable pageable) {
         spec.setCreatedBy(SecurityUtils.getUserId());
-        return instanceService.getPage(spec, pageable);
+        Page<Instance> result = instanceService.getPage(spec, pageable);
+        
+        // softwarePlan의 가격정보 조회
+        List<Instance> instanceList = result.getContent();
+        Long pricePerMonth = 0L;
+        for (Instance instance : instanceList) {
+        	pricePerMonth = softwarePlanService.getPricePerMonth(String.valueOf(instance.getSoftware().getId()), instance.getSoftwarePlanId());
+        	instance.getSoftware().setPricePerMonth(pricePerMonth);
+        }
+        
+        return result;
     }
 
 //    @GetMapping("/my/page/month")
@@ -56,7 +83,14 @@ public class InstanceController {
 
     @GetMapping("/{id}")
     public Instance get(@NotNull @PathVariable Long id) {
-        return instanceService.get(id);
+//        return instanceService.get(id);
+        
+        Instance instance = instanceService.get(id);
+        
+        // softwarePlan의 가격정보 조회
+        Long pricePerMonth = softwarePlanService.getPricePerMonth(String.valueOf(instance.getSoftware().getId()), instance.getSoftwarePlanId());
+    	instance.getSoftware().setPricePerMonth(pricePerMonth);
+    	return instance;
     }
 
     @PostMapping
@@ -86,6 +120,12 @@ public class InstanceController {
         instanceService.updateToDeleted(id);
 
         return saved;
+    }
+    
+    @GetMapping("/usagePriceTotal")
+    public Long usagePriceTotal(InstanceCartSpecification spec) throws BindException {
+    	spec.setCreatedBy(SecurityUtils.getUserId());
+    	return instanceService.usagePriceTotal(spec);
     }
 
 }

@@ -6,6 +6,7 @@ import org.openpaas.paasta.marketplace.api.repository.SoftwarePlanRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -65,6 +66,14 @@ public class SoftwarePlanService {
 
     public void delete(Long id) {
         softwarePlanRepository.deleteById(id);
+    }
+    
+    public Long getPricePerMonth(String softwareId, String softwarePlaneId) {
+    	return softwarePlanRepository.pricePerMonth(softwareId, softwarePlaneId);
+    }
+
+    public List<SoftwarePlan> getCurrentSoftwarePlanList(SoftwarePlanSpecification spec) {
+    	return softwarePlanRepository.findCurrentSoftwarePlanList(spec.getSoftwareId());
     }
 
 }
