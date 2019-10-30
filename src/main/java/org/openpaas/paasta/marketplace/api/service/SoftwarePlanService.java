@@ -67,13 +67,17 @@ public class SoftwarePlanService {
     public void delete(Long id) {
         softwarePlanRepository.deleteById(id);
     }
-    
+
     public Long getPricePerMonth(String softwareId, String softwarePlaneId) {
     	return softwarePlanRepository.pricePerMonth(softwareId, softwarePlaneId);
     }
 
     public List<SoftwarePlan> getCurrentSoftwarePlanList(SoftwarePlanSpecification spec) {
     	return softwarePlanRepository.findCurrentSoftwarePlanList(spec.getSoftwareId());
+    }
+
+    public List<SoftwarePlan> getApplyMonth(SoftwarePlanSpecification spec) {
+        return softwarePlanRepository.findAll(spec);
     }
 
 }
