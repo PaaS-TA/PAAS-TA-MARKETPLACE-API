@@ -404,4 +404,23 @@ public class StatsService {
         return data;
     }
 
+    // 요금 통계
+    public Map<Long, Object> getPurchaseAmount(String createrId, LocalDateTime start, LocalDateTime end) {
+        LocalDateTime startDate = start;
+        LocalDateTime endDate = end.minusDays(1);
+ 
+        //int lengthOfMonth = start.toLocalDate().lengthOfMonth();
+        long i = 0;
+
+        Map<Long, Object> data = new HashMap<>();
+
+        List<Object[]> values = statsRepository.getPurchaseAmount(createrId, startDate, endDate);
+        for (Object[] value : values) { 
+
+            data.put(i, value); 
+            i++;
+        }
+
+        return data;
+    }
 }

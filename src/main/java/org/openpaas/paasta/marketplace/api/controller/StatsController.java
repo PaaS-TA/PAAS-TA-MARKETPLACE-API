@@ -165,4 +165,12 @@ public class StatsController {
         return statsService.getSalesAmount(providerId, idIn, start, end);
     }
 
+    // 요금 통계
+    @GetMapping("/instances/my/price/total")
+    public Map<Long, Object> getPurchaseAmount(
+            @RequestParam(name = "usageStartDate", required = true) LocalDateTime usageStartDate,
+            @RequestParam(name = "usageEndDate", required = true) LocalDateTime usageEndDate) {
+        String createrId = SecurityUtils.getUserId();
+        return statsService.getPurchaseAmount(createrId, usageStartDate, usageEndDate);
+    }
 }
