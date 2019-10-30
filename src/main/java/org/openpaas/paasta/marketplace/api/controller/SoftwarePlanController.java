@@ -83,4 +83,9 @@ public class SoftwarePlanController {
         spec.setApplyMonth(applyMonth);
         return softwarePlanService.getApplyMonth(spec);
     }
+    
+    @GetMapping("/minPricePerMonth")
+    public Long minPricePerMonth(@RequestParam(name="softwareId") String softwareId) {
+        return softwarePlanService.getMinPricePerMonth(softwareId);
+    }
 }
