@@ -80,4 +80,7 @@ public class SoftwarePlanService {
         return softwarePlanRepository.findAll(spec);
     }
 
+    public Long getMinPricePerMonth(String softwareId) {
+        return softwarePlanRepository.minPricePerMonth(softwareId);
+    }
 }
