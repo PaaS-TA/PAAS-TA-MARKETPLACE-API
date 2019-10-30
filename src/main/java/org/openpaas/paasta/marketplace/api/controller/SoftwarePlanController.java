@@ -52,16 +52,28 @@ public class SoftwarePlanController {
     }
 
     @GetMapping("/{id}/list")
-    public List<SoftwarePlan> getList(@NotNull @PathVariable Long id, Sort sort) {
+    public List<SoftwarePlan> currentSoftwarePlanList(@NotNull @PathVariable Long id) {
     	SoftwarePlanSpecification spec = new SoftwarePlanSpecification();
     	spec.setSoftwareId(id);
-
-    	return softwarePlanService.getList(spec, sort);
+    	return softwarePlanService.getCurrentSoftwarePlanList(spec);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         softwarePlanService.delete(id);
+    }
+
+    @GetMapping("/pricePerMonth")
+    public void pricePerMonth(@RequestParam(name="softwareId") String softwareId, @RequestParam(name="softwarePlaneId") String softwarePlaneId) {
+    	softwarePlanService.getPricePerMonth(softwareId, softwarePlaneId);
+    }
+
+    @GetMapping("/{id}/histories")
+    public List<SoftwarePlan> getList(@NotNull @PathVariable Long id, Sort sort) {
+        SoftwarePlanSpecification spec = new SoftwarePlanSpecification();
+        spec.setSoftwareId(id);
+
+        return softwarePlanService.getList(spec, sort);
     }
 
 }

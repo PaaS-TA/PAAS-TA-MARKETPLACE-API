@@ -5,11 +5,14 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openpaas.paasta.marketplace.api.domain.Instance;
 import org.openpaas.paasta.marketplace.api.domain.InstanceCart;
 import org.openpaas.paasta.marketplace.api.domain.InstanceCartSpecification;
 import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.service.InstanceCartService;
+import org.openpaas.paasta.marketplace.api.service.SoftwarePlanService;
 import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -28,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 public class InstanceCartController {
 
 	private final InstanceCartService instanceCartService;
+	private final SoftwarePlanService softwarePlanService;
 	
     @PostMapping
     public InstanceCart create(@NotNull @Validated @RequestBody InstanceCart instanceCart, BindingResult bindingResult) throws BindException {
@@ -50,13 +54,27 @@ public class InstanceCartController {
     @GetMapping("/allList")
     public List<InstanceCart> getAllList(InstanceCartSpecification spec) {
         spec.setCreatedBy(SecurityUtils.getUserId());
-        return instanceCartService.getAllList(spec);
+        List<InstanceCart> instanceCartList = instanceCartService.getAllList(spec);
+        // softwarePlan의 가격정보 조회
+        Long pricePerMonth = 0L;
+        for (InstanceCart info : instanceCartList) {
+        	pricePerMonth = softwarePlanService.getPricePerMonth(String.valueOf(info.getSoftware().getId()), info.getSoftwarePlanId());
+        	info.getSoftware().setPricePerMonth(pricePerMonth);
+        }
+        
+        return instanceCartList;
     }
     
     @DeleteMapping("/allDelete")
     public Integer allDelete(InstanceCartSpecification spec) {
     	spec.setCreatedBy(SecurityUtils.getUserId());
     	return instanceCartService.allDelete(spec);
+    }
+    
+    @DeleteMapping("/delete")
+    public Integer delete(InstanceCartSpecification spec) {
+    	spec.setCreatedBy(SecurityUtils.getUserId());
+    	return instanceCartService.delete(spec);
     }
 
 }

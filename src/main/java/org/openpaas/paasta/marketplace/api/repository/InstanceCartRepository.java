@@ -1,5 +1,7 @@
 package org.openpaas.paasta.marketplace.api.repository;
 
+import java.util.List;
+
 import org.openpaas.paasta.marketplace.api.domain.InstanceCart;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -15,7 +17,16 @@ public interface InstanceCartRepository  extends JpaRepository<InstanceCart, Lon
     @Query("delete from InstanceCart ic where ic.createdBy = :userId")
     Integer deleteAllByUserIdInQuery(@Param("userId") String userId);
     
+    @Transactional
+    @Modifying
+    @Query("delete from InstanceCart ic where ic.createdBy = :userId and id in :inInstanceCartId ")
+    Integer deleteByInstanceCartIdListInQuery(@Param("userId") String userId, @Param("inInstanceCartId") List<Long> inInstanceCartId);
+    
     default Integer allDelete(String userId) {
         return deleteAllByUserIdInQuery(userId);
+    }
+    
+    default Integer delete(String userId, List<Long> inInstanceCartId) {
+    	return deleteByInstanceCartIdListInQuery(userId, inInstanceCartId);
     }
 }

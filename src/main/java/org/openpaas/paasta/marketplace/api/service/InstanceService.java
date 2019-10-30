@@ -2,7 +2,10 @@ package org.openpaas.paasta.marketplace.api.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.lang3.StringUtils;
 import org.openpaas.paasta.marketplace.api.domain.Instance;
+import org.openpaas.paasta.marketplace.api.domain.InstanceCartSpecification;
 import org.openpaas.paasta.marketplace.api.domain.Instance.ProvisionStatus;
 import org.openpaas.paasta.marketplace.api.domain.Instance.Status;
 import org.openpaas.paasta.marketplace.api.domain.InstanceSpecification;
@@ -318,4 +321,12 @@ public class InstanceService {
         log.info("stopDeprovisioning: end: {}", timeout);
     }
 
+    public Long usagePriceTotal(InstanceCartSpecification spec) {
+    	if (StringUtils.isBlank(spec.getCreatedBy())) {
+    		return 0L;
+    	}
+//    	String usagePriceTotal = instanceRepository.usagePriceTotal(spec.getCreatedBy());
+//    	return (StringUtils.isNotBlank(usagePriceTotal) ? Long.parseLong(usagePriceTotal) : 0L);
+    	return instanceRepository.usagePriceTotal(spec.getCreatedBy());
+    }
 }

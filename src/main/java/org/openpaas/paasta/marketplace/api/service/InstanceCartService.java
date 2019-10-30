@@ -53,4 +53,14 @@ public class InstanceCartService {
     	}
     	return instanceCartRepository.deleteAllByUserIdInQuery(spec.getCreatedBy());
     }
+    
+    public Integer delete(InstanceCartSpecification spec) {
+    	if (StringUtils.isBlank(spec.getCreatedBy())) {
+    		return 0;
+    	}
+    	if (spec.getInInstanceCartId() == null || spec.getInInstanceCartId().isEmpty()) {
+    		return 0;
+    	}
+    	return instanceCartRepository.delete(spec.getCreatedBy(), spec.getInInstanceCartId());
+    }
 }

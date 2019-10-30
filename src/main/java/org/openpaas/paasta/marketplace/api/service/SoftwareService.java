@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -49,8 +50,6 @@ public class SoftwareService {
     public Software update(Software software) {
         Software saved = softwareRepository.findById(software.getId()).get();
 
-        List<SoftwarePlan> origin = software.getSoftwarePlanList();
-
         saved.setName(software.getName());
         saved.setCategory(software.getCategory());
         saved.setApp(software.getApp());
@@ -73,24 +72,21 @@ public class SoftwareService {
         history.setDescription(software.getHistoryDescription());
         softwareHistoryRepository.save(history);
 
-        Long originPlanId;
-        SoftwarePlan plan = new SoftwarePlan();
+        List<SoftwarePlan> origin = software.getSoftwarePlanList();
+        List<SoftwarePlan> plan = new ArrayList<>();
 
         for(int i = 0; i < origin.size(); i++) {
-            originPlanId = origin.get(i).getId();
-            plan = softwarePlanRepository.findById(originPlanId).get();
-            plan.setName(software.getSoftwarePlanList().get(i).getName());
-            plan.setDescription(software.getSoftwarePlanList().get(i).getDescription());
-            plan.setCpuAmt(software.getSoftwarePlanList().get(i).getCpuAmt());
-            plan.setMemorySize(software.getSoftwarePlanList().get(i).getMemorySize());
-            plan.setMemoryAmt(software.getSoftwarePlanList().get(i).getMemoryAmt());
-            plan.setDiskAmt(software.getSoftwarePlanList().get(i).getDiskAmt());
-            plan.setDiskSize(software.getSoftwarePlanList().get(i).getDiskSize());
-            plan.setApplyMonth(software.getSoftwarePlanList().get(i).getApplyMonth());
-
-            softwarePlanRepository.save(plan);
+            plan.addAll(origin);
+            plan.get(i).setName(software.getSoftwarePlanList().get(i).getName());
+            plan.get(i).setDescription(software.getSoftwarePlanList().get(i).getDescription());
+            plan.get(i).setCpuAmt(software.getSoftwarePlanList().get(i).getCpuAmt());
+            plan.get(i).setMemorySize(software.getSoftwarePlanList().get(i).getMemorySize());
+            plan.get(i).setMemoryAmt(software.getSoftwarePlanList().get(i).getMemoryAmt());
+            plan.get(i).setDiskAmt(software.getSoftwarePlanList().get(i).getDiskAmt());
+            plan.get(i).setDiskSize(software.getSoftwarePlanList().get(i).getDiskSize());
+            plan.get(i).setApplyMonth(software.getSoftwarePlanList().get(i).getApplyMonth());
+            softwarePlanRepository.saveAll(plan);
         }
-
         return saved;
     }
 
