@@ -94,6 +94,7 @@ public class ScheduledTasks {
             Instance instance = instanceService.getOneToReadyProvision();
 
             if (instance != null) {
+                log.info("TTA [app-{}] ::: 시간 검증 시작 ::: {}", instance.getId() ,instance.getSoftware().getName());
                 instance.setProvisionStatus(ProvisionStatus.Ready);
             }
         }
