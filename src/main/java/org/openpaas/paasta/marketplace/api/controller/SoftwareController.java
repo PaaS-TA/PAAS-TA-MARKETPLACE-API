@@ -72,7 +72,7 @@ public class SoftwareController {
     }
 
     @PutMapping("/{id}")
-    public Software update(@PathVariable @NotNull Long id,
+    public Software update(@PathVariable @NotNull Long id, @RequestParam(name ="softwarePlaneOriginalList") String softwarePlaneOriginalList,
             @NotNull @Validated(Software.Update.class) @RequestBody Software software, BindingResult bindingResult)
             throws BindException {
         System.out.println("[Init]: " + software.toString());
@@ -96,7 +96,7 @@ public class SoftwareController {
 
         software.setId(id);
 
-        return softwareService.update(software);
+        return softwareService.update(software,softwarePlaneOriginalList);
     }
 
     @GetMapping("/{id}/histories")

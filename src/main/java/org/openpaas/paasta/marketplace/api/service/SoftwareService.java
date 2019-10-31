@@ -1,6 +1,7 @@
 package org.openpaas.paasta.marketplace.api.service;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.openpaas.paasta.marketplace.api.domain.*;
 import org.openpaas.paasta.marketplace.api.domain.Software.Status;
 import org.openpaas.paasta.marketplace.api.repository.SoftwareHistoryRepository;
@@ -13,8 +14,9 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +49,9 @@ public class SoftwareService {
         return softwareRepository.findByName(name);
     }
 
-    public Software update(Software software) {
+
+    public Software update(Software software, String softwarePlaneOriginalList) {
+
         Software saved = softwareRepository.findById(software.getId()).get();
 
         saved.setName(software.getName());
@@ -72,21 +76,35 @@ public class SoftwareService {
         history.setDescription(software.getHistoryDescription());
         softwareHistoryRepository.save(history);
 
-        List<SoftwarePlan> origin = software.getSoftwarePlanList();
-        List<SoftwarePlan> plan = new ArrayList<>();
+        //SW-plan Data
+        String [] arrSoftwarePlaneOriginal = StringUtils.split(softwarePlaneOriginalList,"\\^");
+        Map<String, String> updatePlanMap = new HashMap<String,String>();
+        List<SoftwarePlan> procPlanList = software.getSoftwarePlanList();
 
-        for(int i = 0; i < origin.size(); i++) {
-            plan.addAll(origin);
-            plan.get(i).setName(software.getSoftwarePlanList().get(i).getName());
-            plan.get(i).setDescription(software.getSoftwarePlanList().get(i).getDescription());
-            plan.get(i).setCpuAmt(software.getSoftwarePlanList().get(i).getCpuAmt());
-            plan.get(i).setMemorySize(software.getSoftwarePlanList().get(i).getMemorySize());
-            plan.get(i).setMemoryAmt(software.getSoftwarePlanList().get(i).getMemoryAmt());
-            plan.get(i).setDiskAmt(software.getSoftwarePlanList().get(i).getDiskAmt());
-            plan.get(i).setDiskSize(software.getSoftwarePlanList().get(i).getDiskSize());
-            plan.get(i).setApplyMonth(software.getSoftwarePlanList().get(i).getApplyMonth());
-            softwarePlanRepository.saveAll(plan);
+        if(procPlanList != null){
+            for (SoftwarePlan targetPlan : procPlanList) {
+                // 1. update - id map에 추가
+                if (targetPlan.getId() != null && targetPlan.getId() != 0) {
+                    softwarePlanRepository.save(targetPlan);
+                    updatePlanMap.put(String.valueOf(targetPlan.getId()), "Y");
+                } else {
+                    // 2. insert
+                    softwarePlanRepository.save(targetPlan);
+                }
+            }
         }
+        // delete
+        if(arrSoftwarePlaneOriginal != null && arrSoftwarePlaneOriginal.length > 0){
+            for (String deleteTargetId : arrSoftwarePlaneOriginal) {
+                if (StringUtils.isBlank(updatePlanMap.get(deleteTargetId))) {
+                    // Delete 실행
+                    SoftwarePlan softwarePlan = new SoftwarePlan();
+                    softwarePlan.setId(Long.valueOf(deleteTargetId));
+                    softwarePlanRepository.delete(softwarePlan);
+                }
+            }
+        }
+
         return saved;
     }
 

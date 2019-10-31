@@ -187,31 +187,31 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
             + "GROUP BY i.software.id " + "ORDER BY i.software.id ASC")
     List<Object[]> getSalesAmount(@Param("providerId") String providerId, @Param("idIn") List<Long> idIn,
             @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
-
+    
     //요금 통계
-    @Query(value = "select\n" +
-    		"    -- group by\n" +
-    		"    c.ym,\n" +
+    @Query(value = "select\n" + 
+    		"    -- group by\n" + 
+    		"    c.ym,\n" + 
     		"    (select count(*) from instance where created_by = :createrId and DATE_FORMAT(usage_start_date, '%Y%m') < c.ym and (usage_end_date is null or usage_end_date > c.ym)) before_instances,\n" +
-    		"    (select count(*) from instance where created_by = :createrId and DATE_FORMAT(usage_start_date, '%Y%m') = c.ym) start_instances,\n" +
-    		"    (select count(*) from instance where created_by = :createrId and DATE_FORMAT(usage_end_date, '%Y%m') = c.ym) stop_instances,\n" +
-    		"    count(*) total_use_date,\n" +
-    		"    sum(s.price_per_month/c.days) total_charge \n" +
-    		"    -- group by 하기전\n" +
-    		"    -- c.ym, c.dt, \n" +
-    		"    -- i.id instance_id, s.id software_id, s.name, s.price_per_month,  \n" +
-    		"    -- DATE_FORMAT(usage_start_date, '%Y%m%d') start_date,\n" +
-    		"    -- IFNULL(DATE_FORMAT(usage_end_date, '%Y%m%d'), DATE_FORMAT(now(),'%Y%m%d')) end_date,\n" +
-    		"    -- s.price_per_month/c.days price_per_day\n" +
-    		"from instance i, software s, calendar c\n" +
-    		"where i.software_id = s.id\n" +
-    		"  and i.created_by = :createrId\n" +
-    		"  and ifnull(i.usage_end_date, STR_TO_DATE('210001', '%Y%m')) >= :end\n" +
+    		"    (select count(*) from instance where created_by = :createrId and DATE_FORMAT(usage_start_date, '%Y%m') = c.ym) start_instances,\n" + 
+    		"    (select count(*) from instance where created_by = :createrId and DATE_FORMAT(usage_end_date, '%Y%m') = c.ym) stop_instances,\n" + 
+    		"    count(*) total_use_date,\n" + 
+    		"    sum(s.price_per_month/c.days) total_charge \n" + 
+    		"    -- group by 하기전\n" + 
+    		"    -- c.ym, c.dt, \n" + 
+    		"    -- i.id instance_id, s.id software_id, s.name, s.price_per_month,  \n" + 
+    		"    -- DATE_FORMAT(usage_start_date, '%Y%m%d') start_date,\n" + 
+    		"    -- IFNULL(DATE_FORMAT(usage_end_date, '%Y%m%d'), DATE_FORMAT(now(),'%Y%m%d')) end_date,\n" + 
+    		"    -- s.price_per_month/c.days price_per_day\n" + 
+    		"from instance i, software s, calendar c\n" + 
+    		"where i.software_id = s.id\n" + 
+    		"  and i.created_by = :createrId\n" + 
+    		"  and ifnull(i.usage_end_date, STR_TO_DATE('210001', '%Y%m')) >= DATE_FORMAT(STR_TO_DATE(CONCAT(DATE_FORMAT(:end, '%Y%m'), '01'), '%Y%m%d'), '%Y-%m-%d:%H%i%S')\n" +
     		"  -- and (i.usage_end_date >= :end or i.usage_end_date is null)\n" +
-    		"  and i.usage_start_date < :end\n" +
+    		"  and i.usage_start_date <= :end\n" +
     		"  and c.dt >= DATE_FORMAT(:start, '%Y%m%d')\n" +
-    		" and c.dt < DATE_FORMAT(:end, '%Y%m%d')\n" +
-    		" and c.dt between DATE_FORMAT(usage_start_date, '%Y%m%d') and IFNULL(DATE_FORMAT(usage_end_date, '%Y%m%d'), DATE_FORMAT(now(),'%Y%m%d'))\n" +
+    		" and c.dt <= DATE_FORMAT(:end, '%Y%m%d')\n" +
+    		" and c.dt between DATE_FORMAT(usage_start_date, '%Y%m%d') and IFNULL(DATE_FORMAT(usage_end_date, '%Y%m%d'), DATE_FORMAT(now(),'%Y%m%d'))\n" + 
     		" group by c.ym", nativeQuery=true)
     List<Object[]> getPurchaseAmount(@Param("createrId") String createrId,
             @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
