@@ -57,7 +57,7 @@ public class InstanceService {
         instance.setStatus(Instance.Status.Approval);
         instance.setProvisionStatus(Instance.ProvisionStatus.Pending);
         instance.setUsageStartDate(LocalDateTime.now());
-        instance.setUsageEndDate(LocalDateTime.of(2999, Month.DECEMBER, 31, 00, 00));
+//        instance.setUsageEndDate(LocalDateTime.of(2999, Month.DECEMBER, 31, 00, 00));
         instance.setHost(HostUtils.getHostName());
 
         return instanceRepository.save(instance);
