@@ -33,6 +33,12 @@ public class SoftwareController {
 
         spec.setStatus(Status.Approval);
         spec.setInUse(Yn.Y);
+        Page<Software> result = softwareService.getPage(spec, pageable);
+        
+        List<Software> softwareList = result.getContent();
+        for (Software info : softwareList) {
+        	info.setPricePerMonth(softwarePlanService.getMinPricePerMonth(String.valueOf(info.getId())));
+        }
 
         return softwareService.getPage(spec, pageable);
     }
@@ -46,7 +52,9 @@ public class SoftwareController {
 
     @GetMapping("/{id}")
     public Software get(@NotNull @PathVariable Long id) {
-        return softwareService.get(id);
+        Software software = softwareService.get(id);
+        software.setPricePerMonth(softwarePlanService.getMinPricePerMonth(String.valueOf(software.getId())));
+        return software;
     }
 
     @PostMapping

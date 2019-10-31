@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -56,6 +57,7 @@ public class InstanceService {
         instance.setStatus(Instance.Status.Approval);
         instance.setProvisionStatus(Instance.ProvisionStatus.Pending);
         instance.setUsageStartDate(LocalDateTime.now());
+        instance.setUsageEndDate(LocalDateTime.of(2999, Month.DECEMBER, 31, 00, 00));
         instance.setHost(HostUtils.getHostName());
 
         return instanceRepository.save(instance);
