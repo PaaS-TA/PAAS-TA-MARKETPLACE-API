@@ -59,7 +59,8 @@ public class InstanceCartController {
         Long pricePerMonth = 0L;
         for (InstanceCart info : instanceCartList) {
         	pricePerMonth = softwarePlanService.getPricePerMonth(String.valueOf(info.getSoftware().getId()), info.getSoftwarePlanId());
-        	info.getSoftware().setPricePerMonth(pricePerMonth);
+//        	info.getSoftware().setPricePerMonth(pricePerMonth);
+        	info.setSoftwarePlanAmtMonth(pricePerMonth);
         }
         
         return instanceCartList;

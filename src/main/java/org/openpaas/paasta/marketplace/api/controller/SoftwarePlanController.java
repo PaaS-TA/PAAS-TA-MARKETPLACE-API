@@ -64,8 +64,8 @@ public class SoftwarePlanController {
     }
 
     @GetMapping("/pricePerMonth")
-    public void pricePerMonth(@RequestParam(name="softwareId") String softwareId, @RequestParam(name="softwarePlaneId") String softwarePlaneId) {
-    	softwarePlanService.getPricePerMonth(softwareId, softwarePlaneId);
+    public void pricePerMonth(@RequestParam(name="softwareId") String softwareId, @RequestParam(name="softwarePlanId") String softwarePlanId) {
+    	softwarePlanService.getPricePerMonth(softwareId, softwarePlanId);
     }
 
     @GetMapping("/{id}/histories")

@@ -1,5 +1,6 @@
 package org.openpaas.paasta.marketplace.api.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -69,7 +70,9 @@ public class InstanceController {
         Long pricePerMonth = 0L;
         for (Instance instance : instanceList) {
         	pricePerMonth = softwarePlanService.getPricePerMonth(String.valueOf(instance.getSoftware().getId()), instance.getSoftwarePlanId());
-        	instance.getSoftware().setPricePerMonth(pricePerMonth);
+//        	instance.getSoftware().setPricePerMonth(softwarePlanService.getPricePerMonth(String.valueOf(instance.getSoftware().getId()), instance.getSoftwarePlanId()));
+        	instance.getSoftware().setSoftwarePlanAmtMonth(pricePerMonth);
+        	instance.setSoftwarePlanAmtMonth(pricePerMonth);
         }
         
         return result;
@@ -83,8 +86,6 @@ public class InstanceController {
 
     @GetMapping("/{id}")
     public Instance get(@NotNull @PathVariable Long id) {
-//        return instanceService.get(id);
-        
         Instance instance = instanceService.get(id);
         
         // softwarePlan의 가격정보 조회
