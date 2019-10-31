@@ -206,11 +206,11 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
     		"from instance i, software s, calendar c\n" + 
     		"where i.software_id = s.id\n" + 
     		"  and i.created_by = :createrId\n" + 
-    		"  and ifnull(i.usage_end_date, STR_TO_DATE('210001', '%Y%m')) >= :end\n" + 
+    		"  and ifnull(i.usage_end_date, STR_TO_DATE('210001', '%Y%m')) >= DATE_FORMAT(STR_TO_DATE(CONCAT(DATE_FORMAT(:end, '%Y%m'), '01'), '%Y%m%d'), '%Y-%m-%d:%H%i%S')\n" + 
     		"  -- and (i.usage_end_date >= :end or i.usage_end_date is null)\n" + 
-    		"  and i.usage_start_date < :end\n" + 
+    		"  and i.usage_start_date <= :end\n" + 
     		"  and c.dt >= DATE_FORMAT(:start, '%Y%m%d')\n" + 
-    		" and c.dt < DATE_FORMAT(:end, '%Y%m%d')\n" + 
+    		" and c.dt <= DATE_FORMAT(:end, '%Y%m%d')\n" + 
     		" and c.dt between DATE_FORMAT(usage_start_date, '%Y%m%d') and IFNULL(DATE_FORMAT(usage_end_date, '%Y%m%d'), DATE_FORMAT(now(),'%Y%m%d'))\n" + 
     		" group by c.ym", nativeQuery=true)
     List<Object[]> getPurchaseAmount(@Param("createrId") String createrId,
