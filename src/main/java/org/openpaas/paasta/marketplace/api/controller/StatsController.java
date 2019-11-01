@@ -139,9 +139,11 @@ public class StatsController {
      * @return
      */
     @GetMapping("/instances/my/usePeriod/days")
-    public Map<Long, Integer> getDayOfUseInstsPeriod(@RequestParam(name = "idIn", required = false) List<Long> idIn) {
+    public Map<String, String> getDayOfUseInstsPeriod(@RequestParam(name = "idIn", required = false) List<Long> idIn
+    		,@RequestParam(name = "usageStartDate", required = false) String usageStartDate
+    		,@RequestParam(name = "usageEndDate", required = false) String usageEndDate) {
         String providerId = SecurityUtils.getUserId();
-        return statsService.getDayOfUseInstsPeriod(providerId, idIn);
+        return statsService.getDayOfUseInstsPeriod(providerId, idIn, usageStartDate, usageEndDate);
     }
 
 
