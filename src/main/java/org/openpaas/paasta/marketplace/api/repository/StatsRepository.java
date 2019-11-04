@@ -179,14 +179,14 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
     //Page<Instance> countsOfInstsUsingMonth(@Param("userId") String userId, @Param("usageStartDate") LocalDateTime usageStartDate, @Param("usageEndDate") LocalDateTime usageEndDate, Pageable pageable);
 
     @Query("SELECT i.software.id, i.software.pricePerMonth, SUM(DATEDIFF( "
-            + "CASE WHEN i.usageEndDate IS NOT NULL AND i.usageEndDate <= :end THEN i.usageEndDate ELSE :end END, "
+            + "CASE WHEN i.usageEndDate IS NOT NULL AND i.usageEndDate <= :diffEnd THEN i.usageEndDate ELSE :diffEnd END, "
             + "CASE WHEN i.usageStartDate <= :start THEN :start ELSE i.usageStartDate END) + 1) " + "FROM Instance i "
             + "WHERE i.software.createdBy = :providerId AND i.software.id IN :idIn "
             + "AND i.usageStartDate IS NOT NULL "
             + "AND ((i.usageStartDate <= :start AND (i.usageEndDate IS NULL OR i.usageEndDate > :start)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end)) "
             + "GROUP BY i.software.id " + "ORDER BY i.software.id ASC")
     List<Object[]> getSalesAmount(@Param("providerId") String providerId, @Param("idIn") List<Long> idIn,
-            @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+            @Param("start") LocalDateTime start, @Param("end") LocalDateTime end, @Param("diffEnd") LocalDateTime diffEnd);
     
     //요금 통계
     @Query(value = "select\n" + 
