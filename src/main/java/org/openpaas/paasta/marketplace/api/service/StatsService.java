@@ -341,6 +341,20 @@ public class StatsService {
         Map<Long, Integer> data = values.stream().collect(Collectors.toMap(v -> (Long) v[0], v -> (Integer) v[1]));
         return data;
     }
+    
+    /**
+     * 구매 상품 사용한 일(Day) 수 - 입력한 달 기준
+     * @param providerId
+     * @param idIn
+     * @param usageStartDate
+     * @param usageEndDate
+     * @return
+     */
+    public Map<String, String> getDayOfUseInstsPeriod(String providerId, List<Long> idIn, String usageStartDate, String usageEndDate) {
+    	List<Object[]> values = statsRepository.dayOfUseInstsPeriodMonth(providerId, idIn, usageStartDate, usageEndDate);
+    	Map<String, String> data = values.stream().collect(Collectors.toMap(v -> (String) v[0], v -> (String) v[1]));
+    	return data;
+    }
 
     /**
      * [Admin] 판매자가 판매한 상품 중 사용중(status = Approval)인 상품 수

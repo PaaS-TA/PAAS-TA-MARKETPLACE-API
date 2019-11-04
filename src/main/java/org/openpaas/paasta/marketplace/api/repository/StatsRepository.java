@@ -162,6 +162,20 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
 
     @Query("SELECT i.id, DATEDIFF(ifnull(i.usageEndDate, now()), i.usageStartDate) FROM Instance i WHERE i.createdBy = :providerId AND i.id IN :idIn")
     List<Object[]> dayOfUseInstsPeriod(@Param("providerId") String providerId, @Param("idIn") List<Long> idIn);
+    
+    @Query(value="select  CONCAT(t.id)\n"
+	    		+"        ,CONCAT(if(DATEDIFF(endUseDate, startUseDate) > 0, DATEDIFF(endUseDate, startUseDate), 0)+1) as dayOfUsingPeriod\n"
+	    		+"from    (\n"
+	    		+"            select  if(i.usage_start_date > :usageStartDate, i.usage_start_date, :usageStartDate) as startUseDate\n"
+	    		+"                    ,if(ifnull(i.usage_end_date, now()) < :usageEndDate, ifnull(i.usage_end_date, now()), :usageEndDate) as endUseDate\n"
+	    		+"                    ,i.id\n"
+	    		+"            from    instance i\n"
+	    		+"            where   1=1\n"
+	    		+"             and     i.created_by = :providerId\n"
+	    		+"             and     i.id in :idIn\n"
+	    		+"        ) t"
+    , nativeQuery=true)
+    public List<Object[]> dayOfUseInstsPeriodMonth(@Param("providerId") String providerId, @Param("idIn") List<Long> idIn, @Param("usageStartDate") String usageStartDate, @Param("usageEndDate") String usageEndDate);
 
     @Query("SELECT count(*) FROM Software s, Instance i WHERE s.id = i.software.id AND s.createdBy = :providerId AND i.software.id = :id AND i.status='Approval'")
     Object usingPerInstanceByProvider(@Param("providerId") String providerId, @Param("id") Long id);
