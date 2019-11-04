@@ -133,16 +133,18 @@ public class AdminSoftwareController {
         testSoftwareInfo.setSoftwareId(software.getId());
         testSoftwareInfo.setPlanGuid(planId);
 
-        String appGuid;
+        String appGuid = null;
 
         try{
-            log.info("성공이구요~~");
             appGuid = platformService.provision(instance, true);
             testSoftwareInfo.setAppGuid(appGuid);
+            testSoftwareInfo.setStatus(TestSoftwareInfo.Status.Successful);
+            log.info("성공이구요~~");
 
         }catch (Exception e) {
             log.info("실패이지만 저장해~~");
-            testSoftwareInfo.setAppGuid("");
+            testSoftwareInfo.setAppGuid(appGuid);
+            testSoftwareInfo.setStatus(TestSoftwareInfo.Status.Failed);
             //throw new PlatformException("appGuid doesn't exist!!!");
         }
 

@@ -87,7 +87,7 @@ public class ServiceService extends Common {
             resultMap.put("result", true);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             resultMap.put("result", false);
             resultMap.put("msg", e);
         }
