@@ -1,6 +1,14 @@
 package org.openpaas.paasta.marketplace.api.controller;
 
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
 import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
 import org.openpaas.paasta.marketplace.api.domain.Stats;
@@ -11,14 +19,13 @@ import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping(value = "/stats")
@@ -142,6 +149,14 @@ public class StatsController {
     public Map<String, String> getDayOfUseInstsPeriod(@RequestParam(name = "idIn", required = false) List<Long> idIn
     		,@RequestParam(name = "usageStartDate", required = false) String usageStartDate
     		,@RequestParam(name = "usageEndDate", required = false) String usageEndDate) {
+    
+    	if (idIn == null || idIn.isEmpty()) {
+    		return new HashMap<String, String>();
+    	}
+    	if (StringUtils.isBlank(usageStartDate) || StringUtils.isBlank(usageEndDate)) {
+    		return new HashMap<String, String>();
+    	}
+    	
         String providerId = SecurityUtils.getUserId();
         return statsService.getDayOfUseInstsPeriod(providerId, idIn, usageStartDate, usageEndDate);
     }
