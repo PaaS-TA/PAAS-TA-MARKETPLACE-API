@@ -200,7 +200,7 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
             + "AND ((i.usageStartDate <= :start AND (i.usageEndDate IS NULL OR i.usageEndDate > :start)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end)) "
             + "GROUP BY i.software.id " + "ORDER BY i.software.id ASC")
     List<Object[]> getSalesAmount(@Param("providerId") String providerId, @Param("idIn") List<Long> idIn,
-            @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+            @Param("start") LocalDateTime start, @Param("end") LocalDateTime end, @Param("diffEnd") LocalDateTime diffEnd);
     
     //요금 통계
     @Query(value = "select\n" + 

@@ -394,9 +394,9 @@ public class StatsService {
     }
 
     public Map<Long, Long> getSalesAmount(String providerId, List<Long> idIn, LocalDateTime start, LocalDateTime end) {
-        LocalDateTime diffEnd = end.minusDays(1);
+    	LocalDateTime diffEnd = end.minusDays(1);
 
-        if (start.getMonthValue() != diffEnd.getMonthValue()) {
+    	if (start.getMonthValue() != diffEnd.getMonthValue()) {
             throw new IllegalStateException("Invalid term: start=" + start + ", end=" + end);
         }
 
