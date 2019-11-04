@@ -96,7 +96,7 @@ public class InstanceService {
                     throw pe;
                 }
             }
-            platformService.provision(instance);
+            platformService.provision(instance, false);
 
             instance.setProvisionStatus(Instance.ProvisionStatus.Successful);
             instance.setProvisionEndDate(LocalDateTime.now());
@@ -105,7 +105,7 @@ public class InstanceService {
         } catch (Exception e) {
             log.info("provision failed: {}", instance.getId());
             log.info("이놈의 익셉션!!!!!!!!!!!!! " + e.getMessage());
-            e.printStackTrace();
+            //e.printStackTrace();
             instance.setProvisionTryCount(instance.getProvisionTryCount() + 1);
             if (instance.getProvisionTryCount() >= provisioningTryCount) {
                 instance.setProvisionStatus(Instance.ProvisionStatus.Failed);

@@ -14,6 +14,7 @@ import org.cloudfoundry.client.v2.serviceplans.ServicePlanResource;
 import org.openpaas.paasta.marketplace.api.cloudFoundryModel.NameType;
 import org.openpaas.paasta.marketplace.api.domain.Instance;
 import org.openpaas.paasta.marketplace.api.domain.Software;
+import org.openpaas.paasta.marketplace.api.domain.SoftwarePlan;
 import org.openpaas.paasta.marketplace.api.exception.PlatformException;
 import org.openpaas.paasta.marketplace.api.service.cloudfoundry.AppService;
 import org.openpaas.paasta.marketplace.api.service.cloudfoundry.ServiceService;
@@ -48,23 +49,38 @@ public class PlatformService {
 
     private final ServiceService serviceService;
 
-    public void provision(Instance instance) throws PlatformException {
+    private final SoftwarePlanService softwarePlanService;
+
+    public String provision(Instance instance, boolean isTested) throws PlatformException {
         if(instance == null) {
             log.info("아직 없어");
-            return;
+            return null;
         }
+        String appGuid;
 
         try {
             Software software = instance.getSoftware();
-            String name = generateName(instance);
+
+            String planId = instance.getSoftwarePlanId();
+            SoftwarePlan softwarePlan = softwarePlanService.getSoftwarePlan(planId);
+
+            String memorySize = softwarePlan.getMemorySize();
+            String diskSize = softwarePlan.getDiskSize();
+            String name;
+
+            if(isTested) {
+                name = generateName(instance, instance.getAppName());
+            } else {
+                name = generateName(instance, null);
+            }
 
             // 1) 앱 생성하는 CF 호출(처음에는 app no start)
-            Map<String, Object> result = appService.createApp(software, name);
+            Map<String, Object> result = appService.createApp(software, name, memorySize, diskSize);
             if(result.get("appId") == null) {
                 throw new PlatformException("Provisioning fail.\n" + result.get("msg"));
             }
 
-            String appGuid = result.get("appId").toString();
+            appGuid = result.get("appId").toString();
 
 
             // 환경변수 업데이트
@@ -112,6 +128,7 @@ public class PlatformService {
             //e.printStackTrace();
             throw new PlatformException(e);
         }
+        return appGuid;
     }
 
     public void deprovision(Instance instance) throws PlatformException {
@@ -192,8 +209,8 @@ public class PlatformService {
     }
 
 
-    String generateName(Instance instance) {
-        return localNamingType.generateName(instance);
+    String generateName(Instance instance, String testPrefix) {
+        return localNamingType.generateName(instance, testPrefix);
     }
 
 
