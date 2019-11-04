@@ -1,11 +1,16 @@
 package org.openpaas.paasta.marketplace.api.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
+import javax.transaction.Transactional;
+
 import org.openpaas.paasta.marketplace.api.domain.Instance;
-import org.openpaas.paasta.marketplace.api.domain.InstanceCartSpecification;
 import org.openpaas.paasta.marketplace.api.domain.Instance.ProvisionStatus;
 import org.openpaas.paasta.marketplace.api.domain.Instance.Status;
 import org.openpaas.paasta.marketplace.api.domain.InstanceSpecification;
@@ -23,12 +28,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Future;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
@@ -323,12 +324,28 @@ public class InstanceService {
         log.info("stopDeprovisioning: end: {}", timeout);
     }
 
-    public Long usagePriceTotal(InstanceCartSpecification spec) {
-    	if (StringUtils.isBlank(spec.getCreatedBy())) {
-    		return 0L;
+    /**
+     * 사용자 총 사용요금 계산 (기간한정)
+     * @param spec
+     * @return
+     */
+    public Long usagePriceTotal(String userId, String usageStartDate, String usageEndDate) {
+    	return instanceRepository.usagePriceTotal(userId, usageStartDate, usageEndDate);
+    }
+    
+    /**
+     * 상품별 사용요금 계산 (기간한정)
+     * @param inInstanceId
+     * @param usageStartDate
+     * @param usageEndDate
+     * @return
+     */
+    public Map<String, String> getPricePerInstanceList(List<Long> inInstanceId, String usageStartDate, String usageEndDate) {
+    	List<Object[]> values = instanceRepository.pricePerInstanceList(inInstanceId, usageStartDate, usageEndDate);
+    	Map<String, String> data = new HashMap<String, String>();
+    	if (values != null && !values.isEmpty()) {
+    		data = values.stream().collect(Collectors.toMap(v -> (String) v[0], v -> (String) v[1]));
     	}
-//    	String usagePriceTotal = instanceRepository.usagePriceTotal(spec.getCreatedBy());
-//    	return (StringUtils.isNotBlank(usagePriceTotal) ? Long.parseLong(usagePriceTotal) : 0L);
-    	return instanceRepository.usagePriceTotal(spec.getCreatedBy());
+    	return data;
     }
 }
