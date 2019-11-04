@@ -60,6 +60,12 @@ public class SoftwarePlanService {
         return saved;
     }
 
+    public SoftwarePlan getSoftwarePlan(String id) {
+        SoftwarePlanSpecification planSpecification = new SoftwarePlanSpecification();
+        planSpecification.setId(id);
+        return softwarePlanRepository.findOne(planSpecification).get();
+    }
+
     public List<SoftwarePlan> getList(SoftwarePlanSpecification spec, Sort sort) {
     	return softwarePlanRepository.findAll(spec, sort);
     }

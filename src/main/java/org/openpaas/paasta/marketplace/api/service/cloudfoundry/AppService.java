@@ -9,7 +9,10 @@ import org.cloudfoundry.client.v2.routemappings.ListRouteMappingsRequest;
 import org.cloudfoundry.client.v2.routemappings.ListRouteMappingsResponse;
 import org.cloudfoundry.client.v2.routes.CreateRouteRequest;
 import org.cloudfoundry.client.v2.routes.DeleteRouteRequest;
+import org.cloudfoundry.doppler.Envelope;
+import org.cloudfoundry.doppler.RecentLogsRequest;
 import org.cloudfoundry.reactor.client.ReactorCloudFoundryClient;
+import org.cloudfoundry.reactor.doppler.ReactorDopplerClient;
 import org.javaswift.joss.model.Container;
 import org.javaswift.joss.model.StoredObject;
 import org.openpaas.paasta.marketplace.api.cloudFoundryModel.App;
@@ -73,7 +76,7 @@ public class AppService extends Common {
      * @param name
      * @return
      */
-    public Map<String, Object> createApp(Software param, String name) {
+    public Map<String, Object> createApp(Software param, String name, String requestedMemorySize, String requestedDiskSize) {
         ReactorCloudFoundryClient reactorCloudFoundryClient = cloudFoundryClient(tokenProvider());
         String applicationid = "applicationID";
         String routeid = "route ID";
@@ -88,26 +91,56 @@ public class AppService extends Common {
             Object propertyResult = applications.get(0);
             LinkedHashMap<String, ?> resultMap = (LinkedHashMap<String, String>) propertyResult;
 
-            Integer memorySize = null;
+            Integer memorySize;
             Integer instance = null;
-            Integer diskSize = null;
+            Integer diskSize;
             String buildPack = null;
 
-            if(resultMap.containsKey("memory")){
-                memorySize = Integer.valueOf(resultMap.get("memory").toString().replaceAll("[^0-9]", ""));
+//            if(resultMap.containsKey("memory")){
+//                memorySize = Integer.valueOf(resultMap.get("memory").toString().replaceAll("[^0-9]", ""));
+//
+//                if(resultMap.get("memory").toString().toLowerCase().contains("g")){
+//                    memorySize = memorySize * 1024;
+//                }
+//            }
+//
+//            if(resultMap.containsKey("disk_quota")){
+//                diskSize = Integer.valueOf(resultMap.get("disk_quota").toString().replaceAll("[^0-9]", ""));
+//
+//                if(resultMap.get("disk_quota").toString().toLowerCase().contains("g")){
+//                    diskSize = diskSize * 1024;
+//                }
+//            }
 
-                if(resultMap.get("memory").toString().toLowerCase().contains("g")){
-                    memorySize = memorySize * 1024;
-                }
+            String reqExp = "\\s*[a-zA-Z]+";
+            String[] aa = requestedMemorySize.split(reqExp);
+            System.out.println("aa :: " + aa[0]);
+            double bbb = Double.parseDouble(aa[0]);
+
+            String[] cc = requestedDiskSize.split(reqExp);
+            System.out.println("cc :: " + cc[0]);
+            double ddd = Double.parseDouble(cc[0]);
+
+            if(requestedMemorySize.toLowerCase().contains("g")) {
+                //aa = requestedMemorySize.split(reqExp);
+                bbb = bbb * 1024;
+                System.out.println("bbb :: " + bbb);
             }
 
-            if(resultMap.containsKey("disk_quota")){
-                diskSize = Integer.valueOf(resultMap.get("disk_quota").toString().replaceAll("[^0-9]", ""));
+            memorySize = (int) Math.round(bbb);
+            System.out.println("memorySize :::" + memorySize);
 
-                if(resultMap.get("disk_quota").toString().toLowerCase().contains("g")){
-                    diskSize = diskSize * 1024;
-                }
+
+            if(requestedDiskSize.toLowerCase().contains("g")) {
+                //String[] cc = requestedDiskSize.split(reqExp);
+                ddd = ddd * 1024;
+                System.out.println("ddd :: " + ddd);
+
             }
+
+            diskSize = (int) Math.round(ddd);
+            System.out.println("diskSize :::" + diskSize);
+
 
 
             if(resultMap.containsKey("instances")){
@@ -251,7 +284,7 @@ public class AppService extends Common {
         try {
             yamlFile = new FileReader(file);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         Map<String, Object> yamlMaps = yaml.load(yamlFile);
@@ -371,7 +404,7 @@ public class AppService extends Common {
             resultMap.put("result", true);
         } catch (Exception e) {
             // todo ::: to delete
-            e.printStackTrace();
+            //e.printStackTrace();
             resultMap.put("result", false);
             resultMap.put("msg", e);
         }
@@ -453,7 +486,7 @@ public class AppService extends Common {
 
             resultMap.put("result", true);
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             resultMap.put("result", false);
             resultMap.put("msg", e);
         }
@@ -475,12 +508,29 @@ public class AppService extends Common {
             result.put("result", true);
             result.put("msg", "You have successfully completed the task.");
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             result.put("result", false);
             result.put("msg", e.getMessage());
         }
         return result;
     }
 
+
+    /**
+     * 앱 최근 로그
+     *
+     * @param guid
+     * @return
+     */
+    public List<Envelope> getRecentLog(String guid) {
+        //TokenProvider tokenProvider = tokenProvider(token);
+        ReactorDopplerClient reactorDopplerClient = dopplerClient(connectionContext(), tokenProvider());
+
+        RecentLogsRequest.Builder requestBuilder = RecentLogsRequest.builder();
+        requestBuilder.applicationId(guid);
+
+        List<Envelope> getRecentLog = reactorDopplerClient.recentLogs(requestBuilder.build()).collectList().block();
+        return getRecentLog;
+    }
 
 }
