@@ -24,7 +24,7 @@ public class CommonUtils {
         try {
             yamlFile = new FileReader("");
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         Map<String, Object> yamlMaps = yaml.load(yamlFile);

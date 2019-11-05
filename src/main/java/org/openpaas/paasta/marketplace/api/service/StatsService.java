@@ -352,7 +352,10 @@ public class StatsService {
      */
     public Map<String, String> getDayOfUseInstsPeriod(String providerId, List<Long> idIn, String usageStartDate, String usageEndDate) {
     	List<Object[]> values = statsRepository.dayOfUseInstsPeriodMonth(providerId, idIn, usageStartDate, usageEndDate);
-    	Map<String, String> data = values.stream().collect(Collectors.toMap(v -> (String) v[0], v -> (String) v[1]));
+    	Map<String, String> data = new HashMap<String, String>();
+    	if (values != null && !values.isEmpty()) {
+    		data = values.stream().collect(Collectors.toMap(v -> (String) v[0], v -> (String) v[1]));
+    	}
     	return data;
     }
 

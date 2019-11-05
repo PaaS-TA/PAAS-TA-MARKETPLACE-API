@@ -1,62 +1,62 @@
-//package org.openpaas.paasta.marketplace.api.controller.cloudfoundry;
-//
-//import lombok.RequiredArgsConstructor;
-//import org.cloudfoundry.client.v2.applications.ListApplicationsResponse;
-//import org.openpaas.paasta.marketplace.api.service.InstanceService;
-//import org.openpaas.paasta.marketplace.api.service.PlatformService;
-//import org.openpaas.paasta.marketplace.api.service.SoftwareService;
-//import org.openpaas.paasta.marketplace.api.service.cloudfoundry.AppService;
-//import org.openpaas.paasta.marketplace.api.util.CommonUtils;
-//import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RestController;
-//
-//import java.io.IOException;
-//
-///**
-// * @author hrjin
-// * @version 1.0
-// * @since 2019-08-20
-// */
-//@RestController
-//@RequiredArgsConstructor
-//@RequestMapping(value = "/apps")
-//public class AppController extends CommonUtils{
-//    @Value("${market.org..guid}")
-//    public String marketOrgGuid;
-//
-//    @Value("${market.space.guid}")
-//    public String marketSpaceGuid;
-//
-//    private final AppService appService;
-//
-//    private final SoftwareService softwareService;
-//
-//    private final PlatformService platformService;
-//
-//    private final InstanceService instanceService;
-//    /**
-//     * 앱 목록 조회
-//     *
-//     * @return
-//     */
-//    @GetMapping
-//    public ListApplicationsResponse getAppList() throws IOException {
-////        CommonUtils commonUtils = new CommonUtils();
-////        Map map = commonUtils.convertYamlToJson();
-////        System.out.println("yaml to json ::: " + map.toString());
-//        Object obj = softwareService.getObjectDownload("596d5de714184b5da8ffb8688a58b210-1566287270833-bWFuaWZlc3QueW1s");
-//        System.out.println("obj ::: " + obj);
-//        convertYamlToJson(obj);
-//        return appService.getAppList(marketOrgGuid, marketSpaceGuid);
-//    }
-//
-////    @PostMapping
-////    public Software createApp(@RequestBody Software param, @RequestHeader("User-Agent") String token, HttpServletResponse httpServletResponse) throws Exception {
-////        Instance instance = instanceService.findBySoftwareId(param.getId());
-////
-////        //platformService.provision(instance);
-////        return instance.getSoftware();
-////    }
-//}
+package org.openpaas.paasta.marketplace.api.controller.cloudfoundry;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.cloudfoundry.doppler.Envelope;
+import org.openpaas.paasta.marketplace.api.service.cloudfoundry.AppService;
+import org.openpaas.paasta.marketplace.api.util.CommonUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @author hrjin
+ * @version 1.0
+ * @since 2019-08-20
+ */
+@Slf4j
+@RestController
+@RequiredArgsConstructor
+@RequestMapping(value = "/admin/apps")
+public class AppController extends CommonUtils{
+    @Value("${market.org..guid}")
+    public String marketOrgGuid;
+
+    @Value("${market.space.guid}")
+    public String marketSpaceGuid;
+
+    private final AppService appService;
+
+
+    /**
+     * 앱 최근 로그
+     *
+     * @param guid
+     * @return Space respSpace
+     * @throws Exception the exception
+     */
+    @GetMapping(value = "/{guid}/recentLogs")
+    public Map getRecentLog(@PathVariable String guid) throws Exception {
+        log.info("getRecentLog Start : " + guid);
+
+        Map mapLog = new HashMap();
+        try {
+            List<Envelope> respAppEvents = appService.getRecentLog(guid);
+            mapLog.put("log", respAppEvents);
+        } catch (Exception e) {
+            log.info("################ ");
+            log.error(e.toString());
+            mapLog.put("log", "");
+        }
+
+        log.info("getRecentLog End");
+
+        return mapLog;
+    }
+}

@@ -1,7 +1,9 @@
 package org.openpaas.paasta.marketplace.api.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -45,16 +48,16 @@ public class InstanceController {
     public Page<Instance> getMyPage(InstanceSpecification spec, Pageable pageable) {
         spec.setCreatedBy(SecurityUtils.getUserId());
         spec.setStatus(Instance.Status.Approval);
-//        return instanceService.getPage(spec, pageable);
-        
         Page<Instance> result = instanceService.getPage(spec, pageable);
         
         // softwarePlan의 가격정보 조회
         List<Instance> instanceList = result.getContent();
         Long pricePerMonth = 0L;
-        for (Instance instance : instanceList) {
-        	pricePerMonth = softwarePlanService.getPricePerMonth(String.valueOf(instance.getSoftware().getId()), instance.getSoftwarePlanId());
-        	instance.getSoftware().setPricePerMonth(pricePerMonth);
+        if (instanceList != null && !instanceList.isEmpty()) {
+	        for (Instance instance : instanceList) {
+	        	pricePerMonth = softwarePlanService.getPricePerMonth(String.valueOf(instance.getSoftware().getId()), instance.getSoftwarePlanId());
+	        	instance.getSoftware().setPricePerMonth(pricePerMonth);
+	        }
         }
         
         return result;
@@ -124,9 +127,25 @@ public class InstanceController {
     }
     
     @GetMapping("/usagePriceTotal")
-    public Long usagePriceTotal(InstanceCartSpecification spec) throws BindException {
-    	spec.setCreatedBy(SecurityUtils.getUserId());
-    	return instanceService.usagePriceTotal(spec);
+    public Long usagePriceTotal(@RequestParam(name = "usageStartDate", required = false) String usageStartDate
+    							,@RequestParam(name = "usageEndDate", required = false) String usageEndDate) throws BindException {
+    	return instanceService.usagePriceTotal(SecurityUtils.getUserId(), usageStartDate, usageEndDate);
+    }
+
+    @GetMapping("/pricePerInstanceList")
+    public Map<String, String> pricePerInstanceList(
+    		@RequestParam(name = "inInstanceId", required = false) List<Long> inInstanceId
+    		,@RequestParam(name = "usageStartDate", required = false) String usageStartDate
+    		,@RequestParam(name = "usageEndDate", required = false) String usageEndDate) {
+    	
+    	if (inInstanceId == null || inInstanceId.isEmpty()) {
+    		return new HashMap<String, String>();
+    	}
+    	if (StringUtils.isBlank(usageStartDate) || StringUtils.isBlank(usageEndDate)) {
+    		return new HashMap<String, String>();
+    	}
+
+        return instanceService.getPricePerInstanceList(inInstanceId, usageStartDate, usageEndDate);
     }
 
 }

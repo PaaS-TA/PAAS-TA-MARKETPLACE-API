@@ -2,7 +2,9 @@ package org.openpaas.paasta.marketplace.api.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.cloudfoundry.client.v2.ClientV2Exception;
 import org.cloudfoundry.client.v2.applications.ApplicationEntity;
+import org.cloudfoundry.client.v2.applications.GetApplicationResponse;
 import org.cloudfoundry.client.v2.applications.ListApplicationServiceBindingsResponse;
 import org.cloudfoundry.client.v2.routemappings.ListRouteMappingsResponse;
 import org.cloudfoundry.client.v2.servicebrokers.ListServiceBrokersResponse;
@@ -12,6 +14,7 @@ import org.cloudfoundry.client.v2.serviceplans.ServicePlanResource;
 import org.openpaas.paasta.marketplace.api.cloudFoundryModel.NameType;
 import org.openpaas.paasta.marketplace.api.domain.Instance;
 import org.openpaas.paasta.marketplace.api.domain.Software;
+import org.openpaas.paasta.marketplace.api.domain.SoftwarePlan;
 import org.openpaas.paasta.marketplace.api.exception.PlatformException;
 import org.openpaas.paasta.marketplace.api.service.cloudfoundry.AppService;
 import org.openpaas.paasta.marketplace.api.service.cloudfoundry.ServiceService;
@@ -46,19 +49,38 @@ public class PlatformService {
 
     private final ServiceService serviceService;
 
-    public void provision(Instance instance) throws PlatformException {
+    private final SoftwarePlanService softwarePlanService;
+
+    public String provision(Instance instance, boolean isTested) throws PlatformException {
         if(instance == null) {
             log.info("아직 없어");
-            return;
+            return null;
         }
+        String appGuid;
 
         try {
             Software software = instance.getSoftware();
-            String name = generateName(instance);
+
+            String planId = instance.getSoftwarePlanId();
+            SoftwarePlan softwarePlan = softwarePlanService.getSoftwarePlan(planId);
+
+            String memorySize = softwarePlan.getMemorySize();
+            String diskSize = softwarePlan.getDiskSize();
+            String name;
+
+            if(isTested) {
+                name = generateName(instance, instance.getAppName());
+            } else {
+                name = generateName(instance, null);
+            }
 
             // 1) 앱 생성하는 CF 호출(처음에는 app no start)
-            Map<String, Object> result = appService.createApp(software, name);
-            String appGuid = result.get("appId").toString();
+            Map<String, Object> result = appService.createApp(software, name, memorySize, diskSize);
+            if(result.get("appId") == null) {
+                throw new PlatformException("Provisioning fail.\n" + result.get("msg"));
+            }
+
+            appGuid = result.get("appId").toString();
 
 
             // 환경변수 업데이트
@@ -66,7 +88,19 @@ public class PlatformService {
             if(result.get("env") != null) {
                 log.info("매니페스트에 env 있음!!!!!!!!!!");
                 env = (Map) result.get("env");
-                appService.updateApp(env, appGuid);
+
+                int tryCnt = 0;
+                boolean isUpdated = false;
+                while(tryCnt++ < 10 && !isUpdated) {
+                    Map res = appService.updateApp(env, appGuid);
+                    isUpdated = (boolean) res.get("result");
+                    if(!isUpdated) {
+                        Thread.sleep(1000);
+                    }
+
+                    // todo :: to delete
+                    log.info("env count ::: " + tryCnt);
+                }
                 log.info("env 업뎃 완료!!!!!!!!!!");
             }
 
@@ -85,10 +119,16 @@ public class PlatformService {
             // 4) 앱 시작 및 상태 체크
             getAppStats(appGuid, name);
 
-        } catch (Throwable t) {
-            log.error(t.getMessage(), t);
-            throw new PlatformException(t);
+        }catch(PlatformException pe) {
+            // todo ::: to delete
+            //pe.printStackTrace();
+            throw pe;
+        } catch (Exception e) {
+            // todo ::: to delete
+            //e.printStackTrace();
+            throw new PlatformException(e);
         }
+        return appGuid;
     }
 
     public void deprovision(Instance instance) throws PlatformException {
@@ -98,13 +138,39 @@ public class PlatformService {
         }
 
         try {
-            String appGuid = appService.getApp(instance).getMetadata().getId();
+            log.info("deprovision startuuu!!!");
+            GetApplicationResponse getAppRes = appService.getApp(instance);
+            if (getAppRes == null) {
+                throw new PlatformException("appGuid not found yet.\n");
+            }
+
+            String appGuid = getAppRes.getMetadata().getId();
+            if (appGuid == null) {
+                throw new PlatformException("appGuid not found yet.\n");
+            }
+
             log.info("어풀리케이쇼온~~~ " + appGuid);
 
 
             // 1) appGuid 로 서비스 바인딩 id 모두 찾는다.
-            ListApplicationServiceBindingsResponse bindingList = serviceService.getServiceBindings(appGuid);
+            ListApplicationServiceBindingsResponse bindingList = null;
+            
+            int tryCnt = 0;
+            boolean isSuccess = false;
+            
+            while(tryCnt++ < 10 && !isSuccess) {
+            	isSuccess = true;
+            	try{
+            		bindingList = serviceService.getServiceBindings(appGuid);
+            	}catch(Exception e) {
+            		isSuccess = false;
+            		log.info("bindingList try cound ::: {}", tryCnt);
+            		//e.printStackTrace();
+            		Thread.sleep(1000);
+            	}
+            	
 
+            }
             if (bindingList.getTotalResults() > 0) {
                 for (int i = 0; i < bindingList.getResources().size(); i++) {
                     String serviceInstanceId = bindingList.getResources().get(i).getEntity().getServiceInstanceId();
@@ -129,6 +195,12 @@ public class PlatformService {
             // 5) 앱 삭제
             appService.deleteApp(appGuid);
 
+        }catch(ClientV2Exception cv2e) {
+            if("100004".equals(cv2e.getCode()) || "100004".equals(cv2e.getErrorCode()) || cv2e.getMessage().indexOf("CF-AppNotFound") > -1 || cv2e.getDescription().indexOf("CF-AppNotFound") > -1) {
+                throw new PlatformException("noCfAppInstance",cv2e);
+            }
+            log.error(cv2e.getMessage(), cv2e);
+            throw new PlatformException(cv2e);
         }catch (Throwable t) {
             log.error(t.getMessage(), t);
             throw new PlatformException(t);
@@ -137,14 +209,14 @@ public class PlatformService {
     }
 
 
-    String generateName(Instance instance) {
-        return localNamingType.generateName(instance);
+    String generateName(Instance instance, String testPrefix) {
+        return localNamingType.generateName(instance, testPrefix);
     }
 
 
 
 
-    private void procServiceBinding(Instance instance, Map env, String appGuid){
+    private void procServiceBinding(Instance instance, Map env, String appGuid) throws PlatformException, InterruptedException {
         List<String> services = (List) env.get("services");
         log.info("services ::: " + services.toString());
 
@@ -152,7 +224,27 @@ public class PlatformService {
         int index = 0;
 
         // services 에 서비스 타입 판별 후 해당하는 서비스 브로커 존재 여부 -> 있으면 서비스 플랜 아이디 조회
-        ListServiceBrokersResponse brokers = serviceService.getServiceBrokers();
+        ListServiceBrokersResponse brokers = null;
+        int tryCnt = 0;
+        boolean isFound = false;
+        while(tryCnt++ < 10 && !isFound && brokers == null) {
+            isFound = true;
+            try {
+                brokers = serviceService.getServiceBrokers();
+            }catch(Exception npe) {
+                isFound = false;
+
+                // todo ::: to delete
+                log.info("broker list try count ::: " + tryCnt);
+                //npe.printStackTrace();
+                Thread.sleep(1000);
+            }
+
+        }
+        if(brokers == null) {
+            throw new PlatformException("Get Service Broker Failed.");
+        }
+
         ServiceBrokerResource broker = null;
         Map<Integer, List> planMap = new HashMap();
 
@@ -164,9 +256,26 @@ public class PlatformService {
 
                 if(broker.getEntity().getName().toLowerCase().contains(serviceName.toLowerCase())){
                     log.info("브로커 아이디이이이 ::: " + broker.getMetadata().getId());
-                    log.info("서비스 플랜들..." + serviceService.getServicePlans(broker.getMetadata().getId()).getResources().toString());
+                    //log.info("서비스 플랜들..." + serviceService.getServicePlans(broker.getMetadata().getId()).getResources().toString());
 
-                    ListServicePlansResponse planList = serviceService.getServicePlans(broker.getMetadata().getId());
+                    ListServicePlansResponse planList = null;
+                    tryCnt = 0;
+                    isFound = false;
+                    while(tryCnt++ < 10 && !isFound) {
+                    	try {
+                    		planList = serviceService.getServicePlans(broker.getMetadata().getId());
+                    		isFound = true;
+                    	}catch(Exception e) {
+                    		isFound = false;
+                    		//e.printStackTrace();
+                    		Thread.sleep(1000);
+                    	}
+                    }
+                    	
+                    if(planList == null) {
+                        throw new PlatformException("Get Service Plan Failed.");
+                    }
+
                     for (ServicePlanResource plan : planList.getResources()) {
                         planIdList.add(plan.getMetadata().getId());
                     }
@@ -183,10 +292,25 @@ public class PlatformService {
         if(planMap.size() > 0){
             for(int i = 0; i < planMap.size(); i++) {
                 String planId = planMap.get(i+1).get(0).toString();
-                System.out.println("service instance id ::: " + planId);
+                log.info("service instance id ::: " + planId);
                 String serviceName = String.format("service-%d-%d", instance.getId(), i);
 
-                createdService.add(i, serviceService.createServiceInstance(serviceName, appGuid, planId));
+                String svcInstanceId = null;
+                
+                tryCnt = 0;
+                isFound = false;
+                while(tryCnt++ < 10 && !isFound) {
+                	try {
+                		svcInstanceId = serviceService.createServiceInstance(serviceName, appGuid, planId);
+                		isFound = true;
+                	}catch(Exception e) {
+                		isFound = false;
+                		//e.printStackTrace();
+                		Thread.sleep(1000);
+                	}
+                }
+                createdService.add(i, svcInstanceId);
+                
             }
         }
 
@@ -199,32 +323,65 @@ public class PlatformService {
             for (int j = 0; j < createdService.size(); j++){
                 String serviceInstanceId = createdService.get(j).toString();
                 log.info("service instance id ::: " + serviceInstanceId);
-                serviceService.createBindService(appGuid, serviceInstanceId);
+                
+                tryCnt = 0;
+                isFound = false;
+                while(tryCnt++ < 10 && !isFound) {
+                	try {
+                		serviceService.createBindService(appGuid, serviceInstanceId);
+                		isFound = true;
+                	}catch(Exception e) {
+                		isFound = false;
+                		//e.printStackTrace();
+                		Thread.sleep(1000);
+                	}
+                }                
             }
         }
     }
 
-    private ApplicationEntity getAppStats(String appGuid, String appName) throws PlatformException {
+    private ApplicationEntity getAppStats(String appGuid, String appName) throws PlatformException, InterruptedException {
         ApplicationEntity application = null;
         int tryCount = 0;
-        appService.timer(10);
+        appService.timer(5);
 
         log.info("============== 앱 START ================");
         // 앱 스타뚜가 여기서 되어야하는군!!!!
         Map result = appService.procStartApplication(appGuid);
+        if(result == null) {
+            throw new PlatformException("application no start...");
+        }
         log.info("result ::: " + result.toString());
 
-        while(tryCount < 7) {
-            appService.timer(30);
-            application = appService.getApplicationNameExists(appName);
+        while(tryCount < 51) {
+            appService.timer(5);
+
             tryCount++;
-            System.err.println("app state ::: appName=" + appName + ", appState=" + application.getPackageState());
-            if(tryCount == 6 && !application.getPackageState().equals("STAGED")) { //3분
-                System.err.println("Not started ::: appName=" + appName + ", appState=" + application.getPackageState());
+
+            int tryCnt = 0;
+            boolean isExist = false;
+            while(tryCnt++ < 10 && !isExist) {
+                isExist = true;
+                try {
+                    application = appService.getApplicationNameExists(appName);
+                } catch (Exception e) {
+                    // todo :: to delete
+                    log.info("app exist count ::: " + tryCnt);
+
+                    isExist = false;
+                    Thread.sleep(1000);
+                }
+
+            }
+
+            log.info("app state ::: appName=" + appName + ", appState=" + application.getPackageState());
+            if(tryCount == 50 && !application.getPackageState().equals("STAGED")) { //3분
+                log.info("Not started ::: appName=" + appName + ", appState=" + application.getPackageState());
                 throw new PlatformException("앱이 시작되지 않네요...! 시작중일지도 모르지만용");
             }
             if(application.getPackageState().equals("STAGED")) {
                 log.info("============== 앱 START END================");
+                log.info("TTA [{}] ::: 시간 검증 완료", appName);
                 return application;
             }
         }
@@ -233,12 +390,39 @@ public class PlatformService {
     }
 
 
-    private void procServiceUnBind(String serviceInstanceId, String appGuid) {
+    private void procServiceUnBind(String serviceInstanceId, String appGuid) throws InterruptedException {
         // 2) 언바인드
-        Map unbindResult = serviceService.unbindService(serviceInstanceId, appGuid);
+        Map unbindResult = null;
+        
+        int tryCnt = 0;
+        boolean isFound = false;
+        while(tryCnt++ < 10 && !isFound) {
+        	try {
+        		unbindResult = serviceService.unbindService(serviceInstanceId, appGuid);
+        		isFound = true;
+        	}catch(Exception e) {
+        		isFound = false;
+        		//e.printStackTrace();
+        		Thread.sleep(1000);
+        	}
+        }
         log.info("언바인드 ::: " + unbindResult.toString());
+        
         // 3) 서비스 인스턴스 삭제
-        Map deleteResult = serviceService.deleteInstance(serviceInstanceId);
+        Map deleteResult = null;
+        
+        tryCnt = 0;
+        isFound = false;
+        while(tryCnt++ < 10 && !isFound) {
+        	try {
+        		deleteResult = serviceService.deleteInstance(serviceInstanceId);
+        		isFound = true;
+        	}catch(Exception e) {
+        		isFound = false;
+        		//e.printStackTrace();
+        		Thread.sleep(1000);
+        	}
+        }        
         log.info("서비스 인스턴스 ::: " + deleteResult.toString());
     }
 }

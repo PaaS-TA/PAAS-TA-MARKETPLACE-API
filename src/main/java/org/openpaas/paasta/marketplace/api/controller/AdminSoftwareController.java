@@ -1,11 +1,15 @@
 package org.openpaas.paasta.marketplace.api.controller;
 
-import javax.validation.constraints.NotNull;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.openpaas.paasta.marketplace.api.cloudFoundryModel.NameType;
 import org.openpaas.paasta.marketplace.api.domain.*;
+import org.openpaas.paasta.marketplace.api.exception.PlatformException;
+import org.openpaas.paasta.marketplace.api.service.PlatformService;
 import org.openpaas.paasta.marketplace.api.service.SoftwarePlanService;
 import org.openpaas.paasta.marketplace.api.service.SoftwareService;
-import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
+import org.openpaas.paasta.marketplace.api.service.TestSoftwareInfoService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -14,18 +18,26 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import lombok.RequiredArgsConstructor;
-
+import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Random;
 
+@Slf4j
 @RestController
 @RequestMapping(value = "/admin/softwares")
 @RequiredArgsConstructor
 public class AdminSoftwareController {
 
+    @Value("${market.naming-type}")
+    public NameType localNamingType;
+
     private final SoftwareService softwareService;
 
     private final SoftwarePlanService softwarePlanService;
+
+    private final PlatformService platformService;
+
+    private final TestSoftwareInfoService testSoftwareInfoService;
 
     //[1]Software
     @GetMapping("/page")
@@ -92,5 +104,56 @@ public class AdminSoftwareController {
         return softwarePlanService.getApplyMonth(spec);
     }
 
+    @PostMapping("/{id}/plan/{planId}")
+    public TestSoftwareInfo deployTestSoftware(@PathVariable Long id, @PathVariable Long planId, @RequestBody TestSoftwareInfo testSoftwareInfo) throws PlatformException {
+        Random rnd = new Random();
+        String randomNum = "" + rnd.nextInt(10000);
 
+        if(randomNum.length() != 4) {
+            int addNum = 4 - randomNum.length();
+            if(addNum > 0) {
+                for(int i = 0; i < addNum; i++) {
+                    randomNum = "1" + randomNum;
+                }
+            }
+        }
+
+        Software software = softwareService.get(id);
+
+        Instance instance = new Instance();
+        instance.setId(Long.valueOf(randomNum));
+        instance.setAppName(testSoftwareInfo.getName());
+        instance.setSoftware(software);
+        instance.setSoftwarePlanId(String.valueOf(planId));
+
+
+        String name = localNamingType.generateName(instance, testSoftwareInfo.getName());
+
+        testSoftwareInfo.setName(name);
+        testSoftwareInfo.setSoftwareId(software.getId());
+        testSoftwareInfo.setPlanGuid(planId);
+
+        String appGuid = null;
+
+        try{
+            appGuid = platformService.provision(instance, true);
+            testSoftwareInfo.setAppGuid(appGuid);
+            testSoftwareInfo.setStatus(TestSoftwareInfo.Status.Successful);
+            log.info("성공이구요~~");
+
+        }catch (Exception e) {
+            log.info("실패이지만 저장해~~");
+            testSoftwareInfo.setAppGuid(appGuid);
+            testSoftwareInfo.setStatus(TestSoftwareInfo.Status.Failed);
+            //throw new PlatformException("appGuid doesn't exist!!!");
+        }
+
+        return testSoftwareInfoService.create(testSoftwareInfo);
+    }
+
+
+    @GetMapping("/{id}/testSwInfo")
+    public List<TestSoftwareInfo> getTestSwInfoList(@PathVariable Long id) {
+        return testSoftwareInfoService.getTestSwInfoList(id);
+    }
 }

@@ -13,8 +13,12 @@ public enum NameType {
         this.template = template;
     }
 
-    public String generateName(Instance instance) {
+    public String generateName(Instance instance, String testPrefix) {
         if(this.equals(NameType.Auto)) {
+            if(testPrefix != null) {
+                template = testPrefix + "-";
+            }
+
             return template + instance.getId();
         }
         return uuidGetter(instance);
