@@ -377,7 +377,7 @@ public class PlatformService {
             log.info("app state ::: appName=" + appName + ", appState=" + application.getPackageState());
             if(tryCount == 50 && !application.getPackageState().equals("STAGED")) { //3분
                 log.info("Not started ::: appName=" + appName + ", appState=" + application.getPackageState());
-                throw new PlatformException("앱이 시작되지 않네요...! 시작중일지도 모르지만용");
+                throw new PlatformException(appGuid);
             }
             if(application.getPackageState().equals("STAGED")) {
                 log.info("============== 앱 START END================");

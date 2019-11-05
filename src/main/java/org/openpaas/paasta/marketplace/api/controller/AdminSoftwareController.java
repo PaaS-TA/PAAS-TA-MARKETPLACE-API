@@ -19,7 +19,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 @Slf4j
@@ -104,6 +106,15 @@ public class AdminSoftwareController {
         return softwarePlanService.getApplyMonth(spec);
     }
 
+    /**
+     * 앱 배포 테스트
+     *
+     * @param id
+     * @param planId
+     * @param testSoftwareInfo
+     * @return
+     * @throws PlatformException
+     */
     @PostMapping("/{id}/plan/{planId}")
     public TestSoftwareInfo deployTestSoftware(@PathVariable Long id, @PathVariable Long planId, @RequestBody TestSoftwareInfo testSoftwareInfo) throws PlatformException {
         Random rnd = new Random();
@@ -141,9 +152,9 @@ public class AdminSoftwareController {
             testSoftwareInfo.setStatus(TestSoftwareInfo.Status.Successful);
             log.info("성공이구요~~");
 
-        }catch (Exception e) {
-            log.info("실패이지만 저장해~~");
-            testSoftwareInfo.setAppGuid(appGuid);
+        }catch (PlatformException e) {
+            log.info("실패이지만 저장해~~" + e.getMessage());
+            testSoftwareInfo.setAppGuid(e.getMessage());
             testSoftwareInfo.setStatus(TestSoftwareInfo.Status.Failed);
             //throw new PlatformException("appGuid doesn't exist!!!");
         }
@@ -152,8 +163,47 @@ public class AdminSoftwareController {
     }
 
 
+    /**
+     * 각 상품에 대한 배포 테스한 앱 목록 조회
+     *
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}/testSwInfo")
     public List<TestSoftwareInfo> getTestSwInfoList(@PathVariable Long id) {
         return testSoftwareInfoService.getTestSwInfoList(id);
     }
+
+    /**
+     * 배포 테스트한 앱 삭제
+     *
+     * @param swId
+     * @param id
+     * @param appGuid
+     * @return
+     */
+    @DeleteMapping("/{swId}/testSwInfo/{id}/app/{appGuid}")
+    public Map deleteDeployTestApp(@PathVariable Long swId, @PathVariable Long id, @PathVariable String appGuid) {
+        Software software = softwareService.get(swId);
+
+        Instance instance = new Instance();
+
+        instance.setSoftware(software);
+        instance.setAppGuid(appGuid);
+
+        Map resultMap = new HashMap();
+
+        try {
+            platformService.deprovision(instance);
+            testSoftwareInfoService.deleteDeployTestApp(id);
+            resultMap.put("RESULT", TestSoftwareInfo.Status.Successful);
+
+        } catch (PlatformException e) {
+            //e.printStackTrace();
+            resultMap.put("RESULT", TestSoftwareInfo.Status.Failed);
+        }
+
+        return resultMap;
+    }
+
 }
