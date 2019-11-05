@@ -199,6 +199,22 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
             + "AND i.usageStartDate IS NOT NULL "
             + "AND ((i.usageStartDate <= :start AND (i.usageEndDate IS NULL OR i.usageEndDate > :start)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end)) "
             + "GROUP BY i.software.id " + "ORDER BY i.software.id ASC")
+//    @Query(value=
+//    		"SELECT	it.software_id\n" +
+//    		"		-- ,(SELECT count(*) FROM instance i WHERE i.software_id = it.software_id and i.software_plan_id != 0) AS count\n" +		
+//    		"		,DATEDIFF(CASE WHEN it.usage_end_date is not null and it.usage_end_date < :end THEN it.usage_end_date ELSE :diffEnd END\n" + 
+//    		"		,CASE WHEN it.usage_start_date <= :start THEN :start ELSE it.usage_start_date END) + 1 AS usingDay\n" + 
+//    		"		,ifnull(sp.cpu_amt,0) + ifnull(sp.memory_amt,0) + ifnull(sp.disk_amt,0) AS pricePerMonth\n" + 
+//    		"FROM    instance it\n" + 
+//    		"		INNER JOIN software_plan sp\n" + 
+//    		"			ON (sp.id = it.software_plan_id),\n" + 
+//    		"		software s\n" + 
+//    		"WHERE   s.created_by = :providerId AND it.software_id = s.id AND it.software_id IN :idIn\n" + 
+//    		"	AND it.usage_start_date IS NOT NULL\n" + 
+//    		"	AND ((it.usage_start_date <= :start AND (it.usage_end_date IS NULL OR it.usage_end_date > :start)) OR (it.usage_start_date >= :start AND it.usage_start_date < :end))\n" + 
+//    		"ORDER BY s.id asc"
+//            , nativeQuery=true)
+    
     List<Object[]> getSalesAmount(@Param("providerId") String providerId, @Param("idIn") List<Long> idIn,
             @Param("start") LocalDateTime start, @Param("end") LocalDateTime end, @Param("diffEnd") LocalDateTime diffEnd);
     
