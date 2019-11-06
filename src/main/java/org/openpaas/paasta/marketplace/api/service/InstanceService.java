@@ -348,4 +348,8 @@ public class InstanceService {
     	}
     	return data;
     }
+    
+    public Long getSoftwareUsagePriceTotal(Long softwareId) {
+        return instanceRepository.softwareUsagePriceTotal(softwareId);
+    }
 }
