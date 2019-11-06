@@ -408,7 +408,7 @@ public class SoftwareControllerTest {
         s.setVersion(software.getVersion());
         s.setInUse(software.getInUse());
 
-        given(softwareService.update(any(Software.class))).willReturn(software);
+        given(softwareService.update(any(Software.class), any(String.class))).willReturn(software);
         given(softwareService.get(eq(1L))).willReturn(software);
 
         ResultActions result = this.mockMvc.perform(
