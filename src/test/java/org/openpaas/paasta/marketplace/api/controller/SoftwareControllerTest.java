@@ -34,6 +34,7 @@ import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
 import org.openpaas.paasta.marketplace.api.domain.Yn;
 import org.openpaas.paasta.marketplace.api.repository.UserRepository;
+import org.openpaas.paasta.marketplace.api.service.SoftwarePlanService;
 import org.openpaas.paasta.marketplace.api.service.SoftwareService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -69,6 +70,9 @@ public class SoftwareControllerTest {
 
     @MockBean
     private SoftwareService softwareService;
+
+    @MockBean
+    SoftwarePlanService softwarePlanService;
 
     String userId;
     String adminId;
@@ -408,7 +412,7 @@ public class SoftwareControllerTest {
         s.setVersion(software.getVersion());
         s.setInUse(software.getInUse());
 
-        given(softwareService.update(any(Software.class))).willReturn(software);
+        given(softwareService.update(any(Software.class), any(String.class))).willReturn(software);
         given(softwareService.get(eq(1L))).willReturn(software);
 
         ResultActions result = this.mockMvc.perform(

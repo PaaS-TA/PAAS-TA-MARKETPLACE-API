@@ -23,8 +23,8 @@ import java.util.concurrent.LinkedBlockingDeque;
  * @since 2018. 4. 2.
  *
  */
-@ControllerAdvice
-@RestController
+// @ControllerAdvice
+// @RestController
 public class ExceptionController {
     @Value( "${paasta.portal.storage.api.common.countoflastestexception:10}" )
     private int countOfLastestExceptions;
