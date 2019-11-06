@@ -13,12 +13,14 @@ import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
 import org.openpaas.paasta.marketplace.api.domain.Stats;
 import org.openpaas.paasta.marketplace.api.domain.Stats.Term;
+import org.openpaas.paasta.marketplace.api.service.InstanceService;
 import org.openpaas.paasta.marketplace.api.service.SoftwareService;
 import org.openpaas.paasta.marketplace.api.service.StatsService;
 import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +37,8 @@ public class StatsController {
     private final StatsService statsService;
 
     private final SoftwareService softwareService;
+
+    private final InstanceService instanceService;
 
     @GetMapping("/softwares/my/counts/sum")
     public long countOfSwsUsingProvider() {
@@ -149,14 +153,14 @@ public class StatsController {
     public Map<String, String> getDayOfUseInstsPeriod(@RequestParam(name = "idIn", required = false) List<Long> idIn
     		,@RequestParam(name = "usageStartDate", required = false) String usageStartDate
     		,@RequestParam(name = "usageEndDate", required = false) String usageEndDate) {
-    
+
     	if (idIn == null || idIn.isEmpty()) {
     		return new HashMap<String, String>();
     	}
     	if (StringUtils.isBlank(usageStartDate) || StringUtils.isBlank(usageEndDate)) {
     		return new HashMap<String, String>();
     	}
-    	
+
         String providerId = SecurityUtils.getUserId();
         return statsService.getDayOfUseInstsPeriod(providerId, idIn, usageStartDate, usageEndDate);
     }
@@ -190,4 +194,10 @@ public class StatsController {
         String createrId = SecurityUtils.getUserId();
         return statsService.getPurchaseAmount(createrId, usageStartDate, usageEndDate);
     }
+
+    @GetMapping("/softwareUsagePriceTotal")
+    public Long getSoftwareUsagePriceTotal(@RequestParam(name = "softwareId", required = false) Long softwareId) throws BindException {
+        return instanceService.getSoftwareUsagePriceTotal(softwareId);
+    }
+
 }

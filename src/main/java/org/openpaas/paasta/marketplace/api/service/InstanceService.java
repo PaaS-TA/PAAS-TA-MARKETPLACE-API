@@ -332,7 +332,7 @@ public class InstanceService {
     public Long usagePriceTotal(String userId, String usageStartDate, String usageEndDate) {
     	return instanceRepository.usagePriceTotal(userId, usageStartDate, usageEndDate);
     }
-    
+
     /**
      * 상품별 사용요금 계산 (기간한정)
      * @param inInstanceId
@@ -348,7 +348,7 @@ public class InstanceService {
     	}
     	return data;
     }
-    
+
     public Long getSoftwareUsagePriceTotal(Long softwareId) {
         return instanceRepository.softwareUsagePriceTotal(softwareId);
     }
