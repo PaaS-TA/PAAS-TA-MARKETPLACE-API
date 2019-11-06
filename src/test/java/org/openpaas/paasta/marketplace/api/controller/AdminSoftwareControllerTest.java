@@ -31,7 +31,10 @@ import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
 import org.openpaas.paasta.marketplace.api.domain.Yn;
 import org.openpaas.paasta.marketplace.api.repository.UserRepository;
+import org.openpaas.paasta.marketplace.api.service.PlatformService;
+import org.openpaas.paasta.marketplace.api.service.SoftwarePlanService;
 import org.openpaas.paasta.marketplace.api.service.SoftwareService;
+import org.openpaas.paasta.marketplace.api.service.TestSoftwareInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -66,6 +69,15 @@ public class AdminSoftwareControllerTest {
 
     @MockBean
     private SoftwareService softwareService;
+
+    @MockBean
+    SoftwarePlanService softwarePlanService;
+
+    @MockBean
+    PlatformService platformService;
+
+    @MockBean
+    TestSoftwareInfoService testSoftwareInfoService;
 
     String userId;
     String adminId;
