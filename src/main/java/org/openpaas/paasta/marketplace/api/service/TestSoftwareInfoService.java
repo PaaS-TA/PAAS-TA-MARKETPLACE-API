@@ -26,4 +26,8 @@ public class TestSoftwareInfoService {
     public List<TestSoftwareInfo> getTestSwInfoList(Long id) {
         return testSoftwareInfoRepository.findBySoftwareId(id);
     }
+
+    public void deleteDeployTestApp(Long id) {
+        testSoftwareInfoRepository.deleteById(id);
+    }
 }

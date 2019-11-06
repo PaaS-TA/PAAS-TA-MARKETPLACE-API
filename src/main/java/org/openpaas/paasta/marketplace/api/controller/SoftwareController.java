@@ -34,7 +34,7 @@ public class SoftwareController {
         spec.setStatus(Status.Approval);
         spec.setInUse(Yn.Y);
         Page<Software> result = softwareService.getPage(spec, pageable);
-        
+
         List<Software> softwareList = result.getContent();
         for (Software info : softwareList) {
         	info.setPricePerMonth(softwarePlanService.getMinPricePerMonth(String.valueOf(info.getId())));
@@ -60,10 +60,6 @@ public class SoftwareController {
     @PostMapping
     public Software create(@NotNull @Validated(Software.Create.class) @RequestBody Software software,
             BindingResult bindingResult) throws BindException {
-        Software sameName = softwareService.getByName(software.getName());
-        if (sameName != null) {
-            bindingResult.rejectValue("name", "Unique");
-        }
 
         if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);
@@ -92,11 +88,6 @@ public class SoftwareController {
 
         Software saved = softwareService.get(id);
         SecurityUtils.assertCreator(saved);
-
-        Software sameName = softwareService.getByName(software.getName());
-        if (sameName != null && id != sameName.getId()) {
-            bindingResult.rejectValue("name", "Unique");
-        }
 
         if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);
