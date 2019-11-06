@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -55,15 +56,28 @@ public class InstanceCartController {
     public List<InstanceCart> getAllList(InstanceCartSpecification spec) {
         spec.setCreatedBy(SecurityUtils.getUserId());
         List<InstanceCart> instanceCartList = instanceCartService.getAllList(spec);
+
         // softwarePlan의 가격정보 조회
         Long pricePerMonth = 0L;
         for (InstanceCart info : instanceCartList) {
         	pricePerMonth = softwarePlanService.getPricePerMonth(String.valueOf(info.getSoftware().getId()), info.getSoftwarePlanId());
-//        	info.getSoftware().setPricePerMonth(pricePerMonth);
         	info.setSoftwarePlanAmtMonth(pricePerMonth);
         }
         
         return instanceCartList;
+    }
+    
+    @GetMapping("/userAllCartList")
+    public List<InstanceCart> getAllList(@RequestParam(name="usageStartDate") String usageStartDate, @RequestParam(name="usageEndDate") String usageEndDate) {
+    	// 해당 유저의 카트정보 조회 
+    	List<InstanceCart> userAllCartList = instanceCartService.getUserAllCartList(SecurityUtils.getUserId(), usageStartDate, usageEndDate);
+//    	System.out.println("#############################################################################");
+//    	for (InstanceCart cartInfo : userAllCartList) {
+//    		System.out.println(">>>>>>> cartInfo: "+ cartInfo.toString());
+//    	}
+//    	System.out.println("#############################################################################");
+    	
+    	return userAllCartList;
     }
     
     @DeleteMapping("/allDelete")
