@@ -187,7 +187,7 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
     // 판매자의 단일 상품에 대한 총 판매량(사용 + 중지)
     @Query("SELECT count(*) FROM Instance i WHERE i.software.id = :id")
     long soldInstanceCountOfSw(@Param("id") Long id);
-
+    
     // 사용자 사용연월 조회(구매 상품별)
     //@Query("SELECT i FROM Instance i WHERE i.usageStartDate IS NOT NULL AND (((i.usageStartDate <= :usageStartDate AND (ifnull(i.usageEndDate, now()) >= :usageStartDate AND ifnull(i.usageEndDate, now()) < :usageEndDate)) OR (i.usageStartDate >= :usageStartDate AND i.usageStartDate < :usageEndDate))) AND i.createdBy = :userId")
     //Page<Instance> countsOfInstsUsingMonth(@Param("userId") String userId, @Param("usageStartDate") LocalDateTime usageStartDate, @Param("usageEndDate") LocalDateTime usageEndDate, Pageable pageable);
@@ -198,31 +198,37 @@ public interface StatsRepository extends JpaRepository<Stats<Long, Long>, Long> 
             + "WHERE i.software.createdBy = :providerId AND i.software.id IN :idIn "
             + "AND i.usageStartDate IS NOT NULL "
             + "AND ((i.usageStartDate <= :start AND (i.usageEndDate IS NULL OR i.usageEndDate > :start)) OR (i.usageStartDate >= :start AND i.usageStartDate < :end)) "
-            + "GROUP BY i.software.id " + "ORDER BY i.software.id ASC")
-//    @Query(value=
-//    		"SELECT	it.software_id\n" +
-//    		"		-- ,(SELECT count(*) FROM instance i WHERE i.software_id = it.software_id and i.software_plan_id != 0) AS count\n" +		
-//    		"		,DATEDIFF(CASE WHEN it.usage_end_date is not null and it.usage_end_date < :end THEN it.usage_end_date ELSE :diffEnd END\n" + 
-//    		"		,CASE WHEN it.usage_start_date <= :start THEN :start ELSE it.usage_start_date END) + 1 AS usingDay\n" + 
-//    		"		,ifnull(sp.cpu_amt,0) + ifnull(sp.memory_amt,0) + ifnull(sp.disk_amt,0) AS pricePerMonth\n" + 
-//    		"FROM    instance it\n" + 
-//    		"		INNER JOIN software_plan sp\n" + 
-//    		"			ON (sp.id = it.software_plan_id),\n" + 
-//    		"		software s\n" + 
-//    		"WHERE   s.created_by = :providerId AND it.software_id = s.id AND it.software_id IN :idIn\n" + 
-//    		"	AND it.usage_start_date IS NOT NULL\n" + 
-//    		"	AND ((it.usage_start_date <= :start AND (it.usage_end_date IS NULL OR it.usage_end_date > :start)) OR (it.usage_start_date >= :start AND it.usage_start_date < :end))\n" + 
-//    		"ORDER BY s.id asc"
-//            , nativeQuery=true)
-    
+            + "GROUP BY i.software.id " + "ORDER BY i.software.id ASC")    
     List<Object[]> getSalesAmount(@Param("providerId") String providerId, @Param("idIn") List<Long> idIn,
             @Param("start") LocalDateTime start, @Param("end") LocalDateTime end, @Param("diffEnd") LocalDateTime diffEnd);
     
-    //요금 통계
+    // 판매자의 상품별 판매액
+    @Query(value="SELECT	it.software_id\n" +  
+    		"		,DATEDIFF(CASE WHEN date_format(ifnull(it.usage_end_date, now()), '%Y-%m-%d') <= date_format(date_sub(str_to_date(:end, '%Y-%m-%d'), interval 1 day), '%Y-%m-%d')\n" +
+    		"		THEN ifnull(it.usage_end_date, now()) ELSE date_sub(str_to_date(:end, '%Y-%m-%d'), interval 1 day) END\n" + 
+    		"		,CASE WHEN date_format(it.usage_start_date, '%Y-%m-%d') <= date_format(str_to_date(:start, '%Y-%m-%d'), '%Y-%m-%d')\n" +
+    		"		THEN str_to_date(:start, '%Y-%m-%d') ELSE it.usage_start_date END) + 1 AS usingDay\n" + 
+    		"		,IFNULL(sp.cpu_amt,0) + IFNULL(sp.memory_amt,0) + IFNULL(sp.disk_amt,0) AS pricePerMonth\n" + 
+    		"FROM    instance it\n" + 
+    		"		INNER JOIN software_plan sp\n" + 
+    		"			ON (sp.id = it.software_plan_id),\n" + 
+    		"		software s									\n" + 
+    		"WHERE   s.created_by = :providerId\n" + 
+    		"	AND it.software_id = s.id AND it.software_id IN :idIn\n" + 
+    		"	AND it.usage_start_date IS NOT NULL\n" + 
+    		"	AND ((date_format(it.usage_start_date, '%Y-%m-%d') <= date_format(str_to_date(:start, '%Y-%m-%d'), '%Y-%m-%d') \n" + 
+    		"	AND (it.usage_end_date IS NULL OR date_format(it.usage_end_date, '%Y-%m-%d') >= date_format(str_to_date(:start, '%Y-%m-%d'), '%Y-%m-%d'))) \n" + 
+    		"	OR (date_format(it.usage_start_date, '%Y-%m-%d') >= date_format(str_to_date(:start, '%Y-%m-%d'), '%Y-%m-%d') AND date_format(it.usage_start_date, '%Y-%m-%d') < date_format(str_to_date(:end, '%Y-%m-%d'), '%Y-%m-%d')))\n" + 
+    		"ORDER BY s.id asc"
+    		, nativeQuery=true)
+    List<Object[]> getSalesAmountMonth(@Param("providerId") String providerId, @Param("idIn") List<Long> idIn,
+            @Param("start") String start, @Param("end") String end);
+    
+    //사용자 요금 통계
     @Query(value = "select\n" + 
     		"    -- group by\n" + 
     		"    c.ym,\n" + 
-    		"    (select count(*) from instance where created_by = :createrId and DATE_FORMAT(usage_start_date, '%Y%m') < c.ym and (usage_end_date is null or usage_end_date > c.ym)) before_instances,\n" +
+    		"    (select count(*) from instance where created_by = :createrId and DATE_FORMAT(usage_start_date, '%Y%m') < c.ym and (usage_end_date is null or DATE_FORMAT(usage_end_date, '%Y%m') >= c.ym)) before_instances,\n" +
     		"    (select count(*) from instance where created_by = :createrId and DATE_FORMAT(usage_start_date, '%Y%m') = c.ym) start_instances,\n" + 
     		"    (select count(*) from instance where created_by = :createrId and DATE_FORMAT(usage_end_date, '%Y%m') = c.ym) stop_instances,\n" + 
     		"    count(*) total_use_date,\n" + 
