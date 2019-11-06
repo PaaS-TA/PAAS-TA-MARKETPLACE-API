@@ -195,9 +195,11 @@ public class StatsController {
         return statsService.getPurchaseAmount(createrId, usageStartDate, usageEndDate);
     }
 
-    @GetMapping("/softwareUsagePriceTotal")
-    public Long getSoftwareUsagePriceTotal(@RequestParam(name = "softwareId", required = false) Long softwareId) throws BindException {
-        return instanceService.getSoftwareUsagePriceTotal(softwareId);
+    @GetMapping("/{softwareId}/softwareUsagePriceTotal")
+    public long getSoftwareUsagePriceTotal(@PathVariable Long softwareId) {
+        long count = instanceService.getSoftwareUsagePriceTotal(softwareId);
+
+        return count;
     }
 
 }
