@@ -40,6 +40,7 @@ public class ProfileService {
         saved.setManager(profile.getManager());
         saved.setEmail(profile.getEmail());
         saved.setSiteUrl(profile.getSiteUrl());
+        saved.setDescription(profile.getDescription());
         if (profile.getStatus() != saved.getStatus()) {
             saved.setStatusModifiedDate(LocalDateTime.now());
         }
