@@ -42,13 +42,33 @@ SELECT dt, ym, DATE_FORMAT(LAST_DAY(dt), '%d') AS days, NOW()
                         SELECT '2027' y union
                         SELECT '2028' y union
                         SELECT '2029' y union
-                        SELECT '2030' y
+                        SELECT '2030' y union
+                        SELECT '2031' y union
+                        SELECT '2032' y union
+                        SELECT '2033' y union
+                        SELECT '2034' y union
+                        SELECT '2035' y union
+                        SELECT '2036' y union
+                        SELECT '2037' y union
+                        SELECT '2038' y union
+                        SELECT '2039' y union
+                        SELECT '2040' y union
+                        SELECT '2041' y union
+                        SELECT '2042' y union
+                        SELECT '2043' y union
+                        SELECT '2044' y union
+                        SELECT '2045' y union
+                        SELECT '2046' y union
+                        SELECT '2047' y union
+                        SELECT '2048' y union
+                        SELECT '2049' y union
+                        SELECT '2050' y
                         ) d
                  WHERE a*100 + b*10 + c < DayOfYear(CONCAT(y, '1231'))
                 ) a
         ) a
  WHERE dt >= STR_TO_DATE(CONCAT('201901', '01'), '%Y%m%d')
-   AND dt < DATE_FORMAT(date_add(DATE_FORMAT(STR_TO_DATE(CONCAT('203001', '01'), '%Y%m%d'),'%Y-%m-%d:%H%i%S'), interval 1 month), '%Y%m%d')
+   AND dt < DATE_FORMAT(date_add(DATE_FORMAT(STR_TO_DATE(CONCAT('205012', '01'), '%Y%m%d'),'%Y-%m-%d:%H%i%S'), interval 1 month), '%Y%m%d')
  ORDER BY ym, d
 ON
 	DUPLICATE KEY
