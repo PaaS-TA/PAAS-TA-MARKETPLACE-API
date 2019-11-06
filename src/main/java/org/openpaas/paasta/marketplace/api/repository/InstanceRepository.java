@@ -18,7 +18,7 @@ public interface InstanceRepository extends JpaRepository<Instance, Long>, JpaSp
 				+"        CROSS JOIN calendar cl \n"
 				+"WHERE   1=1 \n"
 				+"AND     cl.dt BETWEEN DATE_FORMAT(IF(it.usage_start_date>=:usageStartDate, it.usage_start_date, :usageStartDate),'%Y%m%d') \n"
-				+"                  AND DATE_FORMAT(IFNULL(it.usage_end_date, :usageEndDate),'%Y%m%d') \n"
+				+"                  AND DATE_FORMAT(IF(IFNULL(it.usage_end_date, :usageEndDate) <= STR_TO_DATE(:usageEndDate,'%Y-%m-%d%H%i%S'), it.usage_end_date, :usageEndDate),'%Y%m%d') \n"
 				+"AND     it.created_by = :userId \n"
 			, nativeQuery=true)
     public Long usagePriceTotal(@Param("userId") String userId
@@ -33,8 +33,8 @@ public interface InstanceRepository extends JpaRepository<Instance, Long>, JpaSp
 	    		+"            ON (sp.id = it.software_plan_id) \n"
 	    		+"        CROSS JOIN calendar cl \n"
 	    		+"WHERE   1=1 \n"
-	    		+"AND     cl.dt BETWEEN DATE_FORMAT(IF(it.usage_start_date>=:usageStartDate, it.usage_start_date, :usageStartDate),'%Y%m%d') \n"
-	    		+"                  AND DATE_FORMAT(IFNULL(it.usage_end_date, :usageEndDate),'%Y%m%d') \n"
+	    		+"AND     cl.dt BETWEEN DATE_FORMAT(IF(it.usage_start_date >= :usageStartDate, it.usage_start_date, :usageStartDate),'%Y%m%d') \n"
+	    		+"                  AND DATE_FORMAT(IF(IFNULL(it.usage_end_date, :usageEndDate) <= STR_TO_DATE(:usageEndDate,'%Y-%m-%d%H%i%S'), it.usage_end_date, :usageEndDate),'%Y%m%d') \n"
 	    		+"AND     it.id IN :inInstanceId \n"
 	    		+"GROUP BY it.id \n"
     		, nativeQuery=true)
