@@ -11,6 +11,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openpaas.paasta.marketplace.api.domain.Category;
 import org.openpaas.paasta.marketplace.api.domain.Instance;
+import org.openpaas.paasta.marketplace.api.domain.Profile;
 import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareHistory;
 import org.openpaas.paasta.marketplace.api.domain.User;
@@ -120,4 +121,19 @@ public abstract class AbstractMockTest {
 
         return user;
     }
+
+    protected Profile profile(String id) {
+        Profile profile = new Profile();
+        profile.setId(id);
+        profile.setName("name-" + id);
+        profile.setType(Profile.Type.Company);
+        profile.setCreatedBy(id);
+        profile.setCreatedDate(current);
+        profile.setLastModifiedBy(id);
+        profile.setLastModifiedDate(current);
+        profile.setInUse(Yn.Y);
+
+        return profile;
+    }
+
 }

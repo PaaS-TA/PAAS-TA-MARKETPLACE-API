@@ -65,7 +65,7 @@ public class UserServiceTest extends AbstractMockTest {
         User result = userService.getUser("user-01");
         assertEquals(user1, result);
 
-        verify(userRepository).findById("user-01");
+        verify(userRepository).findById(any(String.class));
     }
 
 }
