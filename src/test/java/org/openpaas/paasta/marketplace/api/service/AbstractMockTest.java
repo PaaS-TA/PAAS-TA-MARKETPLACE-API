@@ -13,6 +13,7 @@ import org.openpaas.paasta.marketplace.api.domain.Category;
 import org.openpaas.paasta.marketplace.api.domain.Instance;
 import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareHistory;
+import org.openpaas.paasta.marketplace.api.domain.User;
 import org.openpaas.paasta.marketplace.api.domain.Yn;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -74,13 +75,13 @@ public abstract class AbstractMockTest {
 
         return software;
     }
-    
+
     protected SoftwareHistory softwareHistory(Long id, Software software, String description) {
         SoftwareHistory softwareHistory = new SoftwareHistory();
         softwareHistory.setId(1L);
         softwareHistory.setSoftware(software);
         softwareHistory.setDescription(description);
-        
+
         softwareHistory.setCreatedBy(userId);
         softwareHistory.setCreatedDate(current);
         softwareHistory.setLastModifiedBy(userId);
@@ -89,7 +90,7 @@ public abstract class AbstractMockTest {
 
         return softwareHistory;
     }
-    
+
     protected Instance instance(Long id, Software software) {
         Instance instance = new Instance();
         instance.setId(id);
@@ -101,8 +102,22 @@ public abstract class AbstractMockTest {
         instance.setCreatedDate(current);
         instance.setLastModifiedBy(userId);
         instance.setLastModifiedDate(current);
+        instance.setInUse(Yn.Y);
 
         return instance;
     }
 
+    protected User user(String id) {
+        User user = new User();
+        user.setId(id);
+        user.setName("name-" + id);
+        user.setRole(User.Role.User);
+        user.setCreatedBy(id);
+        user.setCreatedDate(current);
+        user.setLastModifiedBy(id);
+        user.setLastModifiedDate(current);
+        user.setInUse(Yn.Y);
+
+        return user;
+    }
 }
