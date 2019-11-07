@@ -4,12 +4,14 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.openpaas.paasta.marketplace.api.service.CategoryServiceTest;
+import org.openpaas.paasta.marketplace.api.service.InstanceServiceTest;
 import org.openpaas.paasta.marketplace.api.service.SoftwareServiceTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
         // @formatter:off
-        CategoryServiceTest.class, 
+        CategoryServiceTest.class,
+        InstanceServiceTest.class,
         SoftwareServiceTest.class
         // @formatter:on
 })

@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openpaas.paasta.marketplace.api.domain.Category;
+import org.openpaas.paasta.marketplace.api.domain.Instance;
 import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareHistory;
 import org.openpaas.paasta.marketplace.api.domain.Yn;
@@ -89,4 +90,19 @@ public abstract class AbstractMockTest {
         return softwareHistory;
     }
     
+    protected Instance instance(Long id, Software software) {
+        Instance instance = new Instance();
+        instance.setId(id);
+        instance.setSoftware(software);
+        instance.setStatus(Instance.Status.Approval);
+        instance.setProvisionStatus(Instance.ProvisionStatus.Pending);
+        instance.setUsageStartDate(current);
+        instance.setCreatedBy(userId);
+        instance.setCreatedDate(current);
+        instance.setLastModifiedBy(userId);
+        instance.setLastModifiedDate(current);
+
+        return instance;
+    }
+
 }
