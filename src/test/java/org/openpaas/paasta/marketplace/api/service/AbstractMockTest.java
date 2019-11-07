@@ -11,6 +11,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openpaas.paasta.marketplace.api.domain.Category;
 import org.openpaas.paasta.marketplace.api.domain.Instance;
+import org.openpaas.paasta.marketplace.api.domain.InstanceCart;
 import org.openpaas.paasta.marketplace.api.domain.Profile;
 import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareHistory;
@@ -90,7 +91,7 @@ public abstract class AbstractMockTest {
         softwarePlan.setCpuAmt(id.intValue());
         softwarePlan.setMemoryAmt(id.intValue());
         softwarePlan.setDiskAmt(id.intValue());
-        
+
         return softwarePlan;
     }
 
@@ -123,6 +124,22 @@ public abstract class AbstractMockTest {
         instance.setInUse(Yn.Y);
 
         return instance;
+    }
+
+    protected InstanceCart instanceCart(Long id, Software software) {
+        InstanceCart instanceCart = new InstanceCart();
+        instanceCart.setId(id);
+        instanceCart.setSoftware(software);
+        instanceCart.setUsageStartDate(current);
+        instanceCart.setSoftwarePlanAmtMonth(3L);
+        instanceCart.setPricePerInstance(7000L);
+        instanceCart.setCreatedBy(userId);
+        instanceCart.setCreatedDate(current);
+        instanceCart.setLastModifiedBy(userId);
+        instanceCart.setLastModifiedDate(current);
+        instanceCart.setInUse(Yn.Y);
+
+        return instanceCart;
     }
 
     protected User user(String id) {
