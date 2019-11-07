@@ -50,7 +50,7 @@ public interface InstanceRepository extends JpaRepository<Instance, Long>, JpaSp
 											, @Param("usageStartDate") String usageStartDate
 											, @Param("usageEndDate") String usageEndDate);
 
-	@Query(value="SELECT  ROUND(SUM((IFNULL(sp.cpu_amt,0)+IFNULL(sp.memory_amt,0)+IFNULL(sp.disk_amt,0))/cl.days)) AS softwareUsagePriceTotal \n"
+	@Query(value="SELECT  IFNULL(ROUND(SUM((IFNULL(sp.cpu_amt,0)+IFNULL(sp.memory_amt,0)+IFNULL(sp.disk_amt,0))/cl.days)),0) AS softwareUsagePriceTotal \n"
 				+"FROM    instance it \n"
 				+"        INNER JOIN software_plan sp \n"
 				+"            ON (sp.id = it.software_plan_id) \n"
