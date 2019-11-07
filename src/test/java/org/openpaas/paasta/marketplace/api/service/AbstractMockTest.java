@@ -14,6 +14,7 @@ import org.openpaas.paasta.marketplace.api.domain.Instance;
 import org.openpaas.paasta.marketplace.api.domain.Profile;
 import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareHistory;
+import org.openpaas.paasta.marketplace.api.domain.TestSoftwareInfo;
 import org.openpaas.paasta.marketplace.api.domain.User;
 import org.openpaas.paasta.marketplace.api.domain.Yn;
 
@@ -134,6 +135,18 @@ public abstract class AbstractMockTest {
         profile.setInUse(Yn.Y);
 
         return profile;
+    }
+
+    protected TestSoftwareInfo testSoftwareInfo(Long id, Long softwareId, Long planGuid) {
+        TestSoftwareInfo testSoftwareInfo = new TestSoftwareInfo();
+        testSoftwareInfo.setId(id);
+        testSoftwareInfo.setName("name-" + id);
+        testSoftwareInfo.setSoftwareId(softwareId);
+        testSoftwareInfo.setAppGuid("APP_GUID-" + id);
+        testSoftwareInfo.setPlanGuid(planGuid);
+        testSoftwareInfo.setCreatedDate(current);
+
+        return testSoftwareInfo;
     }
 
 }

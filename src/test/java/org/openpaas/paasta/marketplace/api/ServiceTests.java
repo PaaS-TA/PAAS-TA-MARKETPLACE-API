@@ -7,6 +7,7 @@ import org.openpaas.paasta.marketplace.api.service.CategoryServiceTest;
 import org.openpaas.paasta.marketplace.api.service.InstanceServiceTest;
 import org.openpaas.paasta.marketplace.api.service.ProfileServiceTest;
 import org.openpaas.paasta.marketplace.api.service.SoftwareServiceTest;
+import org.openpaas.paasta.marketplace.api.service.TestSoftwareInfoServiceTest;
 import org.openpaas.paasta.marketplace.api.service.UserServiceTest;
 
 @RunWith(Suite.class)
@@ -16,6 +17,7 @@ import org.openpaas.paasta.marketplace.api.service.UserServiceTest;
         InstanceServiceTest.class,
         ProfileServiceTest.class,
         SoftwareServiceTest.class,
+        TestSoftwareInfoServiceTest.class,
         UserServiceTest.class,
         // @formatter:on
 })
