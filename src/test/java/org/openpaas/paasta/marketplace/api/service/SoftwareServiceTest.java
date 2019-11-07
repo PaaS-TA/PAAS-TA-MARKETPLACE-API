@@ -117,10 +117,13 @@ public class SoftwareServiceTest extends AbstractMockTest {
 
         given(softwareRepository.findById(1L)).willReturn(Optional.of(software1));
 
-        Software result = softwareService.update(software1, null);
+        Software result = null;
+        result = softwareService.update(software1, null);
+        assertEquals(software1, result);
+        result = softwareService.update(software1, "");
         assertEquals(software1, result);
 
-        verify(softwareRepository).findById(1L);
+        verify(softwareRepository, atLeastOnce()).findById(1L);
     }
 
     @Test
@@ -132,14 +135,18 @@ public class SoftwareServiceTest extends AbstractMockTest {
         softwarePlan1.setName("name-1");
         SoftwarePlan softwarePlan2 = new SoftwarePlan();
         softwarePlan2.setName("name-2");
+        SoftwarePlan softwarePlan3 = new SoftwarePlan();
+        softwarePlan3.setId(0L);
+        softwarePlan3.setName("name-3");
         List<SoftwarePlan> softwarePlanList = new ArrayList<>();
         softwarePlanList.add(softwarePlan1);
         softwarePlanList.add(softwarePlan2);
+        softwarePlanList.add(softwarePlan3);
         software1.setSoftwarePlanList(softwarePlanList);
 
         given(softwareRepository.findById(1L)).willReturn(Optional.of(software1));
 
-        Software result = softwareService.update(software1, "1\\^2\\^3");
+        Software result = softwareService.update(software1, "1\\^2\\^3\\^4");
         assertEquals(software1, result);
 
         verify(softwareRepository).findById(1L);
