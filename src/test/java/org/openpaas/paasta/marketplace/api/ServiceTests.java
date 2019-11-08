@@ -6,6 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.openpaas.paasta.marketplace.api.service.CategoryServiceTest;
 import org.openpaas.paasta.marketplace.api.service.InstanceCartServiceTest;
 import org.openpaas.paasta.marketplace.api.service.InstanceServiceTest;
+import org.openpaas.paasta.marketplace.api.service.PlatformServiceTest;
 import org.openpaas.paasta.marketplace.api.service.ProfileServiceTest;
 import org.openpaas.paasta.marketplace.api.service.SoftwarePlanServiceTest;
 import org.openpaas.paasta.marketplace.api.service.SoftwareServiceTest;
@@ -19,6 +20,7 @@ import org.openpaas.paasta.marketplace.api.service.UserServiceTest;
         CategoryServiceTest.class,
         InstanceCartServiceTest.class,
         InstanceServiceTest.class,
+        PlatformServiceTest.class,
         ProfileServiceTest.class,
         SoftwarePlanServiceTest.class,
         SoftwareServiceTest.class,
