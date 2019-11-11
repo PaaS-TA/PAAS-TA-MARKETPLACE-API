@@ -163,25 +163,24 @@ public class AppService extends Common {
 
             log.info("================= 앱 생성 START =================");
 
-            log.info("TTA [{}] ::: 임시파일을 생성합니다.", name);
+            log.info("[{}] ::: 임시파일을 생성합니다.", name);
             file = createTempFile(param); // 임시파일을 생성합니다.
 
-            log.info("TTA [{}] ::: App을 만들고 guid를 return 합니다.", name);
+            log.info("[{}] ::: App을 만들고 guid를 return 합니다.", name);
 
             try {
                 applicationid = createApplication(app, reactorCloudFoundryClient); // App을 만들고 guid를 return 합니다.
             }catch(NullPointerException npe) {
-                //log.info("TTA:::App을 만들고 guid를 return 합니다.(2)");
                 applicationid = createApplication(app, reactorCloudFoundryClient); // App을 만들고 guid를 return 합니다.
             }
 
-            log.info("TTA [{}] ::: route를 생성후 guid를 return 합니다.", name);
+            log.info("[{}] ::: route를 생성후 guid를 return 합니다.", name);
             routeid = createRoute(app, reactorCloudFoundryClient); //route를 생성후 guid를 return 합니다.
 
-            log.info("TTA [{}] ::: app와 route를 mapping합니다.", name);
+            log.info("[{}] ::: app와 route를 mapping합니다.", name);
             routeMapping(applicationid, routeid, reactorCloudFoundryClient); // app와 route를 mapping합니다.
 
-            log.info("TTA [{}] ::: app에 파일 업로드 작업을 합니다.", name);
+            log.info("[{}] ::: app에 파일 업로드 작업을 합니다.", name);
             fileUpload(file, applicationid, reactorCloudFoundryClient); // app에 파일 업로드 작업을 합니다.
 
             String finalApplicationid = applicationid;
