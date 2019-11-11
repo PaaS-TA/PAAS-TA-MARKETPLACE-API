@@ -75,6 +75,8 @@ public class PlatformServiceTest extends AbstractMockTest {
     boolean unbindServiceRetry;
     boolean deleteInstanceRetry;
 
+    boolean getApplicationNameExistsNotStaged;
+
     Map<String, Integer> marks;
 
     @Before
@@ -107,6 +109,8 @@ public class PlatformServiceTest extends AbstractMockTest {
         unbindServiceRetry = false;
         deleteInstanceRetry = false;
 
+        getApplicationNameExistsNotStaged = false;
+
         marks = new TreeMap<>();
     }
 
@@ -127,6 +131,8 @@ public class PlatformServiceTest extends AbstractMockTest {
         createMap.put("env", env);
 
         ApplicationEntity applicationEntity = ApplicationEntity.builder().name("x").packageState("STAGED").build();
+        ApplicationEntity applicationEntityNotStaged = ApplicationEntity.builder().name("x").packageState("UNKNOWN")
+                .build();
         ServiceBrokerEntity serviceBrokerEntity = ServiceBrokerEntity.builder().name("myservice").build();
         Metadata metadata = Metadata.builder().id("x").build();
         ServiceBrokerResource serviceBrokerResource = ServiceBrokerResource.builder().metadata(metadata)
@@ -157,6 +163,9 @@ public class PlatformServiceTest extends AbstractMockTest {
                 }
                 return applicationEntity;
             });
+        }
+        if (getApplicationNameExistsNotStaged) {
+            given(appService.getApplicationNameExists(any(String.class))).willReturn(applicationEntityNotStaged);
         }
         given(serviceService.getServiceBrokers()).willReturn(getServiceBrokersNull ? null : listServiceBrokersResponse);
         if (getServiceBrokersRetry) {
@@ -260,9 +269,6 @@ public class PlatformServiceTest extends AbstractMockTest {
         assertNull(appGuid);
     }
 
-    /**
-     * Test time > 1,000ms
-     */
     @Test
     public void provisionUpdateAppRetry() throws PlatformException {
         updateAppRetry = true;
@@ -270,9 +276,6 @@ public class PlatformServiceTest extends AbstractMockTest {
         provision();
     }
 
-    /**
-     * Test time > 1,000ms
-     */
     @Test
     public void provisionGetServiceBrokersRetry() throws PlatformException {
         getServiceBrokersRetry = true;
@@ -280,9 +283,6 @@ public class PlatformServiceTest extends AbstractMockTest {
         provision();
     }
 
-    /**
-     * Test time > 1,000ms
-     */
     @Test
     public void provisionGetServicePlansRetry() throws PlatformException {
         getServicePlansRetry = true;
@@ -290,9 +290,6 @@ public class PlatformServiceTest extends AbstractMockTest {
         provision();
     }
 
-    /**
-     * Test time > 1,000ms
-     */
     @Test
     public void provisionCreateServiceInstanceRetry() throws PlatformException {
         createServiceInstanceRetry = true;
@@ -300,9 +297,6 @@ public class PlatformServiceTest extends AbstractMockTest {
         provision();
     }
 
-    /**
-     * Test time > 1,000ms
-     */
     @Test
     public void provisionCreateBindServiceRetry() throws PlatformException {
         createBindServiceRetry = true;
@@ -310,12 +304,16 @@ public class PlatformServiceTest extends AbstractMockTest {
         provision();
     }
 
-    /**
-     * Test time > 1,000ms
-     */
     @Test
     public void provisionGetApplicationNameExistsRetry() throws PlatformException {
         getApplicationNameExistsRetry = true;
+
+        provision();
+    }
+
+    @Test(expected = PlatformException.class)
+    public void provisionGetApplicationNameExistsNotStaged() throws PlatformException {
+        getApplicationNameExistsNotStaged = true;
 
         provision();
     }
@@ -425,9 +423,6 @@ public class PlatformServiceTest extends AbstractMockTest {
         deprovision();
     }
 
-    /**
-     * Test time > 1,000ms
-     */
     @Test
     public void deprovisionGetServiceBindingsRetry() throws PlatformException {
         getServiceBindingsRetry = true;
@@ -435,9 +430,6 @@ public class PlatformServiceTest extends AbstractMockTest {
         deprovision();
     }
 
-    /**
-     * Test time > 1,000ms
-     */
     @Test
     public void deprovisionUnbindServiceRetry() throws PlatformException {
         unbindServiceRetry = true;
@@ -445,9 +437,6 @@ public class PlatformServiceTest extends AbstractMockTest {
         deprovision();
     }
 
-    /**
-     * Test time > 1,000ms
-     */
     @Test
     public void deprovisionDeleteInstanceRetry() throws PlatformException {
         deleteInstanceRetry = true;
