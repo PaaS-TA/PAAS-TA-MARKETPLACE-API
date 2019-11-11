@@ -81,6 +81,7 @@ jacoco {
 }
 
 test {
+	include '/org/openpaas/paasta/marketplace/api/service/**'
     outputs.dir snippetsDir
 	ignoreFailures=true
 	jacoco {
