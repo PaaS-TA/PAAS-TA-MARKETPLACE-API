@@ -232,7 +232,6 @@ public class InstanceServiceTest extends AbstractMockTest {
         given(instanceRepository.count(any(InstanceSpecification.class))).willReturn(7L);
 
         long result = instanceService.countOfProvisioning();
-
         assertEquals(7L, result);
 
         verify(instanceRepository).count(any(InstanceSpecification.class));
@@ -254,7 +253,6 @@ public class InstanceServiceTest extends AbstractMockTest {
         given(instanceRepository.findAll(any(InstanceSpecification.class), any(Pageable.class))).willReturn(page);
 
         Instance result = instanceService.getOneToReadyDeprovision();
-
         assertEquals(instance1, result);
 
         verify(instanceRepository).findAll(any(InstanceSpecification.class), any(Pageable.class));
@@ -269,7 +267,6 @@ public class InstanceServiceTest extends AbstractMockTest {
         given(instanceRepository.findAll(any(InstanceSpecification.class), any(Pageable.class))).willReturn(page);
 
         Instance result = instanceService.getOneToReadyDeprovision();
-
         assertNull(result);
 
         verify(instanceRepository).findAll(any(InstanceSpecification.class), any(Pageable.class));
@@ -291,7 +288,6 @@ public class InstanceServiceTest extends AbstractMockTest {
         given(instanceRepository.findAll(any(InstanceSpecification.class), any(Pageable.class))).willReturn(page);
 
         Instance result = instanceService.getOneToDeprovision();
-
         assertEquals(instance1, result);
 
         verify(instanceRepository).findAll(any(InstanceSpecification.class), any(Pageable.class));
@@ -306,7 +302,6 @@ public class InstanceServiceTest extends AbstractMockTest {
         given(instanceRepository.findAll(any(InstanceSpecification.class), any(Pageable.class))).willReturn(page);
 
         Instance result = instanceService.getOneToDeprovision();
-
         assertNull(result);
 
         verify(instanceRepository).findAll(any(InstanceSpecification.class), any(Pageable.class));
@@ -317,7 +312,6 @@ public class InstanceServiceTest extends AbstractMockTest {
         given(instanceRepository.count(any(InstanceSpecification.class))).willReturn(2L);
 
         long result = instanceService.countOfDeprovisioning();
-
         assertEquals(2L, result);
 
         verify(instanceRepository).count(any(InstanceSpecification.class));
@@ -339,7 +333,6 @@ public class InstanceServiceTest extends AbstractMockTest {
         given(instanceRepository.findAll(any(InstanceSpecification.class), any(Pageable.class))).willReturn(page);
 
         Instance result = instanceService.getOneToReadyProvision();
-
         assertEquals(instance1, result);
 
         verify(instanceRepository).findAll(any(InstanceSpecification.class), any(Pageable.class));
@@ -354,7 +347,6 @@ public class InstanceServiceTest extends AbstractMockTest {
         given(instanceRepository.findAll(any(InstanceSpecification.class), any(Pageable.class))).willReturn(page);
 
         Instance result = instanceService.getOneToReadyProvision();
-
         assertNull(result);
 
         verify(instanceRepository).findAll(any(InstanceSpecification.class), any(Pageable.class));
@@ -376,7 +368,6 @@ public class InstanceServiceTest extends AbstractMockTest {
         given(instanceRepository.findAll(any(InstanceSpecification.class), any(Pageable.class))).willReturn(page);
 
         Instance result = instanceService.getOneToProvision();
-
         assertEquals(instance1, result);
 
         verify(instanceRepository).findAll(any(InstanceSpecification.class), any(Pageable.class));
@@ -391,7 +382,6 @@ public class InstanceServiceTest extends AbstractMockTest {
         given(instanceRepository.findAll(any(InstanceSpecification.class), any(Pageable.class))).willReturn(page);
 
         Instance result = instanceService.getOneToProvision();
-
         assertNull(result);
 
         verify(instanceRepository).findAll(any(InstanceSpecification.class), any(Pageable.class));
@@ -475,7 +465,6 @@ public class InstanceServiceTest extends AbstractMockTest {
                 .willReturn(7L);
 
         long result = instanceService.usagePriceTotal(userId, "20191107", "20191108");
-
         assertEquals(7L, result);
 
         verify(instanceRepository).usagePriceTotal(any(String.class), any(String.class), any(String.class));
@@ -499,7 +488,6 @@ public class InstanceServiceTest extends AbstractMockTest {
                 .willReturn(list);
 
         Map<String, String> result = instanceService.getPricePerInstanceList(ids, "20191107", "20191108");
-
         assertEquals("10", result.get("1"));
         assertEquals("20", result.get("2"));
         assertEquals("30", result.get("3"));
@@ -518,7 +506,6 @@ public class InstanceServiceTest extends AbstractMockTest {
                 .willReturn(null);
 
         Map<String, String> result = instanceService.getPricePerInstanceList(ids, "20191107", "20191108");
-
         assertEquals(0, result.size());
 
         verify(instanceRepository).pricePerInstanceList(anyList(), any(String.class), any(String.class));
@@ -537,7 +524,6 @@ public class InstanceServiceTest extends AbstractMockTest {
                 .willReturn(list);
 
         Map<String, String> result = instanceService.getPricePerInstanceList(ids, "20191107", "20191108");
-
         assertEquals(0, result.size());
 
         verify(instanceRepository).pricePerInstanceList(anyList(), any(String.class), any(String.class));
@@ -548,7 +534,6 @@ public class InstanceServiceTest extends AbstractMockTest {
         given(instanceRepository.softwareUsagePriceTotal(any(Long.class))).willReturn(7L);
 
         long result = instanceService.getSoftwareUsagePriceTotal(1L);
-
         assertEquals(7L, result);
 
         verify(instanceRepository).softwareUsagePriceTotal(any(Long.class));

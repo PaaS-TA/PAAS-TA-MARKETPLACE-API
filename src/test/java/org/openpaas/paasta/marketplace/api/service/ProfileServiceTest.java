@@ -92,6 +92,7 @@ public class ProfileServiceTest extends AbstractMockTest {
         Profile result = null;
         result = profileService.update(profile1);
         assertEquals(profile1, result);
+
         result = profileService.update(profile1_1);
         assertEquals(profile1, result);
 

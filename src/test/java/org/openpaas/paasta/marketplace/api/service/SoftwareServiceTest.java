@@ -120,6 +120,7 @@ public class SoftwareServiceTest extends AbstractMockTest {
         Software result = null;
         result = softwareService.update(software1, null);
         assertEquals(software1, result);
+
         result = softwareService.update(software1, "");
         assertEquals(software1, result);
 

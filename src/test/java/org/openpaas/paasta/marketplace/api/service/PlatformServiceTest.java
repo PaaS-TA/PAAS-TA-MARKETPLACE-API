@@ -40,8 +40,6 @@ import org.openpaas.paasta.marketplace.api.service.cloudfoundry.AppService;
 import org.openpaas.paasta.marketplace.api.service.cloudfoundry.ServiceService;
 import org.springframework.test.util.ReflectionTestUtils;
 
-// @RunWith(PowerMockRunner.class)
-// @PrepareForTest(Thread.class)
 public class PlatformServiceTest extends AbstractMockTest {
 
     PlatformService platformService;
@@ -110,9 +108,6 @@ public class PlatformServiceTest extends AbstractMockTest {
         deleteInstanceRetry = false;
 
         marks = new TreeMap<>();
-
-//        PowerMockito.mockStatic(Thread.class);
-//        PowerMockito.doAnswer(null).when(Thread.class);
     }
 
     @Test
@@ -204,16 +199,14 @@ public class PlatformServiceTest extends AbstractMockTest {
                     });
         }
         if (createBindServiceRetry) {
-            given(serviceService.createBindService(any(String.class), any(String.class)))
-            .willAnswer(x -> {
+            given(serviceService.createBindService(any(String.class), any(String.class))).willAnswer(x -> {
                 if (mark("createBindServiceRetry") <= 1) {
                     throw new RuntimeException();
                 }
-                
+
                 return null;
             });
         }
-        
 
         String appGuid = platformService.provision(instance1, isTested);
         assertNotNull(appGuid);
@@ -316,7 +309,7 @@ public class PlatformServiceTest extends AbstractMockTest {
 
         provision();
     }
-    
+
     /**
      * Test time > 1,000ms
      */
@@ -326,8 +319,6 @@ public class PlatformServiceTest extends AbstractMockTest {
 
         provision();
     }
-    
-    
 
     @Test
     public void deprovision() throws PlatformException {
@@ -372,7 +363,8 @@ public class PlatformServiceTest extends AbstractMockTest {
             });
         }
         given(appService.getRouteMappingList(any(String.class))).willReturn(listRouteMappingsResponse);
-        given(serviceService.unbindService(any(String.class), any(String.class))).willReturn(new HashMap<String, Object>());
+        given(serviceService.unbindService(any(String.class), any(String.class)))
+                .willReturn(new HashMap<String, Object>());
         if (unbindServiceRetry) {
             given(serviceService.unbindService(any(String.class), any(String.class))).willAnswer(x -> {
                 if (mark("unbindServiceRetry") <= 1) {
@@ -442,7 +434,7 @@ public class PlatformServiceTest extends AbstractMockTest {
 
         deprovision();
     }
-    
+
     /**
      * Test time > 1,000ms
      */
@@ -452,7 +444,7 @@ public class PlatformServiceTest extends AbstractMockTest {
 
         deprovision();
     }
-    
+
     /**
      * Test time > 1,000ms
      */

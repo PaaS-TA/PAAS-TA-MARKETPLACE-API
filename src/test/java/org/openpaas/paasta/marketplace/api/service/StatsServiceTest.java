@@ -154,7 +154,6 @@ public class StatsServiceTest extends AbstractMockTest {
         given(statsRepository.countOfSws(userId, Software.Status.Approval)).willReturn(7L);
 
         long result = statsService.countOfSwsCurrent(userId);
-
         assertEquals(7L, result);
 
         verify(statsRepository).countOfSws(userId, Software.Status.Approval);
