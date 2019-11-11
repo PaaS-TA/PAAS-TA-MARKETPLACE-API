@@ -221,7 +221,7 @@ public class AppService extends Common {
      * @return Map(자바클래스)
      * @throws Exception Exception(자바클래스)
      */
-    private File createTempFile(Software param) throws Exception {
+    protected File createTempFile(Software param) throws Exception {
         try {
             String appName= param.getApp();
             int index = param.getApp().indexOf(".");
@@ -250,7 +250,7 @@ public class AppService extends Common {
      * @return Map(자바클래스)
      * @throws Exception Exception(자바클래스)
      */
-    private Map createManifestFile(Software param) throws Exception {
+    protected Map createManifestFile(Software param) throws Exception {
         File file = null;
         try {
             //response.setContentType("application/octet-stream");
@@ -291,7 +291,7 @@ public class AppService extends Common {
         return yamlMaps;
     }
 
-    private String getBrowser(String header) {
+    protected String getBrowser(String header) {
 
         if (header.indexOf("MSIE") > -1) {
             return "MSIE";
@@ -307,7 +307,7 @@ public class AppService extends Common {
         return "Firefox";
     }
 
-    private String getDisposition(String filename, String browser) throws Exception {
+    protected String getDisposition(String filename, String browser) throws Exception {
         String encodedFilename = null;
 
         if (browser.equals("MSIE")) {
@@ -334,7 +334,7 @@ public class AppService extends Common {
         return encodedFilename;
     }
 
-    private String createApplication(App param, ReactorCloudFoundryClient reactorCloudFoundryClient) throws Exception {
+    protected String createApplication(App param, ReactorCloudFoundryClient reactorCloudFoundryClient) throws Exception {
         CreateApplicationResponse applicationRes =  reactorCloudFoundryClient.
                 applicationsV2().create(CreateApplicationRequest.builder().buildpack(param.getBuildpack()).memory(param.getMemory()).name(param.getAppName()).diskQuota(param.getDiskQuota()).spaceId(param.getSpaceGuid()).build()).block();
 
@@ -352,7 +352,7 @@ public class AppService extends Common {
      * @return Map(자바클래스)
      * @throws Exception Exception(자바클래스)
      */
-    private String createRoute(App param, ReactorCloudFoundryClient reactorCloudFoundryClient) {
+    protected String createRoute(App param, ReactorCloudFoundryClient reactorCloudFoundryClient) {
         return reactorCloudFoundryClient.
                 routes().create(CreateRouteRequest.builder().host(param.getHostName()).domainId(param.getDomainId()).spaceId(param.getSpaceGuid()).build()).block().getMetadata().getId();
     }
@@ -367,7 +367,7 @@ public class AppService extends Common {
      * @return Map(자바클래스)
      * @throws Exception Exception(자바클래스)
      */
-    private void routeMapping(String applicationid, String routeid, ReactorCloudFoundryClient reactorCloudFoundryClient) throws Exception {
+    protected void routeMapping(String applicationid, String routeid, ReactorCloudFoundryClient reactorCloudFoundryClient) throws Exception {
         reactorCloudFoundryClient.
                 routeMappings().create(CreateRouteMappingRequest.builder().routeId(routeid).applicationId(applicationid).build()).block();
     }
@@ -381,7 +381,7 @@ public class AppService extends Common {
      * @return Map(자바클래스)
      * @throws Exception Exception(자바클래스)
      */
-    private void fileUpload(File file, String applicationid, ReactorCloudFoundryClient reactorCloudFoundryClient) throws Exception {
+    protected void fileUpload(File file, String applicationid, ReactorCloudFoundryClient reactorCloudFoundryClient) throws Exception {
         try {
             reactorCloudFoundryClient.
                     applicationsV2().upload(UploadApplicationRequest.builder().applicationId(applicationid).application(file.toPath()).build()).block();
