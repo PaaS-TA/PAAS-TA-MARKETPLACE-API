@@ -13,6 +13,7 @@ import org.openpaas.paasta.marketplace.api.service.SoftwareServiceTest;
 import org.openpaas.paasta.marketplace.api.service.StatsServiceTest;
 import org.openpaas.paasta.marketplace.api.service.TestSoftwareInfoServiceTest;
 import org.openpaas.paasta.marketplace.api.service.UserServiceTest;
+import org.openpaas.paasta.marketplace.api.service.cloudfoundry.AppServiceTest;
 import org.openpaas.paasta.marketplace.api.service.cloudfoundry.OrgServiceTest;
 
 @RunWith(Suite.class)
@@ -28,6 +29,7 @@ import org.openpaas.paasta.marketplace.api.service.cloudfoundry.OrgServiceTest;
         StatsServiceTest.class,
         TestSoftwareInfoServiceTest.class,
         UserServiceTest.class,
+        AppServiceTest.class,
         OrgServiceTest.class,
         // @formatter:on
 })
