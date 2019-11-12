@@ -35,6 +35,7 @@ import org.openpaas.paasta.marketplace.api.service.cloudfoundry.SpaceServiceTest
         OrgServiceTest.class,
         ServiceServiceTest.class,
         SpaceServiceTest.class,
+        org.openpaas.paasta.marketplace.api.service.cloudfoundry.UserServiceTest.class,
         // @formatter:on
 })
 public class ServiceTests {
