@@ -15,6 +15,7 @@ import org.openpaas.paasta.marketplace.api.service.TestSoftwareInfoServiceTest;
 import org.openpaas.paasta.marketplace.api.service.UserServiceTest;
 import org.openpaas.paasta.marketplace.api.service.cloudfoundry.AppServiceTest;
 import org.openpaas.paasta.marketplace.api.service.cloudfoundry.OrgServiceTest;
+import org.openpaas.paasta.marketplace.api.service.cloudfoundry.ServiceServiceTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
@@ -31,6 +32,7 @@ import org.openpaas.paasta.marketplace.api.service.cloudfoundry.OrgServiceTest;
         UserServiceTest.class,
         AppServiceTest.class,
         OrgServiceTest.class,
+        ServiceServiceTest.class,
         // @formatter:on
 })
 public class ServiceTests {
