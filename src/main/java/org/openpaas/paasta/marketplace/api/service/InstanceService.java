@@ -55,14 +55,13 @@ public class InstanceService {
     private final PlatformService platformService;
 
     public Instance create(Instance instance) {
-    	LocalDateTime nowDate = LocalDateTime.now();
-    	LocalDateTime usageStartDate = LocalDateTime.of(nowDate.getYear(), nowDate.getMonthValue(), nowDate.getDayOfMonth(), 9, 0, 0);
-//    	usageStartDate.atZone(ZoneId.of("Asia/Seoul"));
+//    	LocalDateTime nowDate = LocalDateTime.now();
+//    	LocalDateTime usageStartDate = LocalDateTime.of(nowDate.getYear(), nowDate.getMonthValue(), nowDate.getDayOfMonth(), 9, 0, 0);
     	
         instance.setStatus(Instance.Status.Approval);
         instance.setProvisionStatus(Instance.ProvisionStatus.Pending);
-//        instance.setUsageStartDate(LocalDateTime.now());
-        instance.setUsageStartDate(usageStartDate);
+        instance.setUsageStartDate(LocalDateTime.now());
+//        instance.setUsageStartDate(usageStartDate);
         instance.setHost(HostUtils.getHostName());
 
         return instanceRepository.save(instance);

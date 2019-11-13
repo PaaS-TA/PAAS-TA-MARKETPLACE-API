@@ -1,18 +1,21 @@
 package org.openpaas.paasta.marketplace.api.service;
 
-import lombok.RequiredArgsConstructor;
-import org.openpaas.paasta.marketplace.api.domain.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
+
+import org.openpaas.paasta.marketplace.api.domain.SoftwarePlan;
+import org.openpaas.paasta.marketplace.api.domain.SoftwarePlanSpecification;
 import org.openpaas.paasta.marketplace.api.repository.SoftwarePlanRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -88,5 +91,15 @@ public class SoftwarePlanService {
 
     public Long getMinPricePerMonth(String softwareId) {
         return softwarePlanRepository.minPricePerMonth(softwareId);
+    }
+    
+    public Map<String,Long> getPricePerMonthList(List<Long> inSoftwarePlanId) {
+    	List<Object[]> values = softwarePlanRepository.pricePerMonthList(inSoftwarePlanId);
+    	
+    	Map<String,Long> resultMap = new HashMap<String,Long>();
+    	if (values != null) {
+    		resultMap = values.stream().collect(Collectors.toMap(v -> (String) v[0], v -> Long.valueOf((String) v[1])));
+    	}
+    	return resultMap;
     }
 }

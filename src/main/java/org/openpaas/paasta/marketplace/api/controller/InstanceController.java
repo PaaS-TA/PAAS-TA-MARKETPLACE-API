@@ -1,5 +1,6 @@
 package org.openpaas.paasta.marketplace.api.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import org.openpaas.paasta.marketplace.api.service.SoftwarePlanService;
 import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -49,14 +51,14 @@ public class InstanceController {
         Page<Instance> result = instanceService.getPage(spec, pageable);
         
         // softwarePlan의 가격정보 조회
-        List<Instance> instanceList = result.getContent();
-        Long pricePerMonth = 0L;
-        if (instanceList != null && !instanceList.isEmpty()) {
-	        for (Instance instance : instanceList) {
-	        	pricePerMonth = softwarePlanService.getPricePerMonth(String.valueOf(instance.getSoftware().getId()), instance.getSoftwarePlanId());
-	        	instance.getSoftware().setPricePerMonth(pricePerMonth);
-	        }
-        }
+//        List<Instance> instanceList = result.getContent();
+//        Long pricePerMonth = 0L;
+//        if (instanceList != null && !instanceList.isEmpty()) {
+//	        for (Instance instance : instanceList) {
+//	        	pricePerMonth = softwarePlanService.getPricePerMonth(String.valueOf(instance.getSoftware().getId()), instance.getSoftwarePlanId());
+//	        	instance.getSoftware().setPricePerMonth(pricePerMonth);
+//	        }
+//        }
         
         return result;
     }
@@ -67,14 +69,39 @@ public class InstanceController {
         Page<Instance> result = instanceService.getPage(spec, pageable);
         
         // softwarePlan의 가격정보 조회
+//        List<Instance> instanceList = result.getContent();
+//        Long pricePerMonth = 0L;
+//        for (Instance instance : instanceList) {
+//        	pricePerMonth = softwarePlanService.getPricePerMonth(String.valueOf(instance.getSoftware().getId()), instance.getSoftwarePlanId());
+////        	instance.getSoftware().setPricePerMonth(softwarePlanService.getPricePerMonth(String.valueOf(instance.getSoftware().getId()), instance.getSoftwarePlanId()));
+//        	instance.getSoftware().setSoftwarePlanAmtMonth(pricePerMonth);
+//        	instance.setSoftwarePlanAmtMonth(pricePerMonth);
+//        }
+        
+        // 상품리스트
         List<Instance> instanceList = result.getContent();
-        Long pricePerMonth = 0L;
-        for (Instance instance : instanceList) {
-        	pricePerMonth = softwarePlanService.getPricePerMonth(String.valueOf(instance.getSoftware().getId()), instance.getSoftwarePlanId());
-//        	instance.getSoftware().setPricePerMonth(softwarePlanService.getPricePerMonth(String.valueOf(instance.getSoftware().getId()), instance.getSoftwarePlanId()));
-        	instance.getSoftware().setSoftwarePlanAmtMonth(pricePerMonth);
-        	instance.setSoftwarePlanAmtMonth(pricePerMonth);
-        }
+        
+        // softwarePlan의 ID정보 리스트 생성
+    	List<Long> inSoftwarePlanId = new ArrayList<Long>();
+    	for (Instance info : instanceList) {
+    		inSoftwarePlanId.add(Long.valueOf(info.getSoftwarePlanId()));
+    	}
+
+    	// softwarePlan의 가격정보 조회
+    	Map<String,Long> planInfoMap = softwarePlanService.getPricePerMonthList(inSoftwarePlanId);
+    	if (CollectionUtils.isEmpty(planInfoMap)) {
+    		return result;
+    	}
+    	
+    	// 장바구니 상품정보에  Plan정보 설정
+    	Long pricePerMonth = 0L;
+		for (Instance info : instanceList) {
+			pricePerMonth = planInfoMap.get(info.getSoftwarePlanId());
+			if (pricePerMonth != null) {
+				info.getSoftware().setSoftwarePlanAmtMonth(pricePerMonth);
+				info.setSoftwarePlanAmtMonth(pricePerMonth);
+			}
+    	}
         
         return result;
     }

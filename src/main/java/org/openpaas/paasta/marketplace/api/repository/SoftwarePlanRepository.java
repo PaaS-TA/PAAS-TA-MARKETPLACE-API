@@ -52,4 +52,13 @@ public interface SoftwarePlanRepository extends JpaRepository<SoftwarePlan, Long
 	    		+"                      )\n"
     , nativeQuery=true)
     public Long minPricePerMonth(@Param("softwareId") String softwareId);
+    
+    @Query(value="SELECT  CONCAT(id) \n"
+    			+"	  	  ,CONCAT(IFNULL(cpu_amt,0) + IFNULL(memory_amt,0) + IFNULL(disk_amt,0)) AS price_per_month \n"
+	    		+"FROM    software_plan \n"
+	    		+"WHERE   1=1 \n"
+	    		+"AND     id IN :inSoftwarePlanId \n"
+	, nativeQuery=true)
+	public List<Object[]> pricePerMonthList(@Param("inSoftwarePlanId") List<Long> inSoftwarePlanId);
+
 }
