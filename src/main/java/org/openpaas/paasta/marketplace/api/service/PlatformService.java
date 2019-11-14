@@ -196,7 +196,7 @@ public class PlatformService {
             appService.deleteApp(appGuid);
 
         }catch(ClientV2Exception cv2e) {
-            if("100004".equals(cv2e.getCode()) || "100004".equals(cv2e.getErrorCode()) || cv2e.getMessage().indexOf("CF-AppNotFound") > -1 || cv2e.getDescription().indexOf("CF-AppNotFound") > -1) {
+            if ("100004".equals(cv2e.getErrorCode()) || cv2e.getMessage().indexOf("CF-AppNotFound") > -1 || cv2e.getDescription().indexOf("CF-AppNotFound") > -1) {
                 throw new PlatformException("noCfAppInstance",cv2e);
             }
             log.error(cv2e.getMessage(), cv2e);
