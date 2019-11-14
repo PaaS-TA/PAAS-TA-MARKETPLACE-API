@@ -436,7 +436,9 @@ public class AppService extends Common {
         while ((Calendar.getInstance().getTimeInMillis() - startTime) < (ONE_SECOND * waitTime)) {
             try {
                 Thread.sleep(1_000L);
-            } catch (InterruptedException ignore) {
+            } catch (InterruptedException e) {
+                log.warn(e.getMessage(), e);
+                Thread.currentThread().interrupt();
             }
         }
     }
