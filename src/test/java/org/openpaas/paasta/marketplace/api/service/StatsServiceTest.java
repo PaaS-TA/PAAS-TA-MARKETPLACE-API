@@ -476,6 +476,32 @@ public class StatsServiceTest extends AbstractMockTest {
     }
 
     @Test
+    public void getDayOfUseInstsPeriod2Null() {
+        given(statsRepository.dayOfUseInstsPeriodMonth(any(String.class), anyList(), any(String.class),
+                any(String.class))).willReturn(null);
+
+        Map<String, String> result = statsService.getDayOfUseInstsPeriod(userId, Arrays.asList(1L, 2L), "20191108",
+                "20191208");
+        assertEquals(0, result.size());
+
+        verify(statsRepository).dayOfUseInstsPeriodMonth(any(String.class), anyList(), any(String.class),
+                any(String.class));
+    }
+
+    @Test
+    public void getDayOfUseInstsPeriod2Empty() {
+        given(statsRepository.dayOfUseInstsPeriodMonth(any(String.class), anyList(), any(String.class),
+                any(String.class))).willReturn(Arrays.asList());
+
+        Map<String, String> result = statsService.getDayOfUseInstsPeriod(userId, Arrays.asList(1L, 2L), "20191108",
+                "20191208");
+        assertEquals(0, result.size());
+
+        verify(statsRepository).dayOfUseInstsPeriodMonth(any(String.class), anyList(), any(String.class),
+                any(String.class));
+    }
+
+    @Test
     public void getUsingPerInstanceByProvider() {
         given(statsRepository.usingPerInstanceByProvider(any(String.class), any(Long.class)))
                 .willReturn(Arrays.asList(new Object[] { "a", "A" }, new Object[] { "b", "B" }));
@@ -523,6 +549,18 @@ public class StatsServiceTest extends AbstractMockTest {
 
         Map<Long, Object> result = statsService.getPurchaseAmount(userId, current, current);
         assertEquals(2, result.size());
+
+        verify(statsRepository, atLeastOnce()).getPurchaseAmount(any(String.class), any(LocalDateTime.class),
+                any(LocalDateTime.class));
+    }
+
+    @Test
+    public void getPurchaseAmountEmpty() {
+        given(statsRepository.getPurchaseAmount(any(String.class), any(LocalDateTime.class), any(LocalDateTime.class)))
+                .willReturn(Arrays.asList());
+
+        Map<Long, Object> result = statsService.getPurchaseAmount(userId, current, current);
+        assertEquals(0, result.size());
 
         verify(statsRepository, atLeastOnce()).getPurchaseAmount(any(String.class), any(LocalDateTime.class),
                 any(LocalDateTime.class));
