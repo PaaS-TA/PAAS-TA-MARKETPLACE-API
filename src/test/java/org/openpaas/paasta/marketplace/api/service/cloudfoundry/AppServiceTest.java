@@ -121,6 +121,9 @@ public class AppServiceTest {
     @Mock
     File file;
 
+    @Mock
+    Map<String, String> stringStringMap;
+
     boolean createApplicationRetry;
 
     boolean createManifestFileError;
@@ -140,6 +143,8 @@ public class AppServiceTest {
     boolean envJsonNull;
 
     boolean envJsonEmpty;
+
+    boolean envJsonSizeMinus;
 
     String applicationName;
 
@@ -166,7 +171,8 @@ public class AppServiceTest {
 
         envJsonNull = false;
         envJsonEmpty = false;
-        
+        envJsonSizeMinus = false;
+
         applicationName = "x";
 
         marks = new TreeMap<>();
@@ -489,6 +495,11 @@ public class AppServiceTest {
             if (!envJsonEmpty) {
                 envJson.put("x", "x");
             }
+            if (envJsonSizeMinus) {
+                envJson = stringStringMap;
+                // FIXME:
+                given(envJson.size()).willReturn(-1);
+            }
         }
 
         given(appService.cloudFoundryClient(any())).willReturn(cloudFoundryClient);
@@ -511,6 +522,13 @@ public class AppServiceTest {
     @Test
     public void updateAppEnvJsonEmpty() {
         envJsonEmpty = true;
+
+        updateApp();
+    }
+
+    @Test
+    public void updateAppEnvJsonSizeMinus() {
+        envJsonSizeMinus = true;
 
         updateApp();
     }
@@ -591,10 +609,10 @@ public class AppServiceTest {
     @Test
     public void getApplicationNameExistsFalse() throws PlatformException {
         applicationName = "y";
-        
+
         getApplicationNameExists();
     }
-    
+
     @Test(expected = PlatformException.class)
     public void getApplicationNameExistsError() throws PlatformException {
         given(appService.cloudFoundryClient(any())).willThrow(new RuntimeException());
