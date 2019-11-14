@@ -187,7 +187,7 @@ public class PlatformServiceTest extends AbstractMockTest {
         if (getApplicationNameExistsRetry) {
             given(appService.getApplicationNameExists(any(String.class))).willAnswer(x -> {
                 // FIXME:
-                if (mark("getApplicationNameExistsRetry") <= 60) {
+                if (mark("getApplicationNameExistsRetry") < 50) {
                     throw new RuntimeException();
                 }
                 return applicationEntity;
@@ -200,10 +200,10 @@ public class PlatformServiceTest extends AbstractMockTest {
         if (getServiceBrokersRetry) {
             given(serviceService.getServiceBrokers()).willAnswer(x -> {
                 // FIXME:
-                if (mark("getServiceBrokersRetry") <= 10) {
+                if (mark("getServiceBrokersRetry") < 10) {
                     throw new RuntimeException();
                 }
-                return listServiceBrokersResponse;
+                return getServiceBrokersNull ? null : listServiceBrokersResponse;
             });
         }
         given(serviceService.getServicePlans(any(String.class)))
@@ -317,8 +317,16 @@ public class PlatformServiceTest extends AbstractMockTest {
         provision();
     }
 
-    @Test(expected = PlatformException.class)
+    @Test
     public void provisionGetServiceBrokersRetry() throws PlatformException {
+        getServiceBrokersRetry = true;
+
+        provision();
+    }
+
+    @Test(expected = PlatformException.class)
+    public void provisionGetServiceBrokersRetryNull() throws PlatformException {
+        getServiceBrokersNull = true;
         getServiceBrokersRetry = true;
 
         provision();
@@ -345,7 +353,7 @@ public class PlatformServiceTest extends AbstractMockTest {
         provision();
     }
 
-    @Test(expected = PlatformException.class)
+    @Test
     public void provisionGetApplicationNameExistsRetry() throws PlatformException {
         getApplicationNameExistsRetry = true;
 

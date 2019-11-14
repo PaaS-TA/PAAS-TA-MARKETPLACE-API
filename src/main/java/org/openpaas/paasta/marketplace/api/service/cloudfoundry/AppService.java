@@ -433,10 +433,13 @@ public class AppService extends Common {
 
     public void timer(int waitTime) {
         long startTime = Calendar.getInstance().getTimeInMillis();
-        while ((Calendar.getInstance().getTimeInMillis() - startTime) < (ONE_SECOND * waitTime)){}
+        while ((Calendar.getInstance().getTimeInMillis() - startTime) < (ONE_SECOND * waitTime)) {
+            try {
+                Thread.sleep(1_000L);
+            } catch (InterruptedException ignore) {
+            }
+        }
     }
-
-
 
     public ApplicationEntity getApplicationNameExists(String name) throws PlatformException {
         int count = 0;

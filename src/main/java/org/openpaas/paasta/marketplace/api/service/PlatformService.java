@@ -226,14 +226,10 @@ public class PlatformService {
         // services 에 서비스 타입 판별 후 해당하는 서비스 브로커 존재 여부 -> 있으면 서비스 플랜 아이디 조회
         ListServiceBrokersResponse brokers = null;
         int tryCnt = 0;
-        boolean isFound = false;
-        while(tryCnt++ < 10 && !isFound && brokers == null) {
-            isFound = true;
+        while(tryCnt++ < 10 && brokers == null) {
             try {
                 brokers = serviceService.getServiceBrokers();
             }catch(Exception npe) {
-                isFound = false;
-
                 // todo ::: to delete
                 log.info("broker list try count ::: " + tryCnt);
                 //npe.printStackTrace();
@@ -248,6 +244,7 @@ public class PlatformService {
         ServiceBrokerResource broker = null;
         Map<Integer, List> planMap = new HashMap();
 
+        boolean isFound = false;
         for (String serviceName : services) {
             index++;
             for(ServiceBrokerResource resource : brokers.getResources()){
@@ -369,24 +366,21 @@ public class PlatformService {
                     log.info("app exist count ::: " + tryCnt);
 
                     isExist = false;
-                    Thread.sleep(1000);
+                    appService.timer(1);
                 }
-
             }
+            
+            if (application != null) {
+                log.info("app state ::: appName=" + appName + ", appState=" + application.getPackageState());
+                if(application.getPackageState().equals("STAGED")) {
+                    log.info("============== 앱 START END================");
 
-            log.info("app state ::: appName=" + appName + ", appState=" + application.getPackageState());
-            if(tryCount == 50 && !application.getPackageState().equals("STAGED")) { //3분
-                log.info("Not started ::: appName=" + appName + ", appState=" + application.getPackageState());
-                throw new PlatformException(appGuid);
-            }
-            if(application.getPackageState().equals("STAGED")) {
-                log.info("============== 앱 START END================");
-
-                return application;
+                    return application;
+                }
             }
         }
         log.info("app 을 돌려주세욤" + application);
-        return application;
+        throw new PlatformException(appGuid);
     }
 
 
