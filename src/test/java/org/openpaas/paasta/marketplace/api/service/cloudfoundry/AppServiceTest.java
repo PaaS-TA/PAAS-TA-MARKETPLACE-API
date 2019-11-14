@@ -265,7 +265,7 @@ public class AppServiceTest {
     }
 
     @Test
-    public void c() throws Exception {
+    public void createAppWithoutEnvInstancesAndBuildpacks() throws Exception {
         envInstances = false;
         envBuildpacks = false;
 
@@ -583,6 +583,17 @@ public class AppServiceTest {
         doCallRealMethod().when(appService).timer(any(Integer.class));
 
         appService.timer(1);
+    }
+
+    @Test
+    public void timerInterrupt() {
+        doCallRealMethod().when(appService).timer(any(Integer.class));
+
+        Thread t = new Thread(() -> {
+            appService.timer(1);
+        });
+        t.start();
+        t.interrupt();
     }
 
     @Test
