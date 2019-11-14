@@ -53,6 +53,9 @@ public class PlatformServiceTest extends AbstractMockTest {
     @Mock
     SoftwarePlanService softwarePlanService;
 
+    @Mock
+    ClientV2Exception cv2e;
+
     boolean isTested;
     boolean getSoftwarePlan;
     boolean createApp;
@@ -63,7 +66,10 @@ public class PlatformServiceTest extends AbstractMockTest {
     boolean getServicePlansNull;
     boolean procStartApplicationNull;
     boolean getAppClientV2Exception;
-    String errorCode;
+    
+    String cv2eErrorCode;
+    String cv2eMessage;
+    String cv2eDescription;
 
     boolean updateAppRetry;
     boolean getServiceBrokersRetry;
@@ -97,8 +103,11 @@ public class PlatformServiceTest extends AbstractMockTest {
         getServicePlansNull = false;
         procStartApplicationNull = false;
         getAppClientV2Exception = false;
-        errorCode = "x";
 
+        cv2eErrorCode = null;
+        cv2eMessage = "";
+        cv2eDescription = "";
+        
         updateAppRetry = false;
         getServiceBrokersRetry = false;
         getServicePlansRetry = false;
@@ -349,7 +358,10 @@ public class PlatformServiceTest extends AbstractMockTest {
             given(appService.getApp(any(Instance.class))).willReturn(getApplicationResponse);
         }
         if (getAppClientV2Exception) {
-            given(appService.getApp(any(Instance.class))).willThrow(new ClientV2Exception(1, 1, "x", errorCode));
+            given(appService.getApp(any(Instance.class))).willThrow(cv2e);
+            given(cv2e.getErrorCode()).willReturn(cv2eErrorCode);
+            given(cv2e.getMessage()).willReturn(cv2eMessage);
+            given(cv2e.getDescription()).willReturn(cv2eDescription);
         }
         given(serviceService.getServiceBindings(any(String.class))).willReturn(listApplicationServiceBindingsResponse);
         if (getServiceBindingsRetry) {
@@ -416,9 +428,25 @@ public class PlatformServiceTest extends AbstractMockTest {
     }
 
     @Test(expected = PlatformException.class)
-    public void deprovisionGetAppClientV2ExceptionErrorCode() throws PlatformException {
+    public void deprovisionGetAppClientV2ExceptionError1() throws PlatformException {
         getAppClientV2Exception = true;
-        errorCode = "100004";
+        cv2eErrorCode = "100004";
+
+        deprovision();
+    }
+
+    @Test(expected = PlatformException.class)
+    public void deprovisionGetAppClientV2ExceptionError2() throws PlatformException {
+        getAppClientV2Exception = true;
+        cv2eMessage = "CF-AppNotFound";
+
+        deprovision();
+    }
+    
+    @Test(expected = PlatformException.class)
+    public void deprovisionGetAppClientV2ExceptionError3() throws PlatformException {
+        getAppClientV2Exception = true;
+        cv2eDescription = "CF-AppNotFound";
 
         deprovision();
     }

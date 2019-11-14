@@ -1,6 +1,7 @@
 package org.openpaas.paasta.marketplace.api.service.cloudfoundry;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doCallRealMethod;
@@ -13,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.UUID;
 
 import org.cloudfoundry.client.v2.Metadata;
 import org.cloudfoundry.client.v2.applications.ApplicationEntity;
@@ -115,13 +117,31 @@ public class AppServiceTest {
 
     @Mock
     Mono<List<Envelope>> listEnvelopeMono;
-    
+
     @Mock
     File file;
 
     boolean createApplicationRetry;
 
+    boolean createManifestFileError;
+
+    boolean createRouteError;
+
     boolean routeMappingError;
+
+    String requestedMemorySize;
+
+    String requestedDiskSize;
+
+    boolean envInstances;
+
+    boolean envBuildpacks;
+
+    boolean envJsonNull;
+
+    boolean envJsonEmpty;
+
+    String applicationName;
 
     Map<String, Integer> marks;
 
@@ -134,8 +154,20 @@ public class AppServiceTest {
         ReflectionTestUtils.setField(appService, "marketSpaceGuid", "x");
 
         createApplicationRetry = false;
-
+        createManifestFileError = false;
+        createRouteError = false;
         routeMappingError = false;
+
+        requestedMemorySize = "4G";
+        requestedDiskSize = "30G";
+
+        envInstances = true;
+        envBuildpacks = true;
+
+        envJsonNull = false;
+        envJsonEmpty = false;
+        
+        applicationName = "x";
 
         marks = new TreeMap<>();
     }
@@ -170,23 +202,33 @@ public class AppServiceTest {
         Map<String, Object> manifestFile = new TreeMap<>();
         List<Object> applications = new ArrayList<>();
         LinkedHashMap<String, Object> env = new LinkedHashMap<>();
-        env.put("instances", 1);
-        List<String> buildpacks = new ArrayList<>();
-        buildpacks.add("x");
-        env.put("buildpacks", buildpacks);
+        if (envInstances) {
+            env.put("instances", 1);
+        }
+        if (envBuildpacks) {
+            List<String> buildpacks = new ArrayList<>();
+            buildpacks.add("x");
+            env.put("buildpacks", buildpacks);
+        }
         applications.add(env);
         manifestFile.put("applications", applications);
         given(appService.createManifestFile(any())).willReturn(manifestFile);
+        if (createManifestFileError) {
+            given(appService.createManifestFile(any())).willThrow(new RuntimeException());
+        }
         given(appService.createApplication(any(), any())).willReturn("x");
         if (createApplicationRetry) {
             given(appService.createApplication(any(), any())).willAnswer(x -> {
                 if (mark("createApplicationRetry") <= 1) {
-                   throw new NullPointerException();
+                    throw new NullPointerException();
                 }
                 return "x";
             });
         }
         given(appService.createRoute(any(), any())).willReturn("x");
+        if (createRouteError) {
+            given(appService.createRoute(any(), any())).willThrow(new RuntimeException());
+        }
         if (routeMappingError) {
             doThrow(new RuntimeException()).when(appService).routeMapping(any(), any(), any());
         }
@@ -199,11 +241,29 @@ public class AppServiceTest {
         given(appService.createApp(any(), any(), any(), any())).willCallRealMethod();
 
         Software software = new Software();
-        Map<String, Object> result = appService.createApp(software, "x", "4G", "30G");
-        if (!routeMappingError) {
+        Map<String, Object> result = appService.createApp(software, "x", requestedMemorySize, requestedDiskSize);
+        if (!createManifestFileError && !routeMappingError && !createRouteError) {
             assertEquals("x", result.get("appId"));
             assertEquals(env, result.get("env"));
+        } else {
+            assertEquals("fail", result.get("RESULT"));
         }
+    }
+
+    @Test
+    public void createAppWithoutUnitG() throws Exception {
+        requestedMemorySize = String.valueOf(6 * 1024);
+        requestedDiskSize = String.valueOf(30 * 1024);
+
+        createApp();
+    }
+
+    @Test
+    public void c() throws Exception {
+        envInstances = false;
+        envBuildpacks = false;
+
+        createApp();
     }
 
     @Test
@@ -214,8 +274,21 @@ public class AppServiceTest {
     }
 
     @Test
+    public void createAppCreateManifestFileError() throws Exception {
+        createManifestFileError = true;
+
+        createApp();
+    }
+
+    @Test
+    public void createAppCreateRouteError() throws Exception {
+        createRouteError = true;
+
+        createApp();
+    }
+
+    @Test
     public void createAppRouteMappingError() throws Exception {
-        
         routeMappingError = true;
 
         createApp();
@@ -270,6 +343,14 @@ public class AppServiceTest {
 
         Map<?, ?> result = appService.createManifestFile(software);
         assertEquals(true, result.isEmpty());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void convertYamlToJsonError() {
+        File file = new File(UUID.randomUUID().toString());
+        given(appService.convertYamlToJson(any())).willCallRealMethod();
+
+        appService.convertYamlToJson(file);
     }
 
     @Test
@@ -402,8 +483,13 @@ public class AppServiceTest {
 
     @Test
     public void updateApp() {
-        Map<String, String> envJson = new TreeMap<>();
-        envJson.put("x", "x");
+        Map<String, String> envJson = null;
+        if (!envJsonNull) {
+            envJson = new TreeMap<>();
+            if (!envJsonEmpty) {
+                envJson.put("x", "x");
+            }
+        }
 
         given(appService.cloudFoundryClient(any())).willReturn(cloudFoundryClient);
         given(cloudFoundryClient.applicationsV2()).willReturn(applicationsV2);
@@ -413,6 +499,20 @@ public class AppServiceTest {
 
         Map<?, ?> result = appService.updateApp(envJson, "x");
         assertEquals(true, result.get("result"));
+    }
+
+    @Test
+    public void updateAppEnvJsonNull() {
+        envJsonNull = true;
+
+        updateApp();
+    }
+
+    @Test
+    public void updateAppEnvJsonEmpty() {
+        envJsonEmpty = true;
+
+        updateApp();
     }
 
     @Test
@@ -472,7 +572,7 @@ public class AppServiceTest {
         given(appService.cloudFoundryClient(any())).willReturn(cloudFoundryClient);
         given(cloudFoundryClient.applicationsV2()).willReturn(applicationsV2);
         given(applicationsV2.list(any())).willReturn(listApplicationsResponseMono);
-        ApplicationEntity applicationEntity = ApplicationEntity.builder().name("x").build();
+        ApplicationEntity applicationEntity = ApplicationEntity.builder().name(applicationName).build();
         ApplicationResource applicationResource = ApplicationResource.builder().entity(applicationEntity).build();
         ListApplicationsResponse listApplicationsResponse = ListApplicationsResponse.builder()
                 .resource(applicationResource).build();
@@ -481,9 +581,20 @@ public class AppServiceTest {
         given(appService.getApplicationNameExists(any())).willCallRealMethod();
 
         ApplicationEntity result = appService.getApplicationNameExists("x");
-        assertEquals(applicationEntity, result);
+        if ("x".equals(applicationName)) {
+            assertEquals(applicationEntity, result);
+        } else {
+            assertNull(result);
+        }
     }
 
+    @Test
+    public void getApplicationNameExistsFalse() throws PlatformException {
+        applicationName = "y";
+        
+        getApplicationNameExists();
+    }
+    
     @Test(expected = PlatformException.class)
     public void getApplicationNameExistsError() throws PlatformException {
         given(appService.cloudFoundryClient(any())).willThrow(new RuntimeException());
