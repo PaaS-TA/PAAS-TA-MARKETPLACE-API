@@ -9,6 +9,7 @@ import org.openpaas.paasta.marketplace.api.repository.StatsRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.transaction.Transactional;
 
@@ -431,10 +432,11 @@ public class StatsService {
         Map<Long, Object> data = new HashMap<>();
 
         List<Object[]> values = statsRepository.getPurchaseAmount(createrId, startDate, endDate);
-        for (Object[] value : values) { 
-
-            data.put(i, value); 
-            i++;
+        if (!CollectionUtils.isEmpty(values)) {
+	        for (Object[] value : values) { 
+	            data.put(i, value); 
+	            i++;
+	        }
         }
 
         return data;

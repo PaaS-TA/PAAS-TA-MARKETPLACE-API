@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openpaas.paasta.marketplace.api.domain.Instance;
 import org.openpaas.paasta.marketplace.api.domain.InstanceCart;
 import org.openpaas.paasta.marketplace.api.domain.InstanceCartSpecification;
 import org.openpaas.paasta.marketplace.api.domain.Software;
@@ -69,6 +70,10 @@ public class InstanceCartController {
     public List<InstanceCart> getAllList(InstanceCartSpecification spec) {
         spec.setCreatedBy(SecurityUtils.getUserId());
         List<InstanceCart> instanceCartList = instanceCartService.getAllList(spec);
+
+        if (CollectionUtils.isEmpty(instanceCartList)) {
+    		return instanceCartList;
+    	}
 
         // softwarePlan의 ID정보 리스트 생성
     	List<Long> inSoftwarePlanId = new ArrayList<Long>();

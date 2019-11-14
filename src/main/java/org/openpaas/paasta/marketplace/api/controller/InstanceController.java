@@ -80,6 +80,9 @@ public class InstanceController {
         
         // 상품리스트
         List<Instance> instanceList = result.getContent();
+        if (CollectionUtils.isEmpty(instanceList)) {
+    		return result;
+    	}
         
         // softwarePlan의 ID정보 리스트 생성
     	List<Long> inSoftwarePlanId = new ArrayList<Long>();
