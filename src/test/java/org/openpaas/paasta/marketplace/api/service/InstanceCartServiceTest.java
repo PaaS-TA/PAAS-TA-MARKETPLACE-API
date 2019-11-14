@@ -102,6 +102,28 @@ public class InstanceCartServiceTest extends AbstractMockTest {
     }
 
     @Test
+    public void getUserAllCartListNull() {
+        given(instanceCartRepository.userAllCartList(any(String.class), any(String.class), any(String.class)))
+                .willReturn(null);
+
+        List<InstanceCart> result = instanceCartService.getUserAllCartList(userId, "20191107", "20191108");
+        assertEquals(0, result.size());
+
+        verify(instanceCartRepository).userAllCartList(any(String.class), any(String.class), any(String.class));
+    }
+    
+    @Test
+    public void getUserAllCartListEmpty() {
+        given(instanceCartRepository.userAllCartList(any(String.class), any(String.class), any(String.class)))
+                .willReturn(new ArrayList<>());
+
+        List<InstanceCart> result = instanceCartService.getUserAllCartList(userId, "20191107", "20191108");
+        assertEquals(0, result.size());
+
+        verify(instanceCartRepository).userAllCartList(any(String.class), any(String.class), any(String.class));
+    }
+    
+    @Test
     public void allDelete() {
         InstanceCartSpecification spec = new InstanceCartSpecification();
         spec.setCreatedBy(userId);
