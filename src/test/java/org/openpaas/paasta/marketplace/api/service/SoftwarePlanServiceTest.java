@@ -2,13 +2,16 @@ package org.openpaas.paasta.marketplace.api.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -217,6 +220,26 @@ public class SoftwarePlanServiceTest extends AbstractMockTest {
         assertEquals(Long.valueOf(7L), result);
 
         verify(softwarePlanRepository).minPricePerMonth(any(String.class));
+    }
+
+    @Test
+    public void getPricePerMonthList() {
+        List<Object[]> priceList = new ArrayList<>();
+        priceList.add(new String[] { "1", "2500" });
+        priceList.add(new String[] { "2", "3000" });
+        Map<String, Long> prices = new TreeMap<>();
+        prices.put("1", 2500L);
+        prices.put("2", 3000L);
+        List<Long> ids = new ArrayList<>();
+        ids.add(1L);
+        ids.add(2L);
+
+        given(softwarePlanRepository.pricePerMonthList(anyList())).willReturn(priceList);
+
+        Map<String, Long> result = softwarePlanService.getPricePerMonthList(ids);
+        assertEquals(prices, result);
+
+        verify(softwarePlanRepository).pricePerMonthList(anyList());
     }
 
 }
