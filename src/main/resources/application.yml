@@ -1,12 +1,36 @@
+server:
+  port: 8777
+
 spring:
   application:
-    name: kepri-saas-api
+    name: marketplace-api
+  security:
+    username: xxx
+    password: xxx
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/marketplace?characterEncoding=utf8
-    username: xxxx
-    password: xxxx
+    url: jdbc:mysql://xxx:xxx/marketplace?characterEncoding=utf8&autoReconnect=true
+    #url: jdbc:mysql://xxx:xxx/marketplace?characterEncoding=utf8&autoReconnect=true
+    validationQuery: SELECT 1
+    timeBetweenEvictionRunsMillis: 20000
+    maxActive: 10
+    maxIdle: 5
+    testWhileIdle: true
+    username: xxx
+    password: xxx
+    #password: xxx
+    initialization-mode: always
+    sql-script-encoding: UTF-8
+    data: classpath:/data.sql
+    schema: classpath:/schema.sql
+    
+    hikari:
+      idle-timeout: 600000 # 10분
+      max-lifetime: 1200000 # 20분
+      connection-timeout: 300000 # 5분
+      validation-timeout: 290000
   jpa:
+    database: mysql
     hibernate:
       ddl-auto: update
       use-new-id-generator-mappings: false
@@ -16,36 +40,103 @@ spring:
     serialization:
       fail-on-empty-beans: false
     default-property-inclusion: NON_NULL
-      
+#  batch:
+#    initialize-schema: always
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
 logging:
   level:
+    org.springframework.web: DEBUG
     org.springframework.web.client.RestTemplate: TRACE
+    org.openpaas.paasta.marketplace.api.config.LoggingInterceptor: DEBUG
+    org.hibernate.springframework.type: TRACE
+cf:
+  java:
+    client:
+      api:
+        uri: https://xxx
+  admin:
+    name: xxx
+    password: xxx
 
-server:
-  port: 8000
+# CloudFoundry API Url
+cloudfoundry:
+  cc:
+    api:
+      url: https://xxx
+      uaaUrl: https://xxx
+      sslSkipValidation: true
+      proxyUrl: ""
+      host: ".xxx"
+  # CloudFoundry Login information
+  user:
+    admin:
+      username: xxx
+      password: xxx
+    uaaClient:
+      clientId: xxx
+      clientSecret: xxx
+      adminClientId: xxx
+      adminClientSecret: xxx
+      loginClientId: xxx
+      loginClientSecret: xxx
+      skipSSLValidation: true
+  authorization: cf-Authorization
 
+
+market:
+  org:
+    name: "market-org"
+    guid: "xxx"
+  space:
+    name: "market-space"
+    guid: "xxx"
+    #name: "hrjin-test"
+    #guid: "xxx"
+  quota_guid: "xxx"
+  domain_guid: "xxx"
+  naming-type: "Auto"
+
+
+# 파일 업로드 Swift
+objectStorage:
+  swift:
+    tenantName: paasta-marketplace
+    username: xxx
+    password: xxx
+    authUrl: http://xxx:5000/v2.0/tokens
+    authMethod: keystone
+    preferredRegion: Public
+    container: marketplace-container
+
+ # 2019/06/12 비동기 처리를 위한 properties
 provisioning:
   pool-size: 3
   try-count: 3
   timeout: 3600000
-  ready-fixed-rate: 60000
+  ready-fixed-rate: 10000
   ready-initial-delay: 3000
-  progress-fixed-rate: 120000
+  progress-fixed-rate: 10000
   progress-initial-delay: 5000
-  timeout-fixed-rate: 300000
+  timeout-fixed-rate: 30000
   timeout-initial-delay: 1700
-  
+
 deprovisioning:
   pool-size: 3
   try-count: 3
   timeout: 3600000
-  ready-fixed-rate: 60000
+  ready-fixed-rate: 10000
   ready-initial-delay: 7000
-  progress-fixed-rate: 120000
+  progress-fixed-rate: 10000
   progress-initial-delay: 13000
-  timeout-fixed-rate: 300000
+  timeout-fixed-rate: 30000
   timeout-initial-delay: 1700
 
+
+# 개발 시에는 true(host 가 내 것일때만 스케쥴러 작동되게 해 놓음.)/ 배포 환경에서는 false
 task:
   execution:
     restrict-to-same-host: true

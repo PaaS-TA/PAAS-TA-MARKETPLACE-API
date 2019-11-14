@@ -61,12 +61,15 @@ public class PlatformServiceTest extends AbstractMockTest {
     boolean createApp;
     boolean getApp;
     boolean getAppAppGuid;
+    boolean servicesEmpty;
+    boolean envNull;
 
     boolean getServiceBrokersNull;
     boolean getServicePlansNull;
     boolean procStartApplicationNull;
+    boolean getServiceBindingsEmpty;
     boolean getAppClientV2Exception;
-    
+
     String cv2eErrorCode;
     String cv2eMessage;
     String cv2eDescription;
@@ -98,16 +101,19 @@ public class PlatformServiceTest extends AbstractMockTest {
         createApp = true;
         getApp = true;
         getAppAppGuid = true;
+        servicesEmpty = false;
+        envNull = false;
 
         getServiceBrokersNull = false;
         getServicePlansNull = false;
         procStartApplicationNull = false;
+        getServiceBindingsEmpty = false;
         getAppClientV2Exception = false;
 
         cv2eErrorCode = null;
         cv2eMessage = "";
         cv2eDescription = "";
-        
+
         updateAppRetry = false;
         getServiceBrokersRetry = false;
         getServicePlansRetry = false;
@@ -134,22 +140,31 @@ public class PlatformServiceTest extends AbstractMockTest {
         Map<String, Object> createMap = new TreeMap<>();
         createMap.put("appId", "x");
         List<String> services = new ArrayList<>();
-        services.add("myservice");
+        if (!servicesEmpty) {
+            services.add("myservice");
+        }
         Map<String, Object> env = new TreeMap<>();
         env.put("services", services);
-        createMap.put("env", env);
+        if (!envNull) {
+            createMap.put("env", env);
+        }
 
         ApplicationEntity applicationEntity = ApplicationEntity.builder().name("x").packageState("STAGED").build();
         ApplicationEntity applicationEntityNotStaged = ApplicationEntity.builder().name("x").packageState("UNKNOWN")
                 .build();
-        ServiceBrokerEntity serviceBrokerEntity = ServiceBrokerEntity.builder().name("myservice").build();
-        Metadata metadata = Metadata.builder().id("x").build();
-        ServiceBrokerResource serviceBrokerResource = ServiceBrokerResource.builder().metadata(metadata)
-                .entity(serviceBrokerEntity).build();
+        ServiceBrokerEntity serviceBrokerEntity1 = ServiceBrokerEntity.builder().name("myservice").build();
+        Metadata metadata1 = Metadata.builder().id("x").build();
+        ServiceBrokerResource serviceBrokerResource1 = ServiceBrokerResource.builder().metadata(metadata1)
+                .entity(serviceBrokerEntity1).build();
+        ServiceBrokerEntity serviceBrokerEntity2 = ServiceBrokerEntity.builder().name("yourservice").build();
+        Metadata metadata2 = Metadata.builder().id("x").build();
+        ServiceBrokerResource serviceBrokerResource2 = ServiceBrokerResource.builder().metadata(metadata2)
+                .entity(serviceBrokerEntity2).build();
         ListServiceBrokersResponse listServiceBrokersResponse = ListServiceBrokersResponse.builder()
-                .resource(serviceBrokerResource).build();
+                .resource(serviceBrokerResource1).resource(serviceBrokerResource2).build();
+
         ServicePlanEntity servicePlanEntity = ServicePlanEntity.builder().serviceId("x").build();
-        ServicePlanResource servicePlanResource = ServicePlanResource.builder().metadata(metadata)
+        ServicePlanResource servicePlanResource = ServicePlanResource.builder().metadata(metadata1)
                 .entity(servicePlanEntity).build();
         ListServicePlansResponse listServicePlansResponse = ListServicePlansResponse.builder()
                 .resource(servicePlanResource).build();
@@ -328,6 +343,20 @@ public class PlatformServiceTest extends AbstractMockTest {
     }
 
     @Test
+    public void provisionServicesEmpty() throws PlatformException {
+        servicesEmpty = true;
+
+        provision();
+    }
+
+    @Test
+    public void provisionEnvNully() throws PlatformException {
+        envNull = true;
+
+        provision();
+    }
+
+    @Test
     public void deprovision() throws PlatformException {
         Category category1 = category(1L, "category-01");
         Software software1 = software(1L, "software-01", category1);
@@ -349,6 +378,11 @@ public class PlatformServiceTest extends AbstractMockTest {
                 .build();
         ListApplicationServiceBindingsResponse listApplicationServiceBindingsResponse = ListApplicationServiceBindingsResponse
                 .builder().resource(serviceBindingResource).totalResults(1).build();
+        if (getServiceBindingsEmpty) {
+            listApplicationServiceBindingsResponse = ListApplicationServiceBindingsResponse.builder().totalResults(0)
+                    .build();
+        }
+
         RouteMappingEntity routeMappingEntity = RouteMappingEntity.builder().routeId("x").build();
         RouteMappingResource routeMappingResource = RouteMappingResource.builder().entity(routeMappingEntity).build();
         ListRouteMappingsResponse listRouteMappingsResponse = ListRouteMappingsResponse.builder()
@@ -369,7 +403,8 @@ public class PlatformServiceTest extends AbstractMockTest {
                 if (mark("getServiceBindingsRetry") <= 1) {
                     throw new RuntimeException();
                 }
-                return listApplicationServiceBindingsResponse;
+                return ListApplicationServiceBindingsResponse.builder().resource(serviceBindingResource).totalResults(1)
+                        .build();
             });
         }
         given(appService.getRouteMappingList(any(String.class))).willReturn(listRouteMappingsResponse);
@@ -442,7 +477,7 @@ public class PlatformServiceTest extends AbstractMockTest {
 
         deprovision();
     }
-    
+
     @Test(expected = PlatformException.class)
     public void deprovisionGetAppClientV2ExceptionError3() throws PlatformException {
         getAppClientV2Exception = true;
@@ -468,6 +503,13 @@ public class PlatformServiceTest extends AbstractMockTest {
     @Test
     public void deprovisionDeleteInstanceRetry() throws PlatformException {
         deleteInstanceRetry = true;
+
+        deprovision();
+    }
+
+    @Test
+    public void deprovisionGetServiceBindingsEmpty() throws PlatformException {
+        getServiceBindingsEmpty = true;
 
         deprovision();
     }
