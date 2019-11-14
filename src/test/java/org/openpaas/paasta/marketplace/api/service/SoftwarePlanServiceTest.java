@@ -242,4 +242,18 @@ public class SoftwarePlanServiceTest extends AbstractMockTest {
         verify(softwarePlanRepository).pricePerMonthList(anyList());
     }
 
+    @Test
+    public void getPricePerMonthListNull() {
+        List<Long> ids = new ArrayList<>();
+        ids.add(1L);
+        ids.add(2L);
+
+        given(softwarePlanRepository.pricePerMonthList(anyList())).willReturn(null);
+
+        Map<String, Long> result = softwarePlanService.getPricePerMonthList(ids);
+        assertEquals(0, result.size());
+
+        verify(softwarePlanRepository).pricePerMonthList(anyList());
+    }
+
 }
