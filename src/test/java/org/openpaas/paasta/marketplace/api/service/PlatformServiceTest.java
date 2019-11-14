@@ -86,6 +86,8 @@ public class PlatformServiceTest extends AbstractMockTest {
 
     boolean getApplicationNameExistsNotStaged;
 
+    String packageState;
+
     Map<String, Integer> marks;
 
     @Before
@@ -126,6 +128,8 @@ public class PlatformServiceTest extends AbstractMockTest {
 
         getApplicationNameExistsNotStaged = false;
 
+        packageState = "STAGED";
+
         marks = new TreeMap<>();
     }
 
@@ -149,7 +153,7 @@ public class PlatformServiceTest extends AbstractMockTest {
             createMap.put("env", env);
         }
 
-        ApplicationEntity applicationEntity = ApplicationEntity.builder().name("x").packageState("STAGED").build();
+        ApplicationEntity applicationEntity = ApplicationEntity.builder().name("x").packageState(packageState).build();
         ApplicationEntity applicationEntityNotStaged = ApplicationEntity.builder().name("x").packageState("UNKNOWN")
                 .build();
         ServiceBrokerEntity serviceBrokerEntity1 = ServiceBrokerEntity.builder().name("myservice").build();
@@ -182,7 +186,8 @@ public class PlatformServiceTest extends AbstractMockTest {
         given(appService.getApplicationNameExists(any(String.class))).willReturn(applicationEntity);
         if (getApplicationNameExistsRetry) {
             given(appService.getApplicationNameExists(any(String.class))).willAnswer(x -> {
-                if (mark("getApplicationNameExistsRetry") <= 1) {
+                // FIXME:
+                if (mark("getApplicationNameExistsRetry") <= 60) {
                     throw new RuntimeException();
                 }
                 return applicationEntity;
@@ -194,7 +199,8 @@ public class PlatformServiceTest extends AbstractMockTest {
         given(serviceService.getServiceBrokers()).willReturn(getServiceBrokersNull ? null : listServiceBrokersResponse);
         if (getServiceBrokersRetry) {
             given(serviceService.getServiceBrokers()).willAnswer(x -> {
-                if (mark("getServiceBrokersRetry") <= 1) {
+                // FIXME:
+                if (mark("getServiceBrokersRetry") <= 10) {
                     throw new RuntimeException();
                 }
                 return listServiceBrokersResponse;
@@ -204,7 +210,8 @@ public class PlatformServiceTest extends AbstractMockTest {
                 .willReturn(getServicePlansNull ? null : listServicePlansResponse);
         if (getServicePlansRetry) {
             given(serviceService.getServicePlans(any(String.class))).willAnswer(x -> {
-                if (mark("getServicePlansRetry") <= 1) {
+                // FIXME:
+                if (mark("getServicePlansRetry") <= 10) {
                     throw new RuntimeException();
                 }
                 return listServicePlansResponse;
@@ -216,7 +223,8 @@ public class PlatformServiceTest extends AbstractMockTest {
         if (updateAppRetry) {
             given(appService.updateApp(any(Map.class), any(String.class))).willAnswer(x -> {
                 Map<String, Object> result = new TreeMap<String, Object>();
-                result.put("result", mark("updateAppRetry") > 1 ? true : false);
+                // FIXME:
+                result.put("result", mark("updateAppRetry") > 10 ? true : false);
                 return result;
             });
         }
@@ -225,7 +233,8 @@ public class PlatformServiceTest extends AbstractMockTest {
         if (createServiceInstanceRetry) {
             given(serviceService.createServiceInstance(any(String.class), any(String.class), any(String.class)))
                     .willAnswer(x -> {
-                        if (mark("createServiceInstanceRetry") <= 1) {
+                        // FIXME:
+                        if (mark("createServiceInstanceRetry") <= 10) {
                             throw new RuntimeException();
                         }
                         return "x";
@@ -233,7 +242,8 @@ public class PlatformServiceTest extends AbstractMockTest {
         }
         if (createBindServiceRetry) {
             given(serviceService.createBindService(any(String.class), any(String.class))).willAnswer(x -> {
-                if (mark("createBindServiceRetry") <= 1) {
+                // FIXME:
+                if (mark("createBindServiceRetry") <= 10) {
                     throw new RuntimeException();
                 }
 
@@ -243,6 +253,13 @@ public class PlatformServiceTest extends AbstractMockTest {
 
         String appGuid = platformService.provision(instance1, isTested);
         assertNotNull(appGuid);
+    }
+
+    @Test(expected = PlatformException.class)
+    public void provisionPackageStateError() throws PlatformException {
+        packageState = "UNKNOWN";
+
+        provision();
     }
 
     @Test
@@ -300,21 +317,21 @@ public class PlatformServiceTest extends AbstractMockTest {
         provision();
     }
 
-    @Test
+    @Test(expected = PlatformException.class)
     public void provisionGetServiceBrokersRetry() throws PlatformException {
         getServiceBrokersRetry = true;
 
         provision();
     }
 
-    @Test
+    @Test(expected = PlatformException.class)
     public void provisionGetServicePlansRetry() throws PlatformException {
         getServicePlansRetry = true;
 
         provision();
     }
 
-    @Test
+    @Test(expected = PlatformException.class)
     public void provisionCreateServiceInstanceRetry() throws PlatformException {
         createServiceInstanceRetry = true;
 
@@ -328,7 +345,7 @@ public class PlatformServiceTest extends AbstractMockTest {
         provision();
     }
 
-    @Test
+    @Test(expected = PlatformException.class)
     public void provisionGetApplicationNameExistsRetry() throws PlatformException {
         getApplicationNameExistsRetry = true;
 
@@ -400,7 +417,8 @@ public class PlatformServiceTest extends AbstractMockTest {
         given(serviceService.getServiceBindings(any(String.class))).willReturn(listApplicationServiceBindingsResponse);
         if (getServiceBindingsRetry) {
             given(serviceService.getServiceBindings(any(String.class))).willAnswer(x -> {
-                if (mark("getServiceBindingsRetry") <= 1) {
+                // FIXME:
+                if (mark("getServiceBindingsRetry") <= 10) {
                     throw new RuntimeException();
                 }
                 return ListApplicationServiceBindingsResponse.builder().resource(serviceBindingResource).totalResults(1)
@@ -412,7 +430,8 @@ public class PlatformServiceTest extends AbstractMockTest {
                 .willReturn(new HashMap<String, Object>());
         if (unbindServiceRetry) {
             given(serviceService.unbindService(any(String.class), any(String.class))).willAnswer(x -> {
-                if (mark("unbindServiceRetry") <= 1) {
+                // FIXME:
+                if (mark("unbindServiceRetry") <= 10) {
                     throw new RuntimeException();
                 }
                 return new HashMap<Object, Object>();
@@ -421,7 +440,8 @@ public class PlatformServiceTest extends AbstractMockTest {
         given(serviceService.deleteInstance(any(String.class))).willReturn(new HashMap<String, Object>());
         if (deleteInstanceRetry) {
             given(serviceService.deleteInstance(any(String.class))).willAnswer(x -> {
-                if (mark("deleteInstanceRetry") <= 1) {
+                // FIXME:
+                if (mark("deleteInstanceRetry") <= 10) {
                     throw new RuntimeException();
                 }
                 return new HashMap<Object, Object>();
@@ -486,21 +506,21 @@ public class PlatformServiceTest extends AbstractMockTest {
         deprovision();
     }
 
-    @Test
+    @Test(expected = PlatformException.class)
     public void deprovisionGetServiceBindingsRetry() throws PlatformException {
         getServiceBindingsRetry = true;
 
         deprovision();
     }
 
-    @Test
+    @Test(expected = PlatformException.class)
     public void deprovisionUnbindServiceRetry() throws PlatformException {
         unbindServiceRetry = true;
 
         deprovision();
     }
 
-    @Test
+    @Test(expected = PlatformException.class)
     public void deprovisionDeleteInstanceRetry() throws PlatformException {
         deleteInstanceRetry = true;
 
