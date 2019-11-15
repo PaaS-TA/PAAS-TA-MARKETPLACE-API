@@ -400,7 +400,7 @@ public class PlatformService {
         		Thread.sleep(1000);
         	}
         }
-        log.info("언바인드 ::: " + unbindResult.toString());
+        log.info("언바인드 ::: " + unbindResult);
         
         // 3) 서비스 인스턴스 삭제
         Map deleteResult = null;
@@ -417,6 +417,6 @@ public class PlatformService {
         		Thread.sleep(1000);
         	}
         }        
-        log.info("서비스 인스턴스 ::: " + deleteResult.toString());
+        log.info("서비스 인스턴스 ::: " + deleteResult);
     }
 }

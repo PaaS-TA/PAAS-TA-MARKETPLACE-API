@@ -521,14 +521,14 @@ public class PlatformServiceTest extends AbstractMockTest {
         deprovision();
     }
 
-    @Test(expected = PlatformException.class)
+    @Test
     public void deprovisionUnbindServiceRetry() throws PlatformException {
         unbindServiceRetry = true;
 
         deprovision();
     }
 
-    @Test(expected = PlatformException.class)
+    @Test
     public void deprovisionDeleteInstanceRetry() throws PlatformException {
         deleteInstanceRetry = true;
 
