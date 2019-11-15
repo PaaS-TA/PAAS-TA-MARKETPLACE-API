@@ -17,6 +17,7 @@ import org.openpaas.paasta.marketplace.api.domain.InstanceCart;
 import org.openpaas.paasta.marketplace.api.domain.InstanceCartSpecification;
 import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.repository.InstanceCartRepository;
+import org.springframework.data.domain.Sort;
 
 public class InstanceCartServiceTest extends AbstractMockTest {
 
@@ -68,6 +69,29 @@ public class InstanceCartServiceTest extends AbstractMockTest {
     }
 
     @Test
+    public void getAllList2() {
+        InstanceCartSpecification spec = new InstanceCartSpecification();
+        Sort sort = Sort.by("id");
+
+        Category category1 = category(1L, "category-01");
+        Software software1 = software(1L, "software-01", category1);
+        InstanceCart instanceCart1 = instanceCart(1L, software1);
+        InstanceCart instanceCart2 = instanceCart(2L, software1);
+
+        List<InstanceCart> instanceCartList = new ArrayList<InstanceCart>();
+        instanceCartList.add(instanceCart1);
+        instanceCartList.add(instanceCart2);
+
+        given(instanceCartRepository.findAll(any(InstanceCartSpecification.class), any(Sort.class)))
+                .willReturn(instanceCartList);
+
+        List<InstanceCart> result = instanceCartService.getAllList(spec, sort);
+        assertEquals(instanceCartList, result);
+
+        verify(instanceCartRepository).findAll(any(InstanceCartSpecification.class), any(Sort.class));
+    }
+
+    @Test
     public void getUserAllCartList() {
         Category category1 = category(1L, "category-01");
         Software software1 = software(1L, "software-01", category1);
@@ -111,7 +135,7 @@ public class InstanceCartServiceTest extends AbstractMockTest {
 
         verify(instanceCartRepository).userAllCartList(any(String.class), any(String.class), any(String.class));
     }
-    
+
     @Test
     public void getUserAllCartListEmpty() {
         given(instanceCartRepository.userAllCartList(any(String.class), any(String.class), any(String.class)))
@@ -122,7 +146,7 @@ public class InstanceCartServiceTest extends AbstractMockTest {
 
         verify(instanceCartRepository).userAllCartList(any(String.class), any(String.class), any(String.class));
     }
-    
+
     @Test
     public void allDelete() {
         InstanceCartSpecification spec = new InstanceCartSpecification();
