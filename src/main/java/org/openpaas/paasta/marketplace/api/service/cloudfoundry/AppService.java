@@ -187,10 +187,11 @@ public class AppService extends Common {
 
             log.info("================= 앱 생성 END app name ::: {} - APP_GUID ::: {}" ,name, finalApplicationid);
 
-            return new HashMap<String, Object>() {{
-                put("appId", finalApplicationid);
-                put("env", resultMap);
-            }};
+            Map<String, Object> result = new HashMap<String, Object>();
+            result.put("appId", finalApplicationid);
+            result.put("env", resultMap);
+            
+            return result;
         } catch (Exception e) {
 
             log.info("Exception Class:::{}", e.getClass().getName());
@@ -202,10 +203,12 @@ public class AppService extends Common {
                 }
                 reactorCloudFoundryClient.applicationsV2().delete(DeleteApplicationRequest.builder().applicationId(applicationid).build()).block();
             }
-            return new HashMap<String, Object>() {{
-                put("RESULT", "fail");
-                put("msg", e.getMessage());
-            }};
+
+            Map<String, Object> result = new HashMap<String, Object>();
+            result.put("RESULT", "fail");
+            result.put("msg", e.getMessage());
+            
+            return result;
         } finally {
             if (file != null) {
                 file.delete();
@@ -426,9 +429,11 @@ public class AppService extends Common {
         } catch (Exception e) {
             log.info(e.toString());
         }
-        return new HashMap<String, Object>() {{
-            put("RESULT", "success");
-        }};
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("RESULT", "success");
+
+        return result;
     }
 
     public void timer(int waitTime) {
