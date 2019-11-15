@@ -187,7 +187,7 @@ public class AppService extends Common {
 
             log.info("================= 앱 생성 END app name ::: {} - APP_GUID ::: {}" ,name, finalApplicationid);
 
-            Map<String, Object> result = new HashMap<String, Object>();
+            Map<String, Object> result = new HashMap<>();
             result.put("appId", finalApplicationid);
             result.put("env", resultMap);
             
@@ -204,7 +204,7 @@ public class AppService extends Common {
                 reactorCloudFoundryClient.applicationsV2().delete(DeleteApplicationRequest.builder().applicationId(applicationid).build()).block();
             }
 
-            Map<String, Object> result = new HashMap<String, Object>();
+            Map<String, Object> result = new HashMap<>();
             result.put("RESULT", "fail");
             result.put("msg", e.getMessage());
             
