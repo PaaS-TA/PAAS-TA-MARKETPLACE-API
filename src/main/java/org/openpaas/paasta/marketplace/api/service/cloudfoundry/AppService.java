@@ -211,7 +211,8 @@ public class AppService extends Common {
             return result;
         } finally {
             if (file != null) {
-                file.delete();
+                boolean deleted = file.delete();
+                log.info("file: {}, deleted: {}", file, deleted);
             }
         }
     }
