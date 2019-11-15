@@ -14,6 +14,7 @@ import org.openpaas.paasta.marketplace.api.domain.Yn;
 import org.openpaas.paasta.marketplace.api.repository.InstanceCartRepository;
 import org.openpaas.paasta.marketplace.api.util.HostUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -48,6 +49,10 @@ public class InstanceCartService {
     
     public List<InstanceCart> getAllList(InstanceCartSpecification spec) {
         return instanceCartRepository.findAll(spec);
+    }
+    
+    public List<InstanceCart> getAllList(InstanceCartSpecification spec, Sort sort) {
+    	return instanceCartRepository.findAll(spec, sort);
     }
     
     public List<InstanceCart> getUserAllCartList(String userId, String usageStartDate, String usageEndDate) {

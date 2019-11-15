@@ -14,6 +14,7 @@ import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.service.InstanceCartService;
 import org.openpaas.paasta.marketplace.api.service.SoftwarePlanService;
 import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -140,10 +141,10 @@ public class InstanceCartController {
      * @return
      */
     @GetMapping("/page/list")
-    public List<InstanceCart> cartPageList(InstanceCartSpecification spec) {
+    public List<InstanceCart> cartPageList(InstanceCartSpecification spec, Sort sort) {
     	// 장바구니 상품 리스트 조회
         spec.setCreatedBy(SecurityUtils.getUserId());
-        List<InstanceCart> instanceCartList = instanceCartService.getAllList(spec);
+        List<InstanceCart> instanceCartList = instanceCartService.getAllList(spec, sort);
 
         if (CollectionUtils.isEmpty(instanceCartList)) {
         	return instanceCartList;
