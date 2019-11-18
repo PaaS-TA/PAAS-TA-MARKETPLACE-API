@@ -134,5 +134,9 @@ public class SoftwareService {
     public List<Software> getSwByCreatedBy(String providerId) {
         return softwareRepository.findByCreatedBy(providerId);
     }
+    
+    public Integer getSoldSoftwareCount(String userId, String status) {
+    	return softwareRepository.getSoldSoftwareCount(userId, status);
+    }
 
 }

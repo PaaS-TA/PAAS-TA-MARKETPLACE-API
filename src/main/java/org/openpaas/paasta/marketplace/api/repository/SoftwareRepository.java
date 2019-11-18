@@ -18,4 +18,18 @@ public interface SoftwareRepository extends JpaRepository<Software, Long>, JpaSp
     int clearCategory(@Param("categoryId") Long categoryId);
 
     List<Software> findByCreatedBy(String providerId);
+    
+    @Query(value="SELECT  COUNT(0) AS soldSwCount \n"
+	    		+"FROM    ( \n"
+	    		+"            SELECT  it.software_id \n"
+	    		+"            FROM    software so \n"
+	    		+"                    INNER JOIN instance it \n"
+	    		+"                        ON (it.software_id = so.id) \n"
+	    		+"            WHERE   1=1 \n"
+	    		+"            AND     so.status = :status \n"
+	    		+"            AND     so.created_by = :userId \n"
+	    		+"            GROUP BY it.software_id \n"
+	    		+"        ) t \n"
+	, nativeQuery=true)
+    public Integer getSoldSoftwareCount(@Param("userId") String userId, @Param("status") String status);
 }

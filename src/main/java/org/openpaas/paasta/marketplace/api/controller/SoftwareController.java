@@ -108,5 +108,16 @@ public class SoftwareController {
 
         return softwareService.getHistoryList(spec, sort);
     }
+    
+    /**
+     * 판매자의 상태별 상품 갯수 조회
+     * @param userId
+     * @param status
+     * @return
+     */
+    @GetMapping("/soldSoftwareCount")
+    public Integer soldSoftwareCount(@RequestParam(name="userId") String userId, @RequestParam(name="status") String status) {
+    	return softwareService.getSoldSoftwareCount(userId, status);
+    }
 
 }
