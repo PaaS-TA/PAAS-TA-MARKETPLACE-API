@@ -6,6 +6,8 @@ import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.Stats;
 import org.openpaas.paasta.marketplace.api.domain.Stats.Term;
 import org.openpaas.paasta.marketplace.api.repository.StatsRepository;
+import org.openpaas.paasta.marketplace.api.repository.query.StatsQuery;
+import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -23,7 +25,8 @@ import java.util.stream.Collectors;
 public class StatsService {
 
     private final StatsRepository statsRepository;
-
+    private final StatsQuery statsQuery;
+    
     // 총 등록된 상품 수
     public long countOfTotalSws() {
         return statsRepository.countOfTotalSws();
@@ -441,4 +444,31 @@ public class StatsService {
 
         return data;
     }
+    
+    /**
+     * Seller 요금통계 정보조회 총카운터
+     * @param userId
+     * @param categoryId
+     * @param srchDate
+     * @param page
+     * @param size
+     * @return
+     */
+    public Integer querySoftwareSellPriceTotalCount(String userId, String categoryId, String srchDate, Integer page, Integer size) {
+    	return statsQuery.querySoftwareSellPriceTotalCount(userId, categoryId, srchDate, page, size);
+    }
+    
+    /**
+     * Seller 요금통계 정보조회 리스트
+     * @param userId
+     * @param categoryId
+     * @param srchDate
+     * @param page
+     * @param size
+     * @return
+     */
+    public List<Map<String, Object>> querySoftwareSellPriceList(String userId, String categoryId, String srchDate, Integer page, Integer size) {
+    	return statsQuery.querySoftwareSellPriceList(userId, categoryId, srchDate, page, size);
+    }
+    
 }

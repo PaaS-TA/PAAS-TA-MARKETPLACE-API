@@ -13,6 +13,7 @@ import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
 import org.openpaas.paasta.marketplace.api.domain.Stats;
 import org.openpaas.paasta.marketplace.api.domain.Stats.Term;
+import org.openpaas.paasta.marketplace.api.repository.query.StatsQuery;
 import org.openpaas.paasta.marketplace.api.service.InstanceService;
 import org.openpaas.paasta.marketplace.api.service.SoftwareService;
 import org.openpaas.paasta.marketplace.api.service.StatsService;
@@ -20,7 +21,6 @@ import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -200,6 +200,38 @@ public class StatsController {
         long count = instanceService.getSoftwareUsagePriceTotal(softwareId);
 
         return count;
+    }
+    
+    /**
+     * Seller 요금통계 정보조회 리스트
+     * @param categoryId
+     * @param page
+     * @param size
+     * @param srchDate
+     * @return
+     */
+    @GetMapping("/softwareSellPriceList")
+    public List<Map<String,Object>> getsoftwareSellPriceList(@RequestParam(name="categoryId",required=false) String categoryId
+    														,@RequestParam(name="page") Integer page
+    														,@RequestParam(name="size") Integer size
+    														,@RequestParam(name="srchDate",required=false) String srchDate) {
+    	return statsService.querySoftwareSellPriceList(SecurityUtils.getUserId(), categoryId, srchDate, page, size);
+    }
+    
+    /**
+     * Seller 요금통계 정보조회 총카운트
+     * @param categoryId
+     * @param page
+     * @param size
+     * @param srchDate
+     * @return
+     */
+    @GetMapping("/softwareSellPriceTotalCount")
+    public Integer getsoftwareSellPriceTotalCount(@RequestParam(name="categoryId",required=false) String categoryId
+    		,@RequestParam(name="page") Integer page
+    		,@RequestParam(name="size") Integer size
+    		,@RequestParam(name="srchDate",required=false) String srchDate) {
+    	return statsService.querySoftwareSellPriceTotalCount(SecurityUtils.getUserId(), categoryId, srchDate, page, size);
     }
 
 }
