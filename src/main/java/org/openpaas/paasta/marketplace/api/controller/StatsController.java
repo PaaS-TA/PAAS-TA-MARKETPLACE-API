@@ -13,7 +13,6 @@ import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
 import org.openpaas.paasta.marketplace.api.domain.Stats;
 import org.openpaas.paasta.marketplace.api.domain.Stats.Term;
-import org.openpaas.paasta.marketplace.api.repository.query.StatsQuery;
 import org.openpaas.paasta.marketplace.api.service.InstanceService;
 import org.openpaas.paasta.marketplace.api.service.SoftwareService;
 import org.openpaas.paasta.marketplace.api.service.StatsService;
@@ -232,6 +231,24 @@ public class StatsController {
     		,@RequestParam(name="size") Integer size
     		,@RequestParam(name="srchDate",required=false) String srchDate) {
     	return statsService.querySoftwareSellPriceTotalCount(SecurityUtils.getUserId(), categoryId, srchDate, page, size);
+    }
+
+    /**
+     * 사용자별 구매 퍼센트 통계
+     * @return
+     */
+    @GetMapping("/purchaserPercent")
+    public List<Map<String,Object>> purchaserPercent() {
+    	return statsService.getPurchaserPercent();
+    }
+    
+    /**
+     * 월별 상품구매 통계
+     * @return
+     */
+    @GetMapping("/purchaseTransitionMonth")
+    public List<Map<String,Object>> purchaseTransitionMonth() {
+    	return statsService.getPurchaseTransitionMonth(SecurityUtils.getUserId());
     }
 
 }

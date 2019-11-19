@@ -1,23 +1,29 @@
 package org.openpaas.paasta.marketplace.api.service;
 
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
+
 import org.openpaas.paasta.marketplace.api.domain.Instance;
 import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.Stats;
 import org.openpaas.paasta.marketplace.api.domain.Stats.Term;
 import org.openpaas.paasta.marketplace.api.repository.StatsRepository;
 import org.openpaas.paasta.marketplace.api.repository.query.StatsQuery;
-import org.openpaas.paasta.marketplace.api.util.SecurityUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import javax.transaction.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
@@ -470,5 +476,22 @@ public class StatsService {
     public List<Map<String, Object>> querySoftwareSellPriceList(String userId, String categoryId, String srchDate, Integer page, Integer size) {
     	return statsQuery.querySoftwareSellPriceList(userId, categoryId, srchDate, page, size);
     }
+ 
+    /**
+     * 사용자별 구매 퍼센트 통계
+     * @param userId
+     * @return
+     */
+    public List<Map<String, Object>> getPurchaserPercent() {
+    	return statsQuery.queryPurchaserPercent();
+    }
     
+    /**
+     * 월별 상품구매 통계
+     * @param userId
+     * @return
+     */
+    public List<Map<String, Object>> getPurchaseTransitionMonth(String userId) {
+    	return statsQuery.queryPurchaseTransitionMonth(userId);
+    }
 }
