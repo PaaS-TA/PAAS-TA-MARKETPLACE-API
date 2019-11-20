@@ -142,7 +142,7 @@ public class AdminSoftwareController {
 
         testSoftwareInfo.setName(name);
         testSoftwareInfo.setSoftwareId(software.getId());
-        testSoftwareInfo.setPlanGuid(planId);
+        testSoftwareInfo.setSoftwarePlanId(planId);
 
         String appGuid = null;
 

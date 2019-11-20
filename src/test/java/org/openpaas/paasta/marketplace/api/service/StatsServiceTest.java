@@ -21,6 +21,7 @@ import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.Stats;
 import org.openpaas.paasta.marketplace.api.domain.Stats.Term;
 import org.openpaas.paasta.marketplace.api.repository.StatsRepository;
+import org.openpaas.paasta.marketplace.api.repository.query.StatsQuery;
 import org.springframework.data.domain.Pageable;
 
 public class StatsServiceTest extends AbstractMockTest {
@@ -30,11 +31,14 @@ public class StatsServiceTest extends AbstractMockTest {
     @Mock
     StatsRepository statsRepository;
 
+    @Mock
+    StatsQuery statsQuery;
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
 
-        statsService = new StatsService(statsRepository);
+        statsService = new StatsService(statsRepository, statsQuery);
     }
 
     @Test
