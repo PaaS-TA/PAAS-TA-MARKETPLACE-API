@@ -491,7 +491,16 @@ public class StatsService {
      * @param userId
      * @return
      */
-    public List<Map<String, Object>> getPurchaseTransitionMonth(String userId) {
-    	return statsQuery.queryPurchaseTransitionMonth(userId);
+    public List<Map<String, Object>> getPurchaseTransitionMonth() {
+    	return statsQuery.queryPurchaseTransitionMonth();
+    }
+    
+    /**
+     * 앱사용 사용자 추이
+     * @param userId
+     * @return
+     */
+    public List<Map<String, Object>> getUsageTransition() {
+    	return statsQuery.queryUsageTransition();
     }
 }

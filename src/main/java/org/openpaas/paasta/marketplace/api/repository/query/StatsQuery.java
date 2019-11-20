@@ -233,7 +233,7 @@ public class StatsQuery<T> {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Map<String,Object>> queryPurchaseTransitionMonth(String userId) {
+	public List<Map<String,Object>> queryPurchaseTransitionMonth() {
 		// 조회 결과값 반환 객체 생성
 		List<Map<String,Object>> excuteResult = new ArrayList<Map<String,Object>>();
 		
@@ -276,6 +276,78 @@ public class StatsQuery<T> {
 			tempRowValues = new HashMap<String,Object>();
 			tempRowValues.put("yearMonth", arrInfo[0]);
 			tempRowValues.put("purchaseCount", arrInfo[1]);
+			excuteResult.add(tempRowValues);
+		}
+		
+		return excuteResult;
+	}
+	
+	/**
+	 * 앱사용 사용자 추이
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Map<String,Object>> queryUsageTransition() {
+		// 조회 결과값 반환 객체 생성
+		List<Map<String,Object>> excuteResult = new ArrayList<Map<String,Object>>();
+		
+		// Query 생성
+		StringBuffer excQuery = new StringBuffer();
+		excQuery.append("SELECT  cl.yearMonth AS yearMonth \n");
+		excQuery.append("        ,IFNULL(r.usageUserCount,0) AS usageUserCount \n");
+		excQuery.append("FROM    ( \n");
+		excQuery.append("            SELECT  DATE_FORMAT(dt, '%Y-%m-01') AS yearMonth \n");
+		excQuery.append("            FROM    calendar \n");
+		excQuery.append("            WHERE   1=1 \n");
+		excQuery.append("            AND     ym BETWEEN DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -11 MONTH), '%Y%m') \n");
+		excQuery.append("                              AND DATE_FORMAT(NOW(), '%Y%m') \n");
+		excQuery.append("            GROUP BY ym \n");
+		excQuery.append("        ) cl \n");
+		excQuery.append("        LEFT JOIN ( \n");
+		excQuery.append("            SELECT  us.yearMonth \n");
+		excQuery.append("                    ,COUNT(0) AS usageUserCount \n");
+		excQuery.append("            FROM    ( \n");
+		excQuery.append("                        SELECT  cl.yearMonth  \n");
+		excQuery.append("                                ,it.created_by AS userId \n");
+		excQuery.append("                        FROM    software so  \n");
+		excQuery.append("                                INNER JOIN instance it \n");
+		excQuery.append("                                    ON (it.software_id = so.id) \n");
+		excQuery.append("                                CROSS JOIN (  \n");
+		excQuery.append("                                    SELECT  DATE_FORMAT(dt, '%Y-%m-01') AS yearMonth \n");
+		excQuery.append("                                            ,ym AS compareDate  \n");
+		excQuery.append("                                    FROM    calendar \n");
+		excQuery.append("                                    WHERE   1=1 \n");
+		excQuery.append("                                    AND     ym BETWEEN DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -11 MONTH), '%Y%m') \n");
+		excQuery.append("                                                   AND DATE_FORMAT(NOW(), '%Y%m')  \n");
+		excQuery.append("                                    GROUP BY ym  \n");
+		excQuery.append("                                ) cl \n");
+		excQuery.append("                        WHERE   1=1 \n");
+		excQuery.append("                        AND     1 = (CASE WHEN DATE_FORMAT(it.usage_start_date, '%Y%m') <= cl.compareDate \n");
+		excQuery.append("                                           AND DATE_FORMAT(IFNULL(it.usage_end_date, NOW()), '%Y%m') >= cl.compareDate \n");
+		excQuery.append("                                          THEN 1 \n");
+		excQuery.append("                                          ELSE 0 \n");
+		excQuery.append("                                    END) \n");
+		excQuery.append("                        AND     DATE_FORMAT(it.usage_start_date, '%Y%m') BETWEEN DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -11 MONTH), '%Y%m')  \n");
+		excQuery.append("                                                                             AND DATE_FORMAT(NOW(), '%Y%m') \n");
+		excQuery.append("                        GROUP BY cl.yearMonth, it.created_by \n");
+		excQuery.append("                    ) us \n");
+		excQuery.append("            GROUP BY us.yearMonth \n");
+		excQuery.append("        ) r \n");
+		excQuery.append("        ON (r.yearMonth = cl.yearMonth) \n");
+		excQuery.append("ORDER BY cl.yearMonth \n");		
+		// 쿼리생성
+		Query typedQuery = entityManager.createNativeQuery(excQuery.toString());
+		
+		// 결과 값 Binding
+		List<Object[]> resultList = typedQuery.getResultList();
+		if (CollectionUtils.isEmpty(resultList)) {
+			return excuteResult;
+		}
+		Map<String,Object> tempRowValues = null;
+		for (Object[] arrInfo : resultList) {
+			tempRowValues = new HashMap<String,Object>();
+			tempRowValues.put("yearMonth", arrInfo[0]);
+			tempRowValues.put("usageUserCount", arrInfo[1]);
 			excuteResult.add(tempRowValues);
 		}
 		

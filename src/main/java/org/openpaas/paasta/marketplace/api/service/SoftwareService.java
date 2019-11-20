@@ -51,25 +51,53 @@ public class SoftwareService {
 
 
     public Software update(Software software, String softwarePlaneOriginalList) {
-
         Software saved = softwareRepository.findById(software.getId()).get();
-
-        saved.setName(software.getName());
-        saved.setCategory(software.getCategory());
-        saved.setApp(software.getApp());
-        saved.setAppPath(software.getAppPath());
-        saved.setManifest(software.getManifest());
-        saved.setManifestPath(software.getManifestPath());
+        
+        if (software.getName() != null) {
+        	saved.setName(software.getName());
+        }
+        if (software.getCategory() != null) {
+        	saved.setCategory(software.getCategory());
+        }
+        if (software.getApp() != null) {
+        	saved.setApp(software.getApp());
+        }
+        if (software.getAppPath() != null) {
+        	saved.setAppPath(software.getAppPath());
+        }
+        if (software.getManifest() != null) {
+        	saved.setManifest(software.getManifest());
+        }
+        if (software.getManifestPath() != null) {
+        	saved.setManifestPath(software.getManifestPath());
+        }
+        if (software.getScreenshotList() != null) {
+        	saved.setScreenshotList(software.getScreenshotList());
+        }
+        if (software.getSummary() != null) {
+        	saved.setSummary(software.getSummary());
+        }
+        if (software.getDescription() != null) {
+        	saved.setDescription(software.getDescription());
+        }
+        if (software.getType() != null) {
+        	saved.setType(software.getType());
+        }
+        if (software.getPricePerMonth() != null) {
+        	saved.setPricePerMonth(software.getPricePerMonth());
+        }
+        if (software.getVersion() != null) {
+        	saved.setVersion(software.getVersion());
+        }
+        if (software.getInUse() != null) {
+        	saved.setInUse(software.getInUse());
+        }
+        if (software.getSoftwarePlanList() != null) {
+        	saved.setSoftwarePlanList(software.getSoftwarePlanList());
+        }
         saved.setIcon(software.getIcon());
-        saved.setIconPath(software.getIconPath());
-        saved.setScreenshotList(software.getScreenshotList());
-        saved.setSummary(software.getSummary());
-        saved.setDescription(software.getDescription());
-        saved.setType(software.getType());
-        saved.setPricePerMonth(software.getPricePerMonth());
-        saved.setVersion(software.getVersion());
-        saved.setInUse(software.getInUse());
-        saved.setSoftwarePlanList(software.getSoftwarePlanList());
+        saved.setIconPath(software.getIconPath());        
+        softwareRepository.save(saved);
 
         SoftwareHistory history = new SoftwareHistory();
         history.setSoftware(saved);

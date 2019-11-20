@@ -76,14 +76,16 @@ public class SoftwareController {
     }
 
     @PutMapping("/{id}")
-    public Software update(@PathVariable @NotNull Long id, @RequestParam(name ="softwarePlaneOriginalList") String softwarePlaneOriginalList,
+    public Software update(@PathVariable @NotNull Long id, @RequestParam(name ="softwarePlaneOriginalList", required=false) String softwarePlaneOriginalList,
             @NotNull @Validated(Software.Update.class) @RequestBody Software software, BindingResult bindingResult)
             throws BindException {
         System.out.println("[Init]: " + software.toString());
         List<SoftwarePlan> softwarePlans =software.getSoftwarePlanList();
 
-        for (SoftwarePlan softwarePlan:softwarePlans) {
-            System.out.println("[softwarePlan.toString() For] " + softwarePlan.toString());
+        if (softwarePlans != null) {
+	        for (SoftwarePlan softwarePlan:softwarePlans) {
+	            System.out.println("[softwarePlan.toString() For] " + softwarePlan.toString());
+	        }
         }
 
         Software saved = softwareService.get(id);

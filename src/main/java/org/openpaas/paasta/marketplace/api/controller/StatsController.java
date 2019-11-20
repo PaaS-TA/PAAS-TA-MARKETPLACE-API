@@ -248,7 +248,16 @@ public class StatsController {
      */
     @GetMapping("/purchaseTransitionMonth")
     public List<Map<String,Object>> purchaseTransitionMonth() {
-    	return statsService.getPurchaseTransitionMonth(SecurityUtils.getUserId());
+    	return statsService.getPurchaseTransitionMonth();
+    }
+    
+    /**
+     * 앱사용 사용자 추이
+     * @return
+     */
+    @GetMapping("/usageTransition")
+    public List<Map<String,Object>> usageTransition() {
+    	return statsService.getUsageTransition();
     }
 
 }
