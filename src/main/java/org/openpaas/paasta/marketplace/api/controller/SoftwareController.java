@@ -79,7 +79,6 @@ public class SoftwareController {
     public Software update(@PathVariable @NotNull Long id, @RequestParam(name ="softwarePlaneOriginalList", required=false) String softwarePlaneOriginalList,
             @NotNull @Validated(Software.Update.class) @RequestBody Software software, BindingResult bindingResult)
             throws BindException {
-        System.out.println("[Init]: " + software.toString());
         List<SoftwarePlan> softwarePlans =software.getSoftwarePlanList();
 
         if (softwarePlans != null) {
