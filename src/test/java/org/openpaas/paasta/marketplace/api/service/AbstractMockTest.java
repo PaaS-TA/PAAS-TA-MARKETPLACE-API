@@ -173,7 +173,7 @@ public abstract class AbstractMockTest {
         testSoftwareInfo.setName("name-" + id);
         testSoftwareInfo.setSoftwareId(softwareId);
         testSoftwareInfo.setAppGuid("APP_GUID-" + id);
-        testSoftwareInfo.setPlanGuid(planGuid);
+        testSoftwareInfo.setSoftwarePlanId(planGuid);
         testSoftwareInfo.setCreatedDate(current);
 
         return testSoftwareInfo;
