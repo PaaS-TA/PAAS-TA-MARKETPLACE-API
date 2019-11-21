@@ -191,7 +191,7 @@ public class StatsQuery<T> {
 		excQuery.append("SELECT  it.created_by AS userId \n");
 		excQuery.append("        ,COUNT(0) AS instanceCount \n");
 		excQuery.append("        ,cj.totalInstanceCount \n");
-		excQuery.append("        ,(COUNT(0) / MIN(cj.totalInstanceCount)) * 100 AS purchaserPercent \n");
+		excQuery.append("        ,ROUND((COUNT(0) / MIN(cj.totalInstanceCount)) * 100, 1) AS purchaserPercent \n");
 		excQuery.append("FROM    instance it \n");
 		excQuery.append("        CROSS JOIN ( \n");
 		excQuery.append("            SELECT  COUNT(0) AS totalInstanceCount \n");
