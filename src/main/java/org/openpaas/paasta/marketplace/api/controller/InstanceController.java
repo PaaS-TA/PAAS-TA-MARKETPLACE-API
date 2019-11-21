@@ -41,7 +41,38 @@ public class InstanceController {
 
     @GetMapping("/page")
     public Page<Instance> getPage(InstanceSpecification spec, Pageable pageable) {
-        return instanceService.getPage(spec, pageable);
+    	// 상품리스트 조회
+    	Page<Instance> result = instanceService.getPage(spec, pageable);
+        
+        // 상품리스트
+        List<Instance> instanceList = result.getContent();
+        if (CollectionUtils.isEmpty(instanceList)) {
+    		return result;
+    	}
+        
+        // softwarePlan의 ID정보 리스트 생성
+    	List<Long> inSoftwarePlanId = new ArrayList<Long>();
+    	for (Instance info : instanceList) {
+    		inSoftwarePlanId.add(Long.valueOf(info.getSoftwarePlanId()));
+    	}
+
+    	// softwarePlan의 가격정보 조회
+    	Map<String,Long> planInfoMap = softwarePlanService.getPricePerMonthList(inSoftwarePlanId);
+    	if (CollectionUtils.isEmpty(planInfoMap)) {
+    		return result;
+    	}
+    	
+    	// 상품정보에  Plan정보 설정
+    	Long pricePerMonth = 0L;
+		for (Instance info : instanceList) {
+			pricePerMonth = planInfoMap.get(info.getSoftwarePlanId());
+			if (pricePerMonth != null) {
+				info.getSoftware().setSoftwarePlanAmtMonth(pricePerMonth);
+				info.setSoftwarePlanAmtMonth(pricePerMonth);
+			}
+    	}
+    	
+    	return result;
     }
 
     @GetMapping("/my/page")
@@ -67,16 +98,6 @@ public class InstanceController {
     public Page<Instance> getMyTotalPage(InstanceSpecification spec, Pageable pageable) {
         spec.setCreatedBy(SecurityUtils.getUserId());
         Page<Instance> result = instanceService.getPage(spec, pageable);
-        
-        // softwarePlan의 가격정보 조회
-//        List<Instance> instanceList = result.getContent();
-//        Long pricePerMonth = 0L;
-//        for (Instance instance : instanceList) {
-//        	pricePerMonth = softwarePlanService.getPricePerMonth(String.valueOf(instance.getSoftware().getId()), instance.getSoftwarePlanId());
-////        	instance.getSoftware().setPricePerMonth(softwarePlanService.getPricePerMonth(String.valueOf(instance.getSoftware().getId()), instance.getSoftwarePlanId()));
-//        	instance.getSoftware().setSoftwarePlanAmtMonth(pricePerMonth);
-//        	instance.setSoftwarePlanAmtMonth(pricePerMonth);
-//        }
         
         // 상품리스트
         List<Instance> instanceList = result.getContent();
@@ -108,12 +129,6 @@ public class InstanceController {
         
         return result;
     }
-
-//    @GetMapping("/my/page/month")
-//    public Page<Instance> getMyMonth(@RequestParam LocalDateTime usageStartDate, @RequestParam LocalDateTime usageEndDate, Pageable pageable) {
-//        //spec.setCreatedBy(SecurityUtils.getUserId());
-//        return instanceService.getPage2(SecurityUtils.getUserId(), usageStartDate, usageEndDate, pageable);
-//    }
 
     @GetMapping("/{id}")
     public Instance get(@NotNull @PathVariable Long id) {
