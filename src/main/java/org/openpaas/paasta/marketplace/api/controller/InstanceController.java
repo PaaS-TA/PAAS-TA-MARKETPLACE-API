@@ -155,9 +155,13 @@ public class InstanceController {
     }
     
     @GetMapping("/usagePriceTotal")
-    public Long usagePriceTotal(@RequestParam(name = "usageStartDate", required = false) String usageStartDate
+    public Long usagePriceTotal(@RequestParam(name = "userId", required = false) String userId
+    							,@RequestParam(name = "usageStartDate", required = false) String usageStartDate
     							,@RequestParam(name = "usageEndDate", required = false) String usageEndDate) throws BindException {
-    	return instanceService.usagePriceTotal(SecurityUtils.getUserId(), usageStartDate, usageEndDate);
+    	if (StringUtils.isBlank(userId)) {
+    		userId = SecurityUtils.getUserId();
+    	}
+    	return instanceService.usagePriceTotal(userId, usageStartDate, usageEndDate);
     }
 
     @GetMapping("/pricePerInstanceList")

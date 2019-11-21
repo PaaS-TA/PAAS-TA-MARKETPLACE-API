@@ -333,7 +333,8 @@ public class InstanceService {
      * @return
      */
     public Long usagePriceTotal(String userId, String usageStartDate, String usageEndDate) {
-    	return instanceRepository.usagePriceTotal(userId, usageStartDate, usageEndDate);
+    	Long result = instanceRepository.usagePriceTotal(userId, usageStartDate, usageEndDate); 
+    	return (result == null ? 0 : result);
     }
 
     /**
