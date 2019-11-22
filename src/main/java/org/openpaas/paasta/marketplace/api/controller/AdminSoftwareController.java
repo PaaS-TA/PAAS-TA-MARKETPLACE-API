@@ -211,7 +211,7 @@ public class AdminSoftwareController {
      * @param testFailedAppId
      * @return
      */
-    @DeleteMapping("testFailed/app/{testFailedAppId}")
+    @DeleteMapping("/testFailed/app/{testFailedAppId}")
     public Long deleteDeployTestFailedApp(@PathVariable Long testFailedAppId) {
     	long deleteCount = 1;
     	
@@ -225,4 +225,13 @@ public class AdminSoftwareController {
     	return deleteCount;
     }
 
+    /**
+     * 카테고리를 사용하고 있는 소프트웨어 카운트
+     * @param categoryid
+     * @return
+     */
+    @GetMapping("/softwareUsedCategoryCount/{categoryid}")
+    public Long softwareUsedCategoryCount(@PathVariable Long categoryid) {
+    	return softwareService.getSoftwareUsedCategoryCount(categoryid);
+    }
 }

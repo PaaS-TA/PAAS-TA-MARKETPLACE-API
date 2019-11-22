@@ -166,5 +166,14 @@ public class SoftwareService {
     public Integer getSoldSoftwareCount(String userId, String status) {
     	return softwareRepository.getSoldSoftwareCount(userId, status);
     }
+    
+    /**
+     * 카테고리를 사용하고 있는 소프트웨어 카운트
+     * @param categoryId
+     * @return
+     */
+    public Long getSoftwareUsedCategoryCount(Long categoryId) {
+    	return softwareRepository.getSoftwareUsedCategoryCount(categoryId);
+    }
 
 }

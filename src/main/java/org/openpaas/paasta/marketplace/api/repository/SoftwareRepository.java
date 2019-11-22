@@ -32,4 +32,11 @@ public interface SoftwareRepository extends JpaRepository<Software, Long>, JpaSp
 	    		+"        ) t \n"
 	, nativeQuery=true)
     public Integer getSoldSoftwareCount(@Param("userId") String userId, @Param("status") String status);
+    
+    @Query(value="SELECT  COUNT(0) AS usedCount \n"
+	    		+"FROM    software \n"
+	    		+"WHERE   1=1 \n"
+	    		+"AND     category_id = :categoryId \n"
+	, nativeQuery=true)
+    public Long getSoftwareUsedCategoryCount(@Param("categoryId") Long categoryId);
 }
