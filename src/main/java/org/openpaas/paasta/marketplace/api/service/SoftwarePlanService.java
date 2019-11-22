@@ -47,7 +47,6 @@ public class SoftwarePlanService {
     }
 
     public SoftwarePlan update(SoftwarePlan softwarePlan) {
-        System.out.println(">> update Init");
         SoftwarePlan saved = softwarePlanRepository.findBySoftwareId(softwarePlan.getSoftwareId());
         saved.setName(softwarePlan.getName());
         saved.setId(softwarePlan.getId());
@@ -59,7 +58,6 @@ public class SoftwarePlanService {
         saved.setDiskAmt(softwarePlan.getDiskAmt());
         saved.setInUse(softwarePlan.getInUse());
 
-        System.out.println(">> save" + saved.toString());
         return saved;
     }
 

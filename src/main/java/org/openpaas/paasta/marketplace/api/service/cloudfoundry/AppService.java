@@ -95,53 +95,26 @@ public class AppService extends Common {
             Integer instance = null;
             Integer diskSize;
             String buildPack = null;
-
-//            if(resultMap.containsKey("memory")){
-//                memorySize = Integer.valueOf(resultMap.get("memory").toString().replaceAll("[^0-9]", ""));
-//
-//                if(resultMap.get("memory").toString().toLowerCase().contains("g")){
-//                    memorySize = memorySize * 1024;
-//                }
-//            }
-//
-//            if(resultMap.containsKey("disk_quota")){
-//                diskSize = Integer.valueOf(resultMap.get("disk_quota").toString().replaceAll("[^0-9]", ""));
-//
-//                if(resultMap.get("disk_quota").toString().toLowerCase().contains("g")){
-//                    diskSize = diskSize * 1024;
-//                }
-//            }
-
             String reqExp = "\\s*[a-zA-Z]+";
             String[] aa = requestedMemorySize.split(reqExp);
-            System.out.println("aa :: " + aa[0]);
             double bbb = Double.parseDouble(aa[0]);
 
             String[] cc = requestedDiskSize.split(reqExp);
-            System.out.println("cc :: " + cc[0]);
             double ddd = Double.parseDouble(cc[0]);
 
             if(requestedMemorySize.toLowerCase().contains("g")) {
                 //aa = requestedMemorySize.split(reqExp);
                 bbb = bbb * 1024;
-                System.out.println("bbb :: " + bbb);
             }
 
             memorySize = (int) Math.round(bbb);
-            System.out.println("memorySize :::" + memorySize);
-
 
             if(requestedDiskSize.toLowerCase().contains("g")) {
                 //String[] cc = requestedDiskSize.split(reqExp);
                 ddd = ddd * 1024;
-                System.out.println("ddd :: " + ddd);
-
             }
 
             diskSize = (int) Math.round(ddd);
-            System.out.println("diskSize :::" + diskSize);
-
-
 
             if(resultMap.containsKey("instances")){
                 instance = (Integer) resultMap.get("instances");

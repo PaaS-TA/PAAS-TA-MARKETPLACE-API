@@ -38,7 +38,6 @@ public class UserService extends Common {
             //throw new CloudFoundryException( HttpStatus.NOT_FOUND, "User name cannot find" );
             return null;
         }
-        System.out.println("유저 아이디는 ??? " + userList.get(0).getId());
         return userList.get(0).getId();
     }
 }

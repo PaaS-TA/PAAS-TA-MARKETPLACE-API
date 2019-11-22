@@ -29,8 +29,6 @@ public class SoftwareController {
 
     @GetMapping("/page")
     public Page<Software> getPage(SoftwareSpecification spec, Pageable pageable, HttpServletRequest httpServletRequest) {
-        //System.out.println("bearer 토큰 ::: " + httpServletRequest.getHeader("cf-Authorization"));
-
         spec.setStatus(Status.Approval);
         spec.setInUse(Yn.Y);
         Page<Software> result = softwareService.getPage(spec, pageable);
@@ -80,12 +78,6 @@ public class SoftwareController {
             @NotNull @Validated(Software.Update.class) @RequestBody Software software, BindingResult bindingResult)
             throws BindException {
         List<SoftwarePlan> softwarePlans =software.getSoftwarePlanList();
-
-        if (softwarePlans != null) {
-	        for (SoftwarePlan softwarePlan:softwarePlans) {
-	            System.out.println("[softwarePlan.toString() For] " + softwarePlan.toString());
-	        }
-        }
 
         Software saved = softwareService.get(id);
         SecurityUtils.assertCreator(saved);

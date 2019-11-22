@@ -29,13 +29,6 @@ public class CommonUtils {
 
         Map<String, Object> yamlMaps = yaml.load(yamlFile);
 
-        System.out.println(yamlMaps.toString());
-
         return yamlMaps;
     }
-
-
-
-
-
 }

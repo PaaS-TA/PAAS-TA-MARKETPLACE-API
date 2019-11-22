@@ -47,7 +47,6 @@ public class SoftwarePlanController {
         SecurityUtils.assertCreator(saved);
 
         softwarePlan.setSoftwareId(id);
-        System.out.println(">> softwarePlanService.update");
         return softwarePlanService.update(softwarePlan);
     }
 
