@@ -353,4 +353,92 @@ public class StatsQuery<T> {
 		
 		return excuteResult;
 	}
+	
+	/**
+	 * 현재 사용중인 상품 카운트
+	 * @param categoryId
+	 * @param srchStartDate
+	 * @param srchEndDate
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public Long queryCountOfInstsCurrent(String categoryId, String srchStartDate, String srchEndDate) {
+		// Query 생성
+		StringBuffer excQuery = new StringBuffer();
+		excQuery.append("SELECT  COUNT(0) AS count \n");
+		excQuery.append("FROM    instance it \n");
+		excQuery.append("        INNER JOIN software so \n");
+		excQuery.append("            ON (so.id = it.software_id) \n");
+		excQuery.append("WHERE   1=1 \n");
+		excQuery.append("AND     it.status = 'Approval' \n");
+		if (StringUtils.isNotBlank(categoryId)) {
+			excQuery.append("AND     so.category_id = :categoryId \n");
+		}
+		if (StringUtils.isNotBlank(srchStartDate)) {
+			excQuery.append("AND     DATE_FORMAT(so.created_date, '%Y%m') BETWEEN DATE_FORMAT(:srchStartDate, '%Y%m') \n");
+			excQuery.append("                                                 AND DATE_FORMAT(:srchEndDate, '%Y%m') \n");
+		}
+		
+		// 쿼리생성
+		Query typedQuery = entityManager.createNativeQuery(excQuery.toString());
+		
+		// Parameter 설정
+		if (StringUtils.isNotBlank(categoryId)) {
+			typedQuery.setParameter("categoryId", categoryId);
+		}
+		if (StringUtils.isNotBlank(srchStartDate)) {
+			typedQuery.setParameter("srchStartDate", srchStartDate);
+			typedQuery.setParameter("srchEndDate", srchEndDate);
+		}
+		
+		// 결과 값 Binding
+		Optional<T> first = typedQuery.getResultList().stream().findFirst();
+		Long totalCount = Long.valueOf(first.get().toString());
+		
+		return totalCount;
+	}
+	
+	/**
+	 * 현재 상품을 사용중인 User 카운트
+	 * @param categoryId
+	 * @param srchStartDate
+	 * @param srchEndDate
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public Long queryCountOfUsersUsing(String categoryId, String srchStartDate, String srchEndDate) {
+		// Query 생성
+		StringBuffer excQuery = new StringBuffer();
+		excQuery.append("SELECT  COUNT(DISTINCT it.created_by) AS count \n");
+		excQuery.append("FROM    instance it \n");
+		excQuery.append("        INNER JOIN software so \n");
+		excQuery.append("            ON (so.id = it.software_id) \n");
+		excQuery.append("WHERE   1=1 \n");
+		excQuery.append("AND     it.status = 'Approval' \n");
+		if (StringUtils.isNotBlank(categoryId)) {
+			excQuery.append("AND     so.category_id = :categoryId \n");
+		}
+		if (StringUtils.isNotBlank(srchStartDate)) {
+			excQuery.append("AND     DATE_FORMAT(so.created_date, '%Y%m') BETWEEN DATE_FORMAT(:srchStartDate, '%Y%m') \n");
+			excQuery.append("                                                 AND DATE_FORMAT(:srchEndDate, '%Y%m') \n");
+		}
+		
+		// 쿼리생성
+		Query typedQuery = entityManager.createNativeQuery(excQuery.toString());
+		
+		// Parameter 설정
+		if (StringUtils.isNotBlank(categoryId)) {
+			typedQuery.setParameter("categoryId", categoryId);
+		}
+		if (StringUtils.isNotBlank(srchStartDate)) {
+			typedQuery.setParameter("srchStartDate", srchStartDate);
+			typedQuery.setParameter("srchEndDate", srchEndDate);
+		}
+		
+		// 결과 값 Binding
+		Optional<T> first = typedQuery.getResultList().stream().findFirst();
+		Long totalCount = Long.valueOf(first.get().toString());
+		
+		return totalCount;
+	}
 }

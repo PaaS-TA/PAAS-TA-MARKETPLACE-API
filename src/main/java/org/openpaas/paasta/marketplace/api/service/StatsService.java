@@ -45,9 +45,31 @@ public class StatsService {
     public long countOfInstsCurrent() {
         return statsRepository.countOfInsts(Instance.Status.Approval);
     }
+    
+    /**
+     * 현재 사용중인 상품 카운트
+     * @param categoryId
+     * @param srchStartDate
+     * @param srchEndDate
+     * @return
+     */
+    public long queryCountOfInstsCurrent(String categoryId, String srchStartDate, String srchEndDate) {
+    	return statsQuery.queryCountOfInstsCurrent(categoryId, srchStartDate, srchEndDate);
+    }
 
     public long countOfUsersCurrent() {
         return statsRepository.countOfUsers(Instance.Status.Approval);
+    }
+    
+    /**
+     * 현재 상품을 사용중인 User 카운트
+     * @param categoryId
+     * @param srchStartDate
+     * @param srchEndDate
+     * @return
+     */
+    public long queryCountOfUsersUsing(String categoryId, String srchStartDate, String srchEndDate) {
+    	return statsQuery.queryCountOfUsersUsing(categoryId, srchStartDate, srchEndDate);
     }
 
     public long countOfProvidersCurrent() {

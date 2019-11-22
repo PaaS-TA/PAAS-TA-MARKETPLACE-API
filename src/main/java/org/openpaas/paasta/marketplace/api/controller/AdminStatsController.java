@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
 import org.openpaas.paasta.marketplace.api.domain.Stats;
@@ -58,10 +59,23 @@ public class AdminStatsController {
         return count;
     }
 
+    /**
+     * 현재 사용중인 상품 카운트
+     * @param categoryId
+     * @param srchStartDate
+     * @param srchEndDate
+     * @return
+     */
     @GetMapping("/instances/counts/sum")
-    public long countOfInstsUsing() {
-        long count = statsService.countOfInstsCurrent();
-
+    public long countOfInstsUsing(@RequestParam(name="categoryId", required=false) String categoryId
+    							, @RequestParam(name="srchStartDate", required=false) String srchStartDate
+    							, @RequestParam(name="srchEndDate", required=false) String srchEndDate) {
+        long count = 0;
+        if (StringUtils.isNotBlank(categoryId) || (StringUtils.isNotBlank(srchStartDate) && StringUtils.isNotBlank(srchEndDate))) {
+        	count = statsService.queryCountOfInstsCurrent(categoryId, srchStartDate, srchEndDate);
+        } else {
+        	count = statsService.countOfInstsCurrent();
+        }
         return count;
     }
 
@@ -79,10 +93,20 @@ public class AdminStatsController {
         return count;
     }
 
+    /**
+     * 현재 상품을 사용중인 User 카운트
+     * @return
+     */
     @GetMapping("/users/counts/sum")
-    public long countOfUsersUsing() {
-        long count = statsService.countOfUsersCurrent();
-
+    public long countOfUsersUsing(@RequestParam(name="categoryId", required=false) String categoryId
+								, @RequestParam(name="srchStartDate", required=false) String srchStartDate
+								, @RequestParam(name="srchEndDate", required=false) String srchEndDate) {
+    	long count = 0;
+        if (StringUtils.isNotBlank(categoryId) || (StringUtils.isNotBlank(srchStartDate) && StringUtils.isNotBlank(srchEndDate))) {
+        	count = statsService.queryCountOfUsersUsing(categoryId, srchStartDate, srchEndDate);
+        } else {
+        	count = statsService.countOfUsersCurrent();
+        }
         return count;
     }
 
