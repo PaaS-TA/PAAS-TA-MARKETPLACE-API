@@ -206,4 +206,23 @@ public class AdminSoftwareController {
         return resultMap;
     }
 
+    /**
+     * 배포 테스트 실패한 앱 삭제
+     * @param testFailedAppId
+     * @return
+     */
+    @DeleteMapping("testFailed/app/{testFailedAppId}")
+    public Long deleteDeployTestFailedApp(@PathVariable Long testFailedAppId) {
+    	long deleteCount = 1;
+    	
+    	try {
+    		testSoftwareInfoService.deleteDeployTestApp(testFailedAppId);
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		deleteCount = 0;
+    	}
+    	
+    	return deleteCount;
+    }
+
 }
