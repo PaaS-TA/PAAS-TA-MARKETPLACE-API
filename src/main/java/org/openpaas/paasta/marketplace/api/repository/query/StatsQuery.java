@@ -361,8 +361,19 @@ public class StatsQuery<T> {
 	 * @param srchEndDate
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public Long queryCountOfInstsCurrent(String categoryId, String srchStartDate, String srchEndDate) {
+		return queryCountOfInstsCurrent(categoryId, srchStartDate, srchEndDate, null);
+	}
+	
+	/**
+	 * 현재 사용중인 상품 카운트
+	 * @param categoryId
+	 * @param srchStartDate
+	 * @param srchEndDate
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public Long queryCountOfInstsCurrent(String categoryId, String srchStartDate, String srchEndDate, String userId) {
 		// Query 생성
 		StringBuffer excQuery = new StringBuffer();
 		excQuery.append("SELECT  COUNT(0) AS count \n");
@@ -371,18 +382,24 @@ public class StatsQuery<T> {
 		excQuery.append("            ON (so.id = it.software_id) \n");
 		excQuery.append("WHERE   1=1 \n");
 		excQuery.append("AND     it.status = 'Approval' \n");
+		if (StringUtils.isNotBlank(userId)) {
+			excQuery.append("AND     so.created_by = :userId \n");
+		}
 		if (StringUtils.isNotBlank(categoryId)) {
 			excQuery.append("AND     so.category_id = :categoryId \n");
 		}
 		if (StringUtils.isNotBlank(srchStartDate)) {
-			excQuery.append("AND     DATE_FORMAT(so.created_date, '%Y%m') BETWEEN DATE_FORMAT(:srchStartDate, '%Y%m') \n");
-			excQuery.append("                                                 AND DATE_FORMAT(:srchEndDate, '%Y%m') \n");
+			excQuery.append("AND     DATE_FORMAT(so.created_date, '%Y%m%d') BETWEEN DATE_FORMAT(:srchStartDate, '%Y%m%d') \n");
+			excQuery.append("                                                   AND DATE_FORMAT(:srchEndDate, '%Y%m%d') \n");
 		}
 		
 		// 쿼리생성
 		Query typedQuery = entityManager.createNativeQuery(excQuery.toString());
 		
 		// Parameter 설정
+		if (StringUtils.isNotBlank(userId)) {
+			typedQuery.setParameter("userId", userId);
+		}
 		if (StringUtils.isNotBlank(categoryId)) {
 			typedQuery.setParameter("categoryId", categoryId);
 		}
@@ -405,8 +422,19 @@ public class StatsQuery<T> {
 	 * @param srchEndDate
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public Long queryCountOfUsersUsing(String categoryId, String srchStartDate, String srchEndDate) {
+		return queryCountOfUsersUsing(categoryId, srchStartDate, srchEndDate, null);
+	}
+	
+	/**
+	 * 현재 상품을 사용중인 User 카운트
+	 * @param categoryId
+	 * @param srchStartDate
+	 * @param srchEndDate
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public Long queryCountOfUsersUsing(String categoryId, String srchStartDate, String srchEndDate, String userId) {
 		// Query 생성
 		StringBuffer excQuery = new StringBuffer();
 		excQuery.append("SELECT  COUNT(DISTINCT it.created_by) AS count \n");
@@ -415,18 +443,24 @@ public class StatsQuery<T> {
 		excQuery.append("            ON (so.id = it.software_id) \n");
 		excQuery.append("WHERE   1=1 \n");
 		excQuery.append("AND     it.status = 'Approval' \n");
+		if (StringUtils.isNotBlank(userId)) {
+			excQuery.append("AND     so.created_by = :userId \n");
+		}
 		if (StringUtils.isNotBlank(categoryId)) {
 			excQuery.append("AND     so.category_id = :categoryId \n");
 		}
 		if (StringUtils.isNotBlank(srchStartDate)) {
-			excQuery.append("AND     DATE_FORMAT(so.created_date, '%Y%m') BETWEEN DATE_FORMAT(:srchStartDate, '%Y%m') \n");
-			excQuery.append("                                                 AND DATE_FORMAT(:srchEndDate, '%Y%m') \n");
+			excQuery.append("AND     DATE_FORMAT(so.created_date, '%Y%m%d') BETWEEN DATE_FORMAT(:srchStartDate, '%Y%m%d') \n");
+			excQuery.append("                                                   AND DATE_FORMAT(:srchEndDate, '%Y%m%d') \n");
 		}
 		
 		// 쿼리생성
 		Query typedQuery = entityManager.createNativeQuery(excQuery.toString());
 		
 		// Parameter 설정
+		if (StringUtils.isNotBlank(userId)) {
+			typedQuery.setParameter("userId", userId);
+		}
 		if (StringUtils.isNotBlank(categoryId)) {
 			typedQuery.setParameter("categoryId", categoryId);
 		}

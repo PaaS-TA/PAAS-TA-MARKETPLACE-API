@@ -39,4 +39,20 @@ public interface SoftwareRepository extends JpaRepository<Software, Long>, JpaSp
 	    		+"AND     category_id = :categoryId \n"
 	, nativeQuery=true)
     public Long getSoftwareUsedCategoryCount(@Param("categoryId") Long categoryId);
+    
+    /**
+     * 판매된 소프트웨어의 카운트정보 조회
+     * @param softwareIdList
+     * @return
+     */
+    @Query(value="SELECT  CONCAT(so.id) AS softwareId \n"
+	    		+"        ,SUM(CASE WHEN it.id is not null THEN 1 ELSE 0 END) \n"
+	    		+"FROM    software so \n"
+	    		+"        LEFT JOIN instance it  \n"
+	    		+"            ON (it.software_id = so.id)  \n"
+	    		+"WHERE   1=1 \n"
+	    		+"AND     so.id IN :softwareIdList \n"
+	    		+"GROUP BY so.id \n"
+    , nativeQuery=true)
+    public List<Object[]> getSoftwareInstanceCountMap(@Param("softwareIdList") List<Long> softwareIdList);
 }

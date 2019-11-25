@@ -260,4 +260,28 @@ public class StatsController {
     	return statsService.getUsageTransition();
     }
 
+    /**
+     * 현재 사용중인 상품 카운트
+     * @param categoryId
+     * @param srchStartDate
+     * @param srchEndDate
+     * @return
+     */
+    @GetMapping("/instances/counts/sum")
+    public long countOfInstsUsing(@RequestParam(name="categoryId", required=false) String categoryId
+    							, @RequestParam(name="srchStartDate", required=false) String srchStartDate
+    							, @RequestParam(name="srchEndDate", required=false) String srchEndDate) {
+    	return statsService.queryCountOfInstsCurrent(categoryId, srchStartDate, srchEndDate, SecurityUtils.getUserId());
+    }
+
+    /**
+     * 현재 상품을 사용중인 User 카운트
+     * @return
+     */
+    @GetMapping("/users/counts/sum")
+    public long countOfUsersUsing(@RequestParam(name="categoryId", required=false) String categoryId
+								, @RequestParam(name="srchStartDate", required=false) String srchStartDate
+								, @RequestParam(name="srchEndDate", required=false) String srchEndDate) {
+    	return statsService.queryCountOfUsersUsing(categoryId, srchStartDate, srchEndDate, SecurityUtils.getUserId());
+    }
 }

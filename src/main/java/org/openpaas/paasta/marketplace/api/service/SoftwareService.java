@@ -1,9 +1,21 @@
 package org.openpaas.paasta.marketplace.api.service;
 
-import lombok.RequiredArgsConstructor;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
+
 import org.apache.commons.lang3.StringUtils;
-import org.openpaas.paasta.marketplace.api.domain.*;
+import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.domain.Software.Status;
+import org.openpaas.paasta.marketplace.api.domain.SoftwareHistory;
+import org.openpaas.paasta.marketplace.api.domain.SoftwareHistorySpecification;
+import org.openpaas.paasta.marketplace.api.domain.SoftwarePlan;
+import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
 import org.openpaas.paasta.marketplace.api.repository.SoftwareHistoryRepository;
 import org.openpaas.paasta.marketplace.api.repository.SoftwarePlanRepository;
 import org.openpaas.paasta.marketplace.api.repository.SoftwareRepository;
@@ -12,11 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -174,6 +182,16 @@ public class SoftwareService {
      */
     public Long getSoftwareUsedCategoryCount(Long categoryId) {
     	return softwareRepository.getSoftwareUsedCategoryCount(categoryId);
+    }
+    
+    /**
+     * 판매된 소프트웨어의 카운트정보 조회
+     * @param softwareIdList
+     * @return
+     */
+    public Map<String,Object> getSoftwareInstanceCountMap(List<Long> softwareIdList) {
+    	List<Object[]> values = softwareRepository.getSoftwareInstanceCountMap(softwareIdList);
+        return values.stream().collect(Collectors.toMap(v -> (String) v[0], v -> (BigDecimal) v[1]));
     }
 
 }

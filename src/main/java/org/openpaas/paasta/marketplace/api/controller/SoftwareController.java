@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/softwares")
@@ -111,6 +112,16 @@ public class SoftwareController {
     @GetMapping("/soldSoftwareCount")
     public Integer soldSoftwareCount(@RequestParam(name="userId") String userId, @RequestParam(name="status") String status) {
     	return softwareService.getSoldSoftwareCount(userId, status);
+    }
+    
+    /**
+     * 판매된 소프트웨어의 카운트정보 조회
+     * @param softwareIdList
+     * @return
+     */
+    @GetMapping("/instanceCount")
+    public Map<String,Object> softwareInstanceCountMap(@RequestParam(name="softwareIdList") List<Long> softwareIdList) {
+    	return softwareService.getSoftwareInstanceCountMap(softwareIdList);
     }
 
 }
