@@ -139,6 +139,7 @@ public class InstanceControllerTest {
         instance.setCreatedDate(current);
         instance.setLastModifiedBy(userId);
         instance.setLastModifiedDate(current);
+        instance.setSoftwarePlanId("1");
 
         return instance;
     }
@@ -257,13 +258,18 @@ public class InstanceControllerTest {
         s.setId(software.getId());
         Instance i = new Instance();
         i.setSoftware(s);
+        i.setSoftwarePlanId(instance.getSoftwarePlanId());
 
         given(instanceService.create(any(Instance.class))).willReturn(instance);
 
-        ResultActions result = this.mockMvc
-                .perform(RestDocumentationRequestBuilders.post("/instances").contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON).header("Authorization", userId)
-                        .content(objectMapper.writeValueAsString(i)).characterEncoding("utf-8"));
+        ResultActions result = this.mockMvc.perform(
+        	RestDocumentationRequestBuilders.post("/instances")
+					        				.contentType(MediaType.APPLICATION_JSON)
+					                        .accept(MediaType.APPLICATION_JSON)
+					                        .header("Authorization", userId)
+					                        .content(objectMapper.writeValueAsString(i))
+					                        .characterEncoding("utf-8")
+        );
 
         result.andExpect(status().isOk());
         result.andDo(print());

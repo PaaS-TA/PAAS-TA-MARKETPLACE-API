@@ -31,6 +31,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openpaas.paasta.marketplace.api.domain.Category;
 import org.openpaas.paasta.marketplace.api.domain.Software;
+import org.openpaas.paasta.marketplace.api.domain.SoftwarePlan;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
 import org.openpaas.paasta.marketplace.api.domain.Yn;
 import org.openpaas.paasta.marketplace.api.repository.UserRepository;
@@ -115,8 +116,11 @@ public class SoftwareControllerTest {
         software.setLastModifiedBy(userId);
         software.setLastModifiedDate(current);
         software.setApp(String.format("app-%s.jar", UUID.randomUUID()));
+        software.setAppPath(String.format("app-%s.jar", UUID.randomUUID()));
         software.setManifest(String.format("manifest-%s.yml", UUID.randomUUID()));
+        software.setManifestPath(String.format("manifest-%s.yml", UUID.randomUUID()));
         software.setIcon(String.format("icon-%s.png", UUID.randomUUID()));
+        software.setIconPath(String.format("icon-%s.png", UUID.randomUUID()));
         List<String> screenshotList = new ArrayList<>();
         for (long i = 1; i <= 3; i++) {
             screenshotList.add(String.format("screenshot-%s.jpg", UUID.randomUUID()));
@@ -128,6 +132,21 @@ public class SoftwareControllerTest {
         software.setInUse(Yn.Y);
 
         return software;
+    }
+    
+    private SoftwarePlan softwarePlan(Long id, Long softwareId) {
+        SoftwarePlan softwarePlan = new SoftwarePlan();
+        softwarePlan.setId(id);
+        softwarePlan.setSoftwareId(softwareId);
+        softwarePlan.setName("name-" + id);
+        softwarePlan.setDescription("discription-" + id);
+        softwarePlan.setMemorySize(String.valueOf(id));
+        softwarePlan.setDiskSize(String.valueOf(id));
+        softwarePlan.setCpuAmt(id.intValue());
+        softwarePlan.setMemoryAmt(id.intValue());
+        softwarePlan.setDiskAmt(id.intValue());
+
+        return softwarePlan;
     }
 
     @Test
@@ -311,10 +330,16 @@ public class SoftwareControllerTest {
 
     @Test
     public void create() throws Exception {
+    	List<SoftwarePlan> softwarePlanList = new ArrayList<SoftwarePlan>();
+    	softwarePlanList.add(softwarePlan(1L, 2L));
+    	softwarePlanList.add(softwarePlan(2L, 3L));
+    	softwarePlanList.add(softwarePlan(3L, 4L));
+    	
         Category category = category(1L, "category-01");
         Software software = software(1L, "software-01", category);
         software.setStatus(Software.Status.Pending);
-
+        software.setSoftwarePlanList(softwarePlanList);
+        
         Category c = new Category();
         c.setId(category.getId());
 
@@ -322,9 +347,13 @@ public class SoftwareControllerTest {
         s.setName(software.getName());
         s.setCategory(c);
         s.setApp(software.getApp());
+        s.setAppPath(software.getAppPath());
         s.setManifest(software.getManifest());
+        s.setManifestPath(software.getManifestPath());
         s.setIcon(software.getIcon());
+        s.setIconPath(software.getIconPath());
         s.setScreenshotList(software.getScreenshotList());
+        s.setSoftwarePlanList(software.getSoftwarePlanList());
         s.setSummary(software.getSummary());
         s.setDescription(software.getDescription());
         s.setType(software.getType());
@@ -334,10 +363,14 @@ public class SoftwareControllerTest {
 
         given(softwareService.create(any(Software.class))).willReturn(software);
 
-        ResultActions result = this.mockMvc
-                .perform(RestDocumentationRequestBuilders.post("/softwares").contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON).header("Authorization", userId)
-                        .content(objectMapper.writeValueAsString(s)).characterEncoding("utf-8"));
+        ResultActions result = this.mockMvc.perform(
+        	RestDocumentationRequestBuilders.post("/softwares")
+					        				.contentType(MediaType.APPLICATION_JSON)
+					                        .accept(MediaType.APPLICATION_JSON)
+					                        .header("Authorization", userId)
+					                        .content(objectMapper.writeValueAsString(s))
+					                        .characterEncoding("utf-8")
+        );
 
         result.andExpect(status().isOk());
         result.andDo(print());
@@ -388,11 +421,17 @@ public class SoftwareControllerTest {
 
     @Test
     public void update() throws Exception {
+    	List<SoftwarePlan> softwarePlanList = new ArrayList<SoftwarePlan>();
+    	softwarePlanList.add(softwarePlan(1L, 2L));
+    	softwarePlanList.add(softwarePlan(2L, 3L));
+    	softwarePlanList.add(softwarePlan(3L, 4L));
+    	
         Category category = category(2L, "category-02");
         Software software = software(1L, "software-rename-01", category);
         software.setStatus(Software.Status.Pending);
         software.setPricePerMonth(1500L);
         software.setVersion("2.0");
+        software.setSoftwarePlanList(softwarePlanList);
 
         Category c = new Category();
         c.setId(category.getId());
@@ -402,8 +441,11 @@ public class SoftwareControllerTest {
         s.setName(software.getName());
         s.setCategory(c);
         s.setApp(software.getApp());
+        s.setAppPath(software.getAppPath());
         s.setManifest(software.getManifest());
+        s.setManifestPath(software.getManifestPath());
         s.setIcon(software.getIcon());
+        s.setIconPath(software.getIconPath());
         s.setScreenshotList(software.getScreenshotList());
         s.setSummary(software.getSummary());
         s.setDescription(software.getDescription());
@@ -411,14 +453,19 @@ public class SoftwareControllerTest {
         s.setPricePerMonth(software.getPricePerMonth());
         s.setVersion(software.getVersion());
         s.setInUse(software.getInUse());
+        s.setSoftwarePlanList(softwarePlanList);
 
         given(softwareService.update(any(Software.class), any(String.class))).willReturn(software);
         given(softwareService.get(eq(1L))).willReturn(software);
 
         ResultActions result = this.mockMvc.perform(
-                RestDocumentationRequestBuilders.put("/softwares/{id}", 1L).contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON).header("Authorization", userId)
-                        .content(objectMapper.writeValueAsString(s)).characterEncoding("utf-8"));
+            RestDocumentationRequestBuilders.put("/softwares/{id}?softwarePlaneOriginalList=1^2", 1L)
+					                		.contentType(MediaType.APPLICATION_JSON)
+					                        .accept(MediaType.APPLICATION_JSON)
+					                        .header("Authorization", userId)
+					                        .content(objectMapper.writeValueAsString(s))
+					                        .characterEncoding("utf-8")
+    	);
 
         result.andExpect(status().isOk());
         result.andDo(print());
@@ -440,6 +487,7 @@ public class SoftwareControllerTest {
                         parameterWithName("id").description("Category's id")
                     ),
                 requestParameters(
+                		parameterWithName("softwarePlaneOriginalList").description("softwarePlan original info")
                     ),
                 relaxedRequestFields(
                         fieldWithPath("name").type(JsonFieldType.STRING).description("name"),
