@@ -340,23 +340,25 @@ public class AdminStatsController {
         Map<String, Object> data = new LinkedHashMap<>();
         Map<String, List<Long>> usingSwCount = new LinkedHashMap<>();
 
-        for(int i = 0; i< idIn.size(); i++) {
-            List<Long> newIdIn = new ArrayList<>();
-            // 1. 공급자 별로 본인이 등록한 software id 목록 추출
-            List<Software> softwares = softwareService.getSwByCreatedBy(idIn.get(i));
+        if (idIn != null) {
+            for (int i = 0; i < idIn.size(); i++) {
+                List<Long> newIdIn = new ArrayList<>();
+                // 1. 공급자 별로 본인이 등록한 software id 목록 추출
+                List<Software> softwares = softwareService.getSwByCreatedBy(idIn.get(i));
 
-            List<Long> counts;
-            if(softwares.size() > 0) {
-                for(int j = 0; j < softwares.size(); j++) {
-                    newIdIn.add(softwares.get(j).getId());
+                List<Long> counts;
+                if (softwares.size() > 0) {
+                    for (int j = 0; j < softwares.size(); j++) {
+                        newIdIn.add(softwares.get(j).getId());
+                    }
+
+                    // 2. 상품 id 목록으로 월 별 사용량 조회
+                    counts = statsService.countsOfInstsProvider(newIdIn, terms, using);
+                } else {
+                    counts = null;
                 }
-
-                // 2. 상품 id 목록으로 월 별 사용량 조회
-                counts = statsService.countsOfInstsProvider(newIdIn, terms, using);
-            } else {
-                counts = null;
+                usingSwCount.put(idIn.get(i), counts);
             }
-            usingSwCount.put(idIn.get(i), counts);
         }
 
         data.put("counts", usingSwCount);
