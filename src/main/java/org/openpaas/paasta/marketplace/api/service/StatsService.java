@@ -504,7 +504,7 @@ public class StatsService {
      * @param size
      * @return
      */
-    public Integer querySoftwareSellPriceTotalCount(String userId, String categoryId, String srchDate, Integer page, Integer size) {
+    public Integer getSoftwareSellPriceTotalCount(String userId, String categoryId, String srchDate, Integer page, Integer size) {
     	return statsQuery.querySoftwareSellPriceTotalCount(userId, categoryId, srchDate, page, size);
     }
     
@@ -517,7 +517,7 @@ public class StatsService {
      * @param size
      * @return
      */
-    public List<Map<String, Object>> querySoftwareSellPriceList(String userId, String categoryId, String srchDate, Integer page, Integer size) {
+    public List<Map<String, Object>> getSoftwareSellPriceList(String userId, String categoryId, String srchDate, Integer page, Integer size) {
     	return statsQuery.querySoftwareSellPriceList(userId, categoryId, srchDate, page, size);
     }
  
@@ -546,5 +546,29 @@ public class StatsService {
      */
     public List<Map<String, Object>> getUsageTransition() {
     	return statsQuery.queryUsageTransition();
+    }
+    
+    /**
+     * 상품별 사용앱 데이터 조회 (Chart)
+     * @param userId
+     * @param categoryId
+     * @param srchStartDate
+     * @param srchEndDate
+     * @return
+     */
+    public List<Map<String, Object>> getStatsUseApp(String userId, String categoryId, String srchStartDate, String srchEndDate) {
+    	return statsQuery.queryStatsUseApp(userId, categoryId, srchStartDate, srchEndDate);
+    }
+    
+    /**
+     * 상품별 사용추이 데이터 조회 (Chart)
+     * @param userId
+     * @param categoryId
+     * @param srchStartDate
+     * @param srchEndDate
+     * @return
+     */
+    public List<Map<String, Object>> getStatsUseTransition(String userId, String categoryId, String srchStartDate, String srchEndDate) {
+    	return statsQuery.queryStatsUseTransition(userId, categoryId, srchStartDate, srchEndDate);
     }
 }

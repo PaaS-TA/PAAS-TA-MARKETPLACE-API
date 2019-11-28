@@ -210,11 +210,11 @@ public class StatsController {
      * @return
      */
     @GetMapping("/softwareSellPriceList")
-    public List<Map<String,Object>> getsoftwareSellPriceList(@RequestParam(name="categoryId",required=false) String categoryId
+    public List<Map<String,Object>> softwareSellPriceList(@RequestParam(name="categoryId",required=false) String categoryId
     														,@RequestParam(name="page") Integer page
     														,@RequestParam(name="size") Integer size
     														,@RequestParam(name="srchDate",required=false) String srchDate) {
-    	return statsService.querySoftwareSellPriceList(SecurityUtils.getUserId(), categoryId, srchDate, page, size);
+    	return statsService.getSoftwareSellPriceList(SecurityUtils.getUserId(), categoryId, srchDate, page, size);
     }
     
     /**
@@ -226,11 +226,11 @@ public class StatsController {
      * @return
      */
     @GetMapping("/softwareSellPriceTotalCount")
-    public Integer getsoftwareSellPriceTotalCount(@RequestParam(name="categoryId",required=false) String categoryId
+    public Integer softwareSellPriceTotalCount(@RequestParam(name="categoryId",required=false) String categoryId
     		,@RequestParam(name="page") Integer page
     		,@RequestParam(name="size") Integer size
     		,@RequestParam(name="srchDate",required=false) String srchDate) {
-    	return statsService.querySoftwareSellPriceTotalCount(SecurityUtils.getUserId(), categoryId, srchDate, page, size);
+    	return statsService.getSoftwareSellPriceTotalCount(SecurityUtils.getUserId(), categoryId, srchDate, page, size);
     }
 
     /**
@@ -284,4 +284,36 @@ public class StatsController {
 								, @RequestParam(name="srchEndDate", required=false) String srchEndDate) {
     	return statsService.queryCountOfUsersUsing(categoryId, srchStartDate, srchEndDate, SecurityUtils.getUserId());
     }
+    
+
+    /**
+     * 상품별 사용앱 데이터 조회 (Chart)
+     * @param userId
+     * @param categoryId
+     * @param srchStartDate
+     * @param srchEndDate
+     * @return
+     */
+    @GetMapping("/softwares/chart/statsUseApp")
+    public List<Map<String,Object>> statsUseApp(@RequestParam(name="categoryId", required=false) String categoryId
+				    						  , @RequestParam(name="srchStartDate", required=false) String srchStartDate
+				    						  , @RequestParam(name="srchEndDate", required=false) String srchEndDate) {
+        return statsService.getStatsUseApp(SecurityUtils.getUserId(), categoryId, srchStartDate, srchEndDate);
+    }
+    
+    /**
+     * 상품별 사용추이 데이터 조회 (Chart)
+     * @param userId
+     * @param categoryId
+     * @param srchStartDate
+     * @param srchEndDate
+     * @return
+     */
+    @GetMapping("/softwares/chart/statsUseTransition")
+    public List<Map<String,Object>> statsUseTransitionList(@RequestParam(name="categoryId", required=false) String categoryId
+												    	 , @RequestParam(name="srchStartDate", required=false) String srchStartDate
+												    	 , @RequestParam(name="srchEndDate", required=false) String srchEndDate) {
+    	return statsService.getStatsUseTransition(SecurityUtils.getUserId(), categoryId, srchStartDate, srchEndDate);
+    }
+
 }

@@ -391,4 +391,36 @@ public class AdminStatsController {
         return statsService.getUsingPerInstanceByProvider(providerId, idIn);
     }
 
+    /**
+     * 상품별 사용앱 데이터 조회 (Chart)
+     * @param userId
+     * @param categoryId
+     * @param srchStartDate
+     * @param srchEndDate
+     * @return
+     */
+    @GetMapping("/softwares/chart/statsUseApp")
+    public List<Map<String,Object>> statsUseApp(@RequestParam(name="userId", required=false) String userId
+    										  , @RequestParam(name="categoryId", required=false) String categoryId
+				    						  , @RequestParam(name="srchStartDate", required=false) String srchStartDate
+				    						  , @RequestParam(name="srchEndDate", required=false) String srchEndDate) {
+        return statsService.getStatsUseApp(userId, categoryId, srchStartDate, srchEndDate);
+    }
+    
+    /**
+     * 상품별 사용추이 데이터 조회 (Chart)
+     * @param userId
+     * @param categoryId
+     * @param srchStartDate
+     * @param srchEndDate
+     * @return
+     */
+    @GetMapping("/softwares/chart/statsUseTransition")
+    public List<Map<String,Object>> statsUseTransitionList(@RequestParam(name="userId", required=false) String userId
+												    	 , @RequestParam(name="categoryId", required=false) String categoryId
+												    	 , @RequestParam(name="srchStartDate", required=false) String srchStartDate
+												    	 , @RequestParam(name="srchEndDate", required=false) String srchEndDate) {
+    	return statsService.getStatsUseTransition(userId, categoryId, srchStartDate, srchEndDate);
+    }
+
 }
