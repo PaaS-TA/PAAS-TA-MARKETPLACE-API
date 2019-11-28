@@ -571,4 +571,22 @@ public class StatsService {
     public List<Map<String, Object>> getStatsUseTransition(String userId, String categoryId, String srchStartDate, String srchEndDate) {
     	return statsQuery.queryStatsUseTransition(userId, categoryId, srchStartDate, srchEndDate);
     }
+    
+    /**
+     * 판매자별 등록앱 퍼센트 분포
+     * @param sellerName
+     * @return
+     */
+    public List<Map<String, Object>> getSellerCreatedAppPercent(String sellerName) {
+    	return statsQuery.querySellerCreatedAppPercent(sellerName);
+    }
+    
+    /**
+     * 판매자별 앱 사용 추이
+     * @param sellerName
+     * @return
+     */
+    public List<Map<String, Object>> getSellerCreatedAppTransition(String sellerName) {
+    	return statsQuery.querySellerCreatedAppTransition(sellerName);
+    }
 }

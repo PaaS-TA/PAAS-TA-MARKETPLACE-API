@@ -422,5 +422,25 @@ public class AdminStatsController {
 												    	 , @RequestParam(name="srchEndDate", required=false) String srchEndDate) {
     	return statsService.getStatsUseTransition(userId, categoryId, srchStartDate, srchEndDate);
     }
+    
+    /**
+     * 판매자별 등록앱 퍼센트 분포
+     * @param sellerName
+     * @return
+     */
+    @GetMapping("/softwares/chart/sellerCreatedAppPercent")
+    public List<Map<String,Object>> sellerCreatedAppPercent(@RequestParam(name="sellerName", required=false) String sellerName) {
+    	return statsService.getSellerCreatedAppPercent(sellerName);
+    }
+    
+    /**
+     * 판매자별 앱 사용 추이
+     * @param sellerName
+     * @return
+     */
+    @GetMapping("/softwares/chart/sellerCreatedAppTransition")
+    public List<Map<String,Object>> sellerCreatedAppTransition(@RequestParam(name="sellerName", required=false) String sellerName) {
+    	return statsService.getSellerCreatedAppTransition(sellerName);
+    }
 
 }

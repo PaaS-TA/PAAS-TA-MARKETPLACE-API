@@ -673,4 +673,165 @@ public class StatsQuery<T> {
 		
 		return excuteResult;
 	}
+	
+	/**
+	 * 판매자별 등록앱 퍼센트 분포
+	 * @param sellerName
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Map<String,Object>> querySellerCreatedAppPercent(String sellerName) {
+		// 조회 결과값 반환 객체 생성
+		List<Map<String,Object>> excuteResult = new ArrayList<Map<String,Object>>();
+		
+		// SQL생성
+		StringBuffer excQuery = new StringBuffer();
+		excQuery.append("SELECT  a.name \n");
+		excQuery.append("        ,ROUND((a.softwareCount / b.totalCount) * 100, 2) AS createPercent \n");
+		excQuery.append("FROM    ( \n");
+		excQuery.append("            SELECT  pf.id \n");
+		excQuery.append("                    ,pf.name \n");
+		excQuery.append("                    ,COUNT(0) AS softwareCount \n");
+		excQuery.append("            FROM    profile pf \n");
+		excQuery.append("                    INNER JOIN software so \n");
+		excQuery.append("                        ON(so.created_by = pf.id) \n");
+		excQuery.append("            GROUP BY pf.id, pf.name \n");
+		excQuery.append("        ) a \n");
+		excQuery.append("        CROSS JOIN ( \n");
+		excQuery.append("            SELECT  COUNT(0) AS totalCount \n");
+		excQuery.append("            FROM    profile pf \n");
+		excQuery.append("                    INNER JOIN software so \n");
+		excQuery.append("                        ON(so.created_by = pf.id) \n");
+		excQuery.append("        ) b \n");
+		excQuery.append("WHERE	 1=1 \n");
+		if (StringUtils.isNotBlank(sellerName)) {
+			excQuery.append("AND	 a.name LIKE CONCAT('%', :sellerName, '%') \n");
+		}
+		excQuery.append("ORDER BY a.softwareCount DESC \n");
+		
+		// 쿼리생성
+		Query typedQuery = entityManager.createNativeQuery(excQuery.toString());
+		
+		// Parameter 설정
+		if (StringUtils.isNotBlank(sellerName)) {
+			typedQuery.setParameter("sellerName", sellerName);
+		}
+		
+		// 결과 값 Binding
+		List<Object[]> resultList = typedQuery.getResultList();
+		if (CollectionUtils.isEmpty(resultList)) {
+			return excuteResult;
+		}
+		Map<String,Object> tempRowValues = null;
+		for (Object[] arrInfo : resultList) {
+			tempRowValues = new HashMap<String,Object>();
+			tempRowValues.put("name", arrInfo[0]);
+			tempRowValues.put("data", arrInfo[1]);
+			excuteResult.add(tempRowValues);
+		}
+		
+		return excuteResult;
+	}
+	
+	/**
+	 * 판매자별 앱 사용 추이
+	 * @param sellerName
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Map<String,Object>> querySellerCreatedAppTransition(String sellerName) {
+		// 조회 결과값 반환 객체 생성
+		List<Map<String,Object>> excuteResult = new ArrayList<Map<String,Object>>();
+		
+		// SQL생성
+		StringBuffer excQuery = new StringBuffer();
+		excQuery.append("SELECT  bs.yearMonth \n");
+		excQuery.append("        ,bs.name \n");
+		excQuery.append("        ,IFNULL(dt.useCount,0) AS useCount \n");
+		excQuery.append("FROM    ( \n");
+		excQuery.append("            SELECT  a.yearMonth \n");
+		excQuery.append("                    ,a.compareDate \n");
+		excQuery.append("                    ,b.name \n");
+		excQuery.append("            FROM    ( \n");
+		excQuery.append("                        SELECT  DATE_FORMAT(dt, '%Y-%m-01') AS yearMonth \n");
+		excQuery.append("                                ,ym AS compareDate  \n");
+		excQuery.append("                        FROM    calendar \n");
+		excQuery.append("                        WHERE   1=1 \n");
+		excQuery.append("                        AND     ym BETWEEN DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -5 MONTH), '%Y%m') \n");
+		excQuery.append("                                       AND DATE_FORMAT(NOW(), '%Y%m')  \n");
+		excQuery.append("                        GROUP BY ym  \n");
+		excQuery.append("                    ) a \n");
+		excQuery.append("                    CROSS JOIN ( \n");
+		excQuery.append("                        SELECT  pf.name \n");
+		excQuery.append("                        FROM    profile pf \n");
+		excQuery.append("                                INNER JOIN software so \n");
+		excQuery.append("                                    ON(so.created_by = pf.id) \n");
+		excQuery.append("                        WHERE   1=1 \n");
+		if (StringUtils.isNotBlank(sellerName)) {
+			excQuery.append("                    AND     pf.name LIKE CONCAT('%', :sellerName, '%') \n");
+		}
+		excQuery.append("                        AND     DATE_FORMAT(so.created_date, '%Y%m') BETWEEN DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -5 MONTH), '%Y%m') \n");
+		excQuery.append("                                                                         AND DATE_FORMAT(NOW(), '%Y%m') \n");
+		excQuery.append("                        GROUP BY pf.name \n");
+		excQuery.append("                    ) b             \n");
+		excQuery.append("            ORDER BY a.yearMonth \n");
+		excQuery.append("        ) bs \n");
+		excQuery.append("        LEFT JOIN ( \n");
+		excQuery.append("            SELECT  cl.yearMonth  \n");
+		excQuery.append("                    ,pf.name  AS name \n");
+		excQuery.append("                    ,COUNT(0) AS useCount \n");
+		excQuery.append("            FROM    profile pf \n");
+		excQuery.append("                    INNER JOIN software so \n");
+		excQuery.append("                        ON (so.created_by = pf.id) \n");
+		excQuery.append("                    INNER JOIN instance it \n");
+		excQuery.append("                        ON (it.software_id = so.id) \n");
+		excQuery.append("                    CROSS JOIN (  \n");
+		excQuery.append("                        SELECT  DATE_FORMAT(dt, '%Y-%m-01') AS yearMonth \n");
+		excQuery.append("                                ,ym AS compareDate  \n");
+		excQuery.append("                        FROM    calendar \n");
+		excQuery.append("                        WHERE   1=1 \n");
+		excQuery.append("                        AND     ym BETWEEN DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -5 MONTH), '%Y%m') \n");
+		excQuery.append("                                       AND DATE_FORMAT(NOW(), '%Y%m') \n");
+		excQuery.append("                        GROUP BY ym  \n");
+		excQuery.append("                    ) cl \n");
+		excQuery.append("            WHERE   1=1 \n");
+		excQuery.append("            AND     1 = (CASE WHEN DATE_FORMAT(it.usage_start_date, '%Y%m') <= cl.compareDate \n");
+		excQuery.append("                               AND DATE_FORMAT(IFNULL(it.usage_end_date, NOW()), '%Y%m') >= cl.compareDate \n");
+		excQuery.append("                              THEN 1 \n");
+		excQuery.append("                              ELSE 0 \n");
+		excQuery.append("                        END) \n");
+		if (StringUtils.isNotBlank(sellerName)) {
+			excQuery.append("        AND     pf.name LIKE CONCAT('%', :sellerName, '%') \n");
+		}
+		excQuery.append("            AND     DATE_FORMAT(it.usage_start_date, '%Y%m') BETWEEN DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -5 MONTH), '%Y%m') \n");
+		excQuery.append("                                                                 AND DATE_FORMAT(NOW(), '%Y%m') \n");
+		excQuery.append("            GROUP BY cl.yearMonth, pf.name \n");
+		excQuery.append("        ) dt \n");
+		excQuery.append("        ON (dt.yearMonth = bs.yearMonth AND dt.name = bs.name) \n");
+		excQuery.append("ORDER BY bs.yearMonth \n");
+		
+		// 쿼리생성
+		Query typedQuery = entityManager.createNativeQuery(excQuery.toString());
+		
+		// Parameter 설정
+		if (StringUtils.isNotBlank(sellerName)) {
+			typedQuery.setParameter("sellerName", sellerName);
+		}
+		
+		// 결과 값 Binding
+		List<Object[]> resultList = typedQuery.getResultList();
+		if (CollectionUtils.isEmpty(resultList)) {
+			return excuteResult;
+		}
+		Map<String,Object> tempRowValues = null;
+		for (Object[] arrInfo : resultList) {
+			tempRowValues = new HashMap<String,Object>();
+			tempRowValues.put("yearMonth", arrInfo[0]);
+			tempRowValues.put("name", arrInfo[1]);
+			tempRowValues.put("useCount", arrInfo[2]);
+			excuteResult.add(tempRowValues);
+		}
+		
+		return excuteResult;
+	}
 }
