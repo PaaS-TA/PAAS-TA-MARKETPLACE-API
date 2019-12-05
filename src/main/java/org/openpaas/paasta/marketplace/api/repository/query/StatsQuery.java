@@ -20,6 +20,11 @@ public class StatsQuery<T> {
 	@PersistenceContext
 	private EntityManager entityManager;
 	
+	
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
+	}
+
 	/**
 	 * Seller 요금통계 정보조회 총카운터
 	 * @param userId
@@ -77,7 +82,7 @@ public class StatsQuery<T> {
 		
 		// 결과 값 Binding
 		Optional<T> first = typedQuery.getResultList().stream().findFirst();
-		Integer totalCount = Integer.valueOf(first.get().toString());
+		Integer totalCount = first.isPresent() ? Integer.valueOf(first.get().toString()) : 0;
 		
 		return totalCount;
 	}
@@ -395,7 +400,7 @@ public class StatsQuery<T> {
 		
 		// 쿼리생성
 		Query typedQuery = entityManager.createNativeQuery(excQuery.toString());
-		
+
 		// Parameter 설정
 		if (StringUtils.isNotBlank(userId)) {
 			typedQuery.setParameter("userId", userId);
@@ -410,7 +415,7 @@ public class StatsQuery<T> {
 		
 		// 결과 값 Binding
 		Optional<T> first = typedQuery.getResultList().stream().findFirst();
-		Long totalCount = Long.valueOf(first.get().toString());
+		Long totalCount = first.isPresent() ? Long.valueOf(first.get().toString()) : 0L;
 		
 		return totalCount;
 	}
@@ -471,7 +476,7 @@ public class StatsQuery<T> {
 		
 		// 결과 값 Binding
 		Optional<T> first = typedQuery.getResultList().stream().findFirst();
-		Long totalCount = Long.valueOf(first.get().toString());
+		Long totalCount = first.isPresent() ? Long.valueOf(first.get().toString()) : 0L;
 		
 		return totalCount;
 	}
