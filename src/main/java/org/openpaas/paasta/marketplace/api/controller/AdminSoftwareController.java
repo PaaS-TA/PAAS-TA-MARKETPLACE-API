@@ -1,9 +1,21 @@
 package org.openpaas.paasta.marketplace.api.controller;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import javax.validation.constraints.NotNull;
+
 import org.openpaas.paasta.marketplace.api.cloudFoundryModel.NameType;
-import org.openpaas.paasta.marketplace.api.domain.*;
+import org.openpaas.paasta.marketplace.api.domain.Instance;
+import org.openpaas.paasta.marketplace.api.domain.Software;
+import org.openpaas.paasta.marketplace.api.domain.SoftwareHistory;
+import org.openpaas.paasta.marketplace.api.domain.SoftwareHistorySpecification;
+import org.openpaas.paasta.marketplace.api.domain.SoftwarePlan;
+import org.openpaas.paasta.marketplace.api.domain.SoftwarePlanSpecification;
+import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
+import org.openpaas.paasta.marketplace.api.domain.TestSoftwareInfo;
 import org.openpaas.paasta.marketplace.api.exception.PlatformException;
 import org.openpaas.paasta.marketplace.api.service.PlatformService;
 import org.openpaas.paasta.marketplace.api.service.SoftwarePlanService;
@@ -16,15 +28,18 @@ import org.springframework.data.domain.Sort;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.constraints.NotNull;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import lombok.RequiredArgsConstructor;
 
-@Slf4j
 @RestController
 @RequestMapping(value = "/admin/softwares")
 @RequiredArgsConstructor
@@ -56,13 +71,6 @@ public class AdminSoftwareController {
     public Software update(@PathVariable @NotNull Long id,
             @NotNull @Validated(Software.UpdateMetadata.class) @RequestBody Software software, BindingResult bindingResult)
             throws BindException {
-        /*
-        Software sameName = softwareService.getByName(software.getName());
-        if (sameName != null && id != sameName.getId()) {
-         bindingResult.rejectValue("name", "Unique");
-         }
-        */
-
         if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);
         }
@@ -90,6 +98,12 @@ public class AdminSoftwareController {
         return softwarePlanService.getCurrentSoftwarePlanList(spec);
     }
 
+    /**
+     * 상품가격 리스트 조회
+     * @param id
+     * @param sort
+     * @return
+     */
     @GetMapping("/plan/{id}/histories")
     public List<SoftwarePlan> getList(@NotNull @PathVariable Long id, Sort sort) {
         SoftwarePlanSpecification spec = new SoftwarePlanSpecification();
@@ -98,6 +112,12 @@ public class AdminSoftwareController {
         return softwarePlanService.getList(spec, sort);
     }
 
+    /**
+     * 상품가격 정보를 적용일자로 조회
+     * @param id
+     * @param applyMonth
+     * @return
+     */
     @GetMapping("/plan/{id}/applyMonth")
     public List<SoftwarePlan> getApplyMonth(@NotNull @PathVariable Long id, @RequestParam(name="applyMonth") String applyMonth) {
         SoftwarePlanSpecification spec = new SoftwarePlanSpecification();
@@ -150,10 +170,7 @@ public class AdminSoftwareController {
             appGuid = platformService.provision(instance, true);
             testSoftwareInfo.setAppGuid(appGuid);
             testSoftwareInfo.setStatus(TestSoftwareInfo.Status.Successful);
-            log.info("성공이구요~~");
-
         }catch (PlatformException e) {
-            log.info("실패이지만 저장해~~" + e.getMessage());
             testSoftwareInfo.setAppGuid(e.getMessage());
             testSoftwareInfo.setStatus(TestSoftwareInfo.Status.Failed);
             //throw new PlatformException("appGuid doesn't exist!!!");
@@ -185,7 +202,6 @@ public class AdminSoftwareController {
     @DeleteMapping("/{swId}/testSwInfo/{id}/app/{appGuid}")
     public Map deleteDeployTestApp(@PathVariable Long swId, @PathVariable Long id, @PathVariable String appGuid) {
         Software software = softwareService.get(swId);
-
         Instance instance = new Instance();
 
         instance.setSoftware(software);
@@ -213,13 +229,13 @@ public class AdminSoftwareController {
      */
     @DeleteMapping("/testFailed/app/{testFailedAppId}")
     public Long deleteDeployTestFailedApp(@PathVariable Long testFailedAppId) {
-    	long deleteCount = 1;
+    	long deleteCount = 0;
     	
     	try {
     		testSoftwareInfoService.deleteDeployTestApp(testFailedAppId);
+    		deleteCount = 1;
     	} catch (Exception e) {
     		e.printStackTrace();
-    		deleteCount = 0;
     	}
     	
     	return deleteCount;

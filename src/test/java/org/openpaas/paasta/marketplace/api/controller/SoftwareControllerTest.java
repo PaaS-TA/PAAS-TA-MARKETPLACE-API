@@ -17,20 +17,27 @@ import static org.springframework.restdocs.request.RequestDocumentation.requestP
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.openpaas.paasta.marketplace.api.domain.Category;
 import org.openpaas.paasta.marketplace.api.domain.Software;
+import org.openpaas.paasta.marketplace.api.domain.SoftwareHistory;
+import org.openpaas.paasta.marketplace.api.domain.SoftwareHistorySpecification;
 import org.openpaas.paasta.marketplace.api.domain.SoftwarePlan;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
 import org.openpaas.paasta.marketplace.api.domain.Yn;
@@ -45,6 +52,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -147,6 +155,19 @@ public class SoftwareControllerTest {
         softwarePlan.setDiskAmt(id.intValue());
 
         return softwarePlan;
+    }
+    
+    private SoftwareHistory softwareHistory(Long id, String name) {
+    	SoftwareHistory softwareHistory = new SoftwareHistory();
+    	softwareHistory.setId(id);
+    	softwareHistory.setDescription("description of this software.");
+    	softwareHistory.setCreatedBy(userId);
+    	softwareHistory.setCreatedDate(current);
+    	softwareHistory.setLastModifiedBy(userId);
+    	softwareHistory.setLastModifiedDate(current);
+    	softwareHistory.setInUse(Yn.Y);
+    	
+    	return softwareHistory;
     }
 
     @Test
@@ -516,4 +537,128 @@ public class SoftwareControllerTest {
         // @formatter:on
     }
 
+    @Test
+    public void getHistoryList() throws Exception {
+    	Category category = category(1L, "category-01");
+    	Software software = software(1L, "software-01", category);
+    	
+        SoftwareHistory softwareHistory1 = softwareHistory(1L, "software-01");
+        SoftwareHistory softwareHistory2 = softwareHistory(2L, "software-02");
+        List<SoftwareHistory> softwareHistoryList = new ArrayList<SoftwareHistory>();
+        softwareHistoryList.add(softwareHistory1);
+        softwareHistoryList.add(softwareHistory2);
+    	
+        given(softwareService.get(any(Long.class))).willReturn(software);
+        given(softwareService.getHistoryList(any(SoftwareHistorySpecification.class), any(Sort.class))).willReturn(softwareHistoryList);
+
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/softwares/{id}/histories", 1L)
+        												.param("sort", "id,asc")
+                										.contentType(MediaType.APPLICATION_JSON)
+                										.accept(MediaType.APPLICATION_JSON)
+                										.header("Authorization", userId)
+                										.characterEncoding("utf-8"));
+        result.andExpect(status().isOk());
+        result.andDo(print());
+        result.andDo(
+            document("software/getHistoryList",
+                preprocessRequest(
+                    modifyUris()
+                        .scheme("http")
+                        .host("marketplace.yourdomain.com")
+                        .removePort(),
+                    prettyPrint()
+                ),
+                preprocessResponse(
+                    prettyPrint()
+                ),
+                pathParameters(
+                    parameterWithName("id").description("Software's id")
+                ),
+                requestParameters(
+                	parameterWithName("sort").description("sort condition (column,direction)")
+                ),
+                relaxedResponseFields(
+                	fieldWithPath("[0].id").type(JsonFieldType.NUMBER).description("version"),
+                	fieldWithPath("[0].description").type(JsonFieldType.STRING).description("description"),
+                	fieldWithPath("[0].createdBy").type(JsonFieldType.STRING).description("createdBy"),
+                	fieldWithPath("[0].inUse").type(JsonFieldType.STRING).description("inUse")
+                )
+            )
+        );
+    }
+    
+    // 판매자의 상태별 상품 갯수 조회
+    @Test
+    public void soldSoftwareCount() throws Exception {
+        given(softwareService.getSoldSoftwareCount(any(String.class), any(String.class))).willReturn(1);
+
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/softwares/soldSoftwareCount")
+        												.param("userId", userId)
+        												.param("status", "Approval")
+                										.contentType(MediaType.APPLICATION_JSON)
+                										.accept(MediaType.APPLICATION_JSON)
+                										.header("Authorization", userId)
+                										.characterEncoding("utf-8"));
+        result.andExpect(status().isOk());
+        result.andDo(print());
+        result.andDo(
+            document("software/getHistoryList",
+                preprocessRequest(
+                    modifyUris()
+                        .scheme("http")
+                        .host("marketplace.yourdomain.com")
+                        .removePort(),
+                    prettyPrint()
+                ),
+                preprocessResponse(
+                    prettyPrint()
+                ),
+                pathParameters(),
+                requestParameters(
+                	parameterWithName("userId").description("User's Id"),
+                	parameterWithName("status").description("Software status code")
+                ),
+                relaxedResponseFields()
+            )
+        );
+    }
+
+    // 판매된 소프트웨어의 카운트정보 조회
+    @Test
+    public void softwareInstanceCountMap() throws Exception {
+    	Map<String,Object> mockMap = new HashMap<String,Object>();
+    	mockMap.put("1", new BigDecimal(10));
+    	mockMap.put("2", new BigDecimal(20));
+    	mockMap.put("3", new BigDecimal(30));
+
+        given(softwareService.getSoftwareInstanceCountMap(any(List.class))).willReturn(mockMap);
+
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/softwares/instanceCount")
+        												.param("softwareIdList", "1", "2", "3")
+                										.contentType(MediaType.APPLICATION_JSON)
+                										.accept(MediaType.APPLICATION_JSON)
+                										.header("Authorization", userId)
+                										.characterEncoding("utf-8"));
+        result.andExpect(status().isOk());
+        result.andDo(print());
+        result.andDo(
+            document("software/softwareInstanceCountMap",
+                preprocessRequest(
+                    modifyUris()
+                        .scheme("http")
+                        .host("marketplace.yourdomain.com")
+                        .removePort(),
+                    prettyPrint()
+                ),
+                preprocessResponse(
+                    prettyPrint()
+                ),
+                pathParameters(),
+                requestParameters(
+                	parameterWithName("softwareIdList").description("Software's ID list")
+                ),
+                relaxedResponseFields()
+            )
+        );
+    }
 }

@@ -17,18 +17,31 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openpaas.paasta.marketplace.api.domain.Category;
+import org.openpaas.paasta.marketplace.api.domain.Instance;
+import org.openpaas.paasta.marketplace.api.domain.InstanceSpecification;
 import org.openpaas.paasta.marketplace.api.domain.Profile;
+import org.openpaas.paasta.marketplace.api.domain.ProfileSpecification;
+import org.openpaas.paasta.marketplace.api.domain.Software;
 import org.openpaas.paasta.marketplace.api.repository.UserRepository;
 import org.openpaas.paasta.marketplace.api.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -257,6 +270,55 @@ public class SellerProfileControllerTest {
                 )
             );
         // @formatter:on
+    }
+    
+    @Test
+    public void getPage() throws Exception {
+        Profile profile = profile(userId);
+        profile.setName("yourname");
+        profile.setEmail("yourname@yourcompany.com");
+        profile.setType(Profile.Type.Company);
+
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Profile> content = new ArrayList<>();
+        content.add(profile);
+        Page<Profile> page = new PageImpl<>(content, pageable, content.size());
+        
+        given(profileService.getPage(any(ProfileSpecification.class), any(Pageable.class))).willReturn(page);
+        
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/profiles/page")
+										                .param("page", "0")
+										                .param("size", "10")
+										                .param("sort", "id,asc")
+										                .contentType(MediaType.APPLICATION_JSON)
+										                .accept(MediaType.APPLICATION_JSON).header("Authorization", userId)
+										                .characterEncoding("utf-8"));
+        result.andExpect(status().isOk());
+        result.andDo(print());
+        result.andDo(
+            document("/profiles/getPage",
+                preprocessRequest(
+                    modifyUris().scheme("http")
+		                        .host("marketplace.yourdomain.com")
+		                        .removePort()
+                    ,prettyPrint()
+                ),
+                preprocessResponse(
+                    prettyPrint()
+                ),
+                pathParameters(),
+                requestParameters(
+                    parameterWithName("page").description("index of page (starting from 0)"),
+                    parameterWithName("size").description("size of page"),
+                    parameterWithName("sort").description("sort condition (column,direction)")
+                ),
+                relaxedResponseFields(
+                    fieldWithPath("content").type(JsonFieldType.ARRAY).description("content of page"),
+                    fieldWithPath("pageable").type(JsonFieldType.OBJECT).description("request pageable"),
+                    fieldWithPath("numberOfElements").type(JsonFieldType.NUMBER).description("total count of elements")
+                )
+            )
+        );
     }
 
 }

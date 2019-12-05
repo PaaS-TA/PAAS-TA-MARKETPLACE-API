@@ -22,13 +22,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.cloudfoundry.operations.domains.Status;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openpaas.paasta.marketplace.api.domain.Category;
 import org.openpaas.paasta.marketplace.api.domain.Software;
+import org.openpaas.paasta.marketplace.api.domain.SoftwareHistory;
+import org.openpaas.paasta.marketplace.api.domain.SoftwareHistorySpecification;
+import org.openpaas.paasta.marketplace.api.domain.SoftwarePlan;
+import org.openpaas.paasta.marketplace.api.domain.SoftwarePlanSpecification;
 import org.openpaas.paasta.marketplace.api.domain.SoftwareSpecification;
+import org.openpaas.paasta.marketplace.api.domain.TestSoftwareInfo;
 import org.openpaas.paasta.marketplace.api.domain.Yn;
 import org.openpaas.paasta.marketplace.api.repository.UserRepository;
 import org.openpaas.paasta.marketplace.api.service.PlatformService;
@@ -43,6 +49,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -133,6 +140,46 @@ public class AdminSoftwareControllerTest {
         software.setInUse(Yn.Y);
 
         return software;
+    }
+    
+    private SoftwareHistory softwareHistory(Long id, String name) {
+    	SoftwareHistory softwareHistory = new SoftwareHistory();
+    	softwareHistory.setId(id);
+    	softwareHistory.setDescription("description of this software.");
+    	softwareHistory.setCreatedBy(userId);
+    	softwareHistory.setCreatedDate(current);
+    	softwareHistory.setLastModifiedBy(userId);
+    	softwareHistory.setLastModifiedDate(current);
+    	softwareHistory.setInUse(Yn.Y);
+    	
+    	return softwareHistory;
+    }
+    
+    private SoftwarePlan softwarePlan(Long id, Long softwareId, String name) {
+    	SoftwarePlan softwarePlan = new SoftwarePlan();
+    	softwarePlan.setId(id);
+    	softwarePlan.setSoftwareId(softwareId);
+    	softwarePlan.setApplyMonth(current.toString());
+    	softwarePlan.setName(name);
+    	softwarePlan.setDescription("description of this softwarePlan.");
+    	softwarePlan.setMemorySize("1G");
+    	softwarePlan.setDiskSize("2G");
+    	softwarePlan.setCpuAmt(1000);
+    	softwarePlan.setMemoryAmt(1000);
+    	softwarePlan.setDiskAmt(1000);
+    	
+    	return softwarePlan;
+    }
+    
+    private TestSoftwareInfo testSoftwareInfo(Long id, Long softwareId, String name) {
+    	TestSoftwareInfo testSoftwareInfo = new TestSoftwareInfo();
+    	testSoftwareInfo.setId(id);
+    	testSoftwareInfo.setName(name);
+    	testSoftwareInfo.setSoftwareId(softwareId);
+    	testSoftwareInfo.setAppGuid(UUID.randomUUID().toString());
+    	testSoftwareInfo.setSoftwarePlanId(1L);
+    	testSoftwareInfo.setStatus(TestSoftwareInfo.Status.Successful);
+    	return testSoftwareInfo;
     }
 
     @Test
@@ -317,4 +364,381 @@ public class AdminSoftwareControllerTest {
         // @formatter:on
     }
 
+    // 상품 히스토리 내역 조회
+    @Test
+    public void getHistoryList() throws Exception {
+        SoftwareHistory softwareHistory1 = softwareHistory(1L, "software-01");
+        SoftwareHistory softwareHistory2 = softwareHistory(2L, "software-02");
+        List<SoftwareHistory> softwareHistoryList = new ArrayList<SoftwareHistory>();
+        softwareHistoryList.add(softwareHistory1);
+        softwareHistoryList.add(softwareHistory2);
+
+        given(softwareService.getHistoryList(any(SoftwareHistorySpecification.class), any(Sort.class))).willReturn(softwareHistoryList);
+
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/admin/softwares/{id}/histories", 1L)
+        												.param("sort", "id,asc")
+                										.contentType(MediaType.APPLICATION_JSON)
+                										.accept(MediaType.APPLICATION_JSON)
+                										.header("Authorization", adminId)
+                										.characterEncoding("utf-8"));
+        result.andExpect(status().isOk());
+        result.andDo(print());
+
+        result.andDo(
+            document("admin/software/getHistoryList",
+                preprocessRequest(
+                    modifyUris()
+                        .scheme("http")
+                        .host("marketplace.yourdomain.com")
+                        .removePort(),
+                    prettyPrint()
+                ),
+                preprocessResponse(
+                    prettyPrint()
+                ),
+                pathParameters(
+                    parameterWithName("id").description("Software's id")
+                ),
+                requestParameters(
+                	parameterWithName("sort").description("sort condition (column,direction)")
+                ),
+                relaxedResponseFields(
+                )
+            )
+        );
+    }
+
+    // 상품가격 리스트 조회
+    @Test
+    public void currentSoftwarePlanList() throws Exception {
+    	SoftwarePlan softwarePlan1 = softwarePlan(1L, 1L, "softwarePlan-01");
+    	SoftwarePlan softwarePlan2 = softwarePlan(2L, 1L, "softwarePlan-02");
+
+    	List<SoftwarePlan> softwarePlanList = new ArrayList<SoftwarePlan>();
+    	softwarePlanList.add(softwarePlan1);
+    	softwarePlanList.add(softwarePlan2);
+
+        given(softwarePlanService.getCurrentSoftwarePlanList(any(SoftwarePlanSpecification.class))).willReturn(softwarePlanList);
+
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/admin/softwares/plan/{id}/list", 1L)
+                										.contentType(MediaType.APPLICATION_JSON)
+                										.accept(MediaType.APPLICATION_JSON)
+                										.header("Authorization", adminId)
+                										.characterEncoding("utf-8"));
+        result.andExpect(status().isOk());
+        result.andDo(print());
+
+        result.andDo(
+            document("admin/software/currentSoftwarePlanList",
+                preprocessRequest(
+                    modifyUris()
+                        .scheme("http")
+                        .host("marketplace.yourdomain.com")
+                        .removePort(),
+                    prettyPrint()
+                ),
+                preprocessResponse(
+                    prettyPrint()
+                ),
+                pathParameters(
+                    parameterWithName("id").description("Software's id")
+                ),
+                requestParameters(
+                ),
+                relaxedResponseFields(
+                )
+            )
+        );
+    }
+
+    // 상품가격 리스트 조회
+    @Test
+    public void getList() throws Exception {
+    	SoftwarePlan softwarePlan1 = softwarePlan(1L, 1L, "softwarePlan-01");
+    	SoftwarePlan softwarePlan2 = softwarePlan(2L, 1L, "softwarePlan-02");
+
+    	List<SoftwarePlan> softwarePlanList = new ArrayList<SoftwarePlan>();
+    	softwarePlanList.add(softwarePlan1);
+    	softwarePlanList.add(softwarePlan2);
+
+        given(softwarePlanService.getList(any(SoftwarePlanSpecification.class), any(Sort.class))).willReturn(softwarePlanList);
+
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/admin/softwares/plan/{id}/histories", 1L)
+        												.param("sort", "id,asc")
+                										.contentType(MediaType.APPLICATION_JSON)
+                										.accept(MediaType.APPLICATION_JSON)
+                										.header("Authorization", adminId)
+                										.characterEncoding("utf-8"));
+        result.andExpect(status().isOk());
+        result.andDo(print());
+
+        result.andDo(
+            document("admin/software/getList",
+                preprocessRequest(
+                    modifyUris()
+                        .scheme("http")
+                        .host("marketplace.yourdomain.com")
+                        .removePort(),
+                    prettyPrint()
+                ),
+                preprocessResponse(
+                    prettyPrint()
+                ),
+                pathParameters(
+                    parameterWithName("id").description("Software's id")
+                ),
+                requestParameters(
+            		parameterWithName("sort").description("sort condition (column,direction)")
+                ),
+                relaxedResponseFields(
+                )
+            )
+        );
+    }
+
+    // 상품가격 정보를 적용일자로 조회
+    @Test
+    public void getApplyMonth() throws Exception {
+    	SoftwarePlan softwarePlan1 = softwarePlan(1L, 1L, "softwarePlan-01");
+    	SoftwarePlan softwarePlan2 = softwarePlan(2L, 1L, "softwarePlan-02");
+
+    	List<SoftwarePlan> softwarePlanList = new ArrayList<SoftwarePlan>();
+    	softwarePlanList.add(softwarePlan1);
+    	softwarePlanList.add(softwarePlan2);
+
+        given(softwarePlanService.getList(any(SoftwarePlanSpecification.class), any(Sort.class))).willReturn(softwarePlanList);
+
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/admin/softwares/plan/{id}/applyMonth", 1L)
+        												.param("applyMonth", current.toString())
+                										.contentType(MediaType.APPLICATION_JSON)
+                										.accept(MediaType.APPLICATION_JSON)
+                										.header("Authorization", adminId)
+                										.characterEncoding("utf-8"));
+        result.andExpect(status().isOk());
+        result.andDo(print());
+
+        result.andDo(
+            document("admin/software/getApplyMonth",
+                preprocessRequest(
+                    modifyUris()
+                        .scheme("http")
+                        .host("marketplace.yourdomain.com")
+                        .removePort(),
+                    prettyPrint()
+                ),
+                preprocessResponse(
+                    prettyPrint()
+                ),
+                pathParameters(
+                    parameterWithName("id").description("Software's id")
+                ),
+                requestParameters(
+            		parameterWithName("applyMonth").description("softwarePlan apply Date.")
+                ),
+                relaxedResponseFields(
+                )
+            )
+        );
+    }
+
+    // 앱 배포 테스트
+    @Test
+    public void deployTestSoftware() throws Exception {
+    	TestSoftwareInfo testSoftwareInfo = testSoftwareInfo(1L, 1L, "testSoftware-01");
+        Category category = category(1L, "category-01");
+        Software software = software(1L, "software-01", category);
+    	
+        given(testSoftwareInfoService.create(any(TestSoftwareInfo.class))).willReturn(testSoftwareInfo);
+        given(softwareService.get(any(Long.class))).willReturn(software);
+        
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.post("/admin/softwares/{id}/plan/{planId}", 1L, 1L)
+                										.contentType(MediaType.APPLICATION_JSON)
+                										.accept(MediaType.APPLICATION_JSON)
+                										.header("Authorization", adminId)
+                										.content(objectMapper.writeValueAsString(testSoftwareInfo))
+                										.characterEncoding("utf-8"));
+        result.andExpect(status().isOk());
+        result.andDo(print());
+
+        result.andDo(
+            document("admin/software/deployTestSoftware",
+                preprocessRequest(
+                    modifyUris()
+                        .scheme("http")
+                        .host("marketplace.yourdomain.com")
+                        .removePort(),
+                    prettyPrint()
+                ),
+                preprocessResponse(
+                    prettyPrint()
+                ),
+                pathParameters(
+                    parameterWithName("id").description("Software's id"),
+                    parameterWithName("planId").description("SoftwarePlan's id")
+                ),
+                requestParameters(
+                ),
+                relaxedResponseFields(
+                )
+            )
+        );
+    }
+
+    // 각 상품에 대한 배포 테스한 앱 목록 조회
+    // @GetMapping("/{id}/testSwInfo")
+    @Test
+    public void getTestSwInfoList() throws Exception {
+    	TestSoftwareInfo testSoftwareInfo1 = testSoftwareInfo(1L, 1L, "testSoftware-01");
+    	TestSoftwareInfo testSoftwareInfo2 = testSoftwareInfo(2L, 1L, "testSoftware-02");
+
+    	List<TestSoftwareInfo> testSoftwareInfoList = new ArrayList<TestSoftwareInfo>();
+    	testSoftwareInfoList.add(testSoftwareInfo1);
+    	testSoftwareInfoList.add(testSoftwareInfo2);
+
+        given(testSoftwareInfoService.getTestSwInfoList(any(Long.class))).willReturn(testSoftwareInfoList);
+
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/admin/softwares/{id}/testSwInfo", 1L)
+                										.contentType(MediaType.APPLICATION_JSON)
+                										.accept(MediaType.APPLICATION_JSON)
+                										.header("Authorization", adminId)
+                										.characterEncoding("utf-8"));
+        result.andExpect(status().isOk());
+        result.andDo(print());
+
+        result.andDo(
+            document("admin/software/getTestSwInfoList",
+                preprocessRequest(
+                    modifyUris()
+                        .scheme("http")
+                        .host("marketplace.yourdomain.com")
+                        .removePort(),
+                    prettyPrint()
+                ),
+                preprocessResponse(
+                    prettyPrint()
+                ),
+                pathParameters(
+                    parameterWithName("id").description("Software's id")
+                ),
+                requestParameters(
+                ),
+                relaxedResponseFields(
+                )
+            )
+        );
+    }
+
+    // 배포 테스트한 앱 삭제
+    // @DeleteMapping("/{swId}/testSwInfo/{id}/app/{appGuid}")
+    @Test
+    public void deleteDeployTestApp() throws Exception {
+    	String appGuid = UUID.randomUUID().toString();
+    	
+        Category category = category(1L, "category-01");
+        Software software = software(1L, "software-01", category);
+    	
+        given(softwareService.get(any(Long.class))).willReturn(software);
+
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.delete("/admin/softwares/{swId}/testSwInfo/{id}/app/{appGuid}", 1L, 1L, appGuid)
+                										.contentType(MediaType.APPLICATION_JSON)
+                										.accept(MediaType.APPLICATION_JSON)
+                										.header("Authorization", adminId)
+                										.characterEncoding("utf-8"));
+        result.andExpect(status().isOk());
+        result.andDo(print());
+
+        result.andDo(
+            document("admin/software/deleteDeployTestApp",
+                preprocessRequest(
+                    modifyUris()
+                        .scheme("http")
+                        .host("marketplace.yourdomain.com")
+                        .removePort(),
+                    prettyPrint()
+                ),
+                preprocessResponse(
+                    prettyPrint()
+                ),
+                pathParameters(
+                	parameterWithName("swId").description("Software's id"),
+                    parameterWithName("id").description("TestSoftware's id"),
+                    parameterWithName("appGuid").description("Test App's id")
+                ),
+                requestParameters(
+                ),
+                relaxedResponseFields(
+                )
+            )
+        );
+    }
+
+    // 배포 테스트 실패한 앱 삭제
+    @Test
+    public void deleteDeployTestFailedApp() throws Exception {
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.delete("/admin/softwares/testFailed/app/{testFailedAppId}", 1L)
+                										.contentType(MediaType.APPLICATION_JSON)
+                										.accept(MediaType.APPLICATION_JSON)
+                										.header("Authorization", adminId)
+                										.characterEncoding("utf-8"));
+        result.andExpect(status().isOk());
+        result.andDo(print());
+
+        result.andDo(
+            document("admin/software/deleteDeployTestFailedApp",
+                preprocessRequest(
+                    modifyUris()
+                        .scheme("http")
+                        .host("marketplace.yourdomain.com")
+                        .removePort(),
+                    prettyPrint()
+                ),
+                preprocessResponse(
+                    prettyPrint()
+                ),
+                pathParameters(
+                    parameterWithName("testFailedAppId").description("Test Fail App's id")
+                ),
+                requestParameters(
+                ),
+                relaxedResponseFields(
+                )
+            )
+        );
+    }
+
+    // 카테고리를 사용하고 있는 소프트웨어 카운트
+    @Test
+    public void softwareUsedCategoryCount() throws Exception {
+    	given(softwareService.getSoftwareUsedCategoryCount(any(Long.class))).willReturn(1L);
+    	
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/admin/softwares/softwareUsedCategoryCount/{categoryid}", 1L)
+														.contentType(MediaType.APPLICATION_JSON)
+														.accept(MediaType.APPLICATION_JSON)
+														.header("Authorization", adminId)
+														.characterEncoding("utf-8"));
+		result.andExpect(status().isOk());
+		result.andDo(print());
+
+        result.andDo(
+            document("admin/software/softwareUsedCategoryCount",
+                preprocessRequest(
+                    modifyUris()
+                        .scheme("http")
+                        .host("marketplace.yourdomain.com")
+                        .removePort(),
+                    prettyPrint()
+                ),
+                preprocessResponse(
+                    prettyPrint()
+                ),
+                pathParameters(
+                    parameterWithName("categoryid").description("Category's id")
+                ),
+                requestParameters(
+                ),
+                relaxedResponseFields(
+                )
+            )
+        );
+    }
 }

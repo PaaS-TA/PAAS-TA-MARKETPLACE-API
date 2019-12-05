@@ -9,9 +9,13 @@ import static org.mockito.Mockito.verify;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.persistence.EntityManager;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,12 +36,16 @@ public class StatsServiceTest extends AbstractMockTest {
     StatsRepository statsRepository;
 
     @Mock
-    StatsQuery statsQuery;
+    StatsQuery<?> statsQuery;
+    
+    @Mock
+    private EntityManager entityManager;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
-
+        
+        statsQuery.setEntityManager(entityManager);
         statsService = new StatsService(statsRepository, statsQuery);
     }
 
@@ -570,4 +578,261 @@ public class StatsServiceTest extends AbstractMockTest {
                 any(LocalDateTime.class));
     }
 
+    // 현재 사용중인 상품 카운트 (arg 3개)
+    @Test
+    public void queryCountOfInstsCurrent() {
+    	given(statsQuery.queryCountOfInstsCurrent(any(String.class), any(String.class), any(String.class)))
+        		.willReturn(1L);
+    	
+    	Long result = statsService.queryCountOfInstsCurrent(categoryId, current.toString(), current.toString());
+    	assertEquals(1, result.longValue());
+    	
+    	verify(statsQuery, atLeastOnce()).queryCountOfInstsCurrent(any(String.class), any(String.class), any(String.class));
+    }
+    
+    // 현재 사용중인 상품 카운트 (arg 4개)
+    @Test
+    public void queryCountOfInstsCurrent2() {
+    	given(statsQuery.queryCountOfInstsCurrent(any(String.class), any(String.class), any(String.class), any(String.class)))
+				.willReturn(1L);
+		
+		Long result = statsService.queryCountOfInstsCurrent(categoryId, current.toString(), current.toString(), userId);
+		assertEquals(1, result.longValue());
+		
+		verify(statsQuery, atLeastOnce()).queryCountOfInstsCurrent(any(String.class), any(String.class), any(String.class), any(String.class));
+    }
+    
+    // 현재 상품을 사용중인 User 카운트 (arg 3개)
+    @Test
+    public void queryCountOfUsersUsing() {
+    	given(statsQuery.queryCountOfUsersUsing(any(String.class), any(String.class), any(String.class)))
+				.willReturn(1L);
+		
+		Long result = statsService.queryCountOfUsersUsing(categoryId, current.toString(), current.toString());
+		assertEquals(1, result.longValue());
+		
+		verify(statsQuery, atLeastOnce()).queryCountOfUsersUsing(any(String.class), any(String.class), any(String.class));
+    }
+    
+    // 현재 상품을 사용중인 User 카운트 (arg 4개)
+    @Test
+    public void queryCountOfUsersUsing2() {
+    	given(statsQuery.queryCountOfUsersUsing(any(String.class), any(String.class), any(String.class), any(String.class)))
+				.willReturn(1L);
+		
+		Long result = statsService.queryCountOfUsersUsing(categoryId, current.toString(), current.toString(), userId);
+		assertEquals(1, result.longValue());
+		
+		verify(statsQuery, atLeastOnce()).queryCountOfUsersUsing(any(String.class), any(String.class), any(String.class), any(String.class));
+    }
+    
+    // Seller 요금통계 정보조회 총카운터
+    @Test
+    public void getSoftwareSellPriceTotalCount() {
+    	given(statsQuery.querySoftwareSellPriceTotalCount(any(String.class), any(String.class), any(String.class), any(Integer.class), any(Integer.class)))
+				.willReturn(10);
+		
+		Integer result = statsService.getSoftwareSellPriceTotalCount(userId, categoryId, current.toString(), 0, 10);
+		assertEquals(10, result.intValue());
+		
+		verify(statsQuery, atLeastOnce()).querySoftwareSellPriceTotalCount(any(String.class), any(String.class), any(String.class), any(Integer.class), any(Integer.class));
+    }
+    
+    // Seller 요금통계 정보조회 리스트
+    @Test
+    public void getSoftwareSellPriceList() {
+    	List<Map<String, Object>> mockList = new ArrayList<Map<String, Object>>();
+    	Map<String, Object> mockMap1 = new HashMap<String, Object>();
+    	mockMap1.put("softwareId", 1);
+		mockMap1.put("categoryId", 1);
+		mockMap1.put("categoryName", "ctName1");
+		mockMap1.put("softawareName", "softName1");
+		mockMap1.put("version", "1.0");
+		mockMap1.put("createdDate", current.toString());
+		mockMap1.put("softwarePlanAmtMonth", 1000);
+		mockMap1.put("sellCount", 10);
+		Map<String, Object> mockMap2 = new HashMap<String, Object>();
+    	mockMap2.put("softwareId", 2);
+		mockMap2.put("categoryId", 2);
+		mockMap2.put("categoryName", "ctName2");
+		mockMap2.put("softawareName", "softName2");
+		mockMap2.put("version", "1.0");
+		mockMap2.put("createdDate", current.toString());
+		mockMap2.put("softwarePlanAmtMonth", 2000);
+		mockMap2.put("sellCount", 20);
+		mockList.add(mockMap1);
+		mockList.add(mockMap2);
+    	
+    	given(statsQuery.querySoftwareSellPriceList(any(String.class), any(String.class), any(String.class), any(Integer.class), any(Integer.class)))
+				.willReturn(mockList);
+		
+    	List<Map<String, Object>> result = statsService.getSoftwareSellPriceList(userId, categoryId, current.toString(), 0, 10);
+		assertEquals(2, result.size());
+		
+		verify(statsQuery, atLeastOnce()).querySoftwareSellPriceList(any(String.class), any(String.class), any(String.class), any(Integer.class), any(Integer.class));
+    }
+ 
+    // 사용자별 구매 퍼센트 통계
+    @Test
+    public void getPurchaserPercent() {
+    	List<Map<String, Object>> mockList = new ArrayList<Map<String, Object>>();
+    	Map<String, Object> mockMap1 = new HashMap<String, Object>();
+		mockMap1.put("userId", userId);
+		mockMap1.put("instanceCount", 10);
+		mockMap1.put("totalInstanceCount", 10);
+		mockMap1.put("purchaserPercent", 50);
+		Map<String, Object> mockMap2 = new HashMap<String, Object>();
+		mockMap2.put("userId", userId);
+		mockMap2.put("instanceCount", 10);
+		mockMap2.put("totalInstanceCount", 20);
+		mockMap2.put("purchaserPercent", 50);
+		mockList.add(mockMap1);
+		mockList.add(mockMap2);
+
+    	given(statsQuery.queryPurchaserPercent()).willReturn(mockList);
+		
+    	List<Map<String, Object>> result = statsService.getPurchaserPercent();
+		assertEquals(2, result.size());
+		
+		verify(statsQuery, atLeastOnce()).queryPurchaserPercent();
+    }
+    
+    // 월별 상품구매 통계
+    @Test
+    public void getPurchaseTransitionMonth() {
+    	List<Map<String, Object>> mockList = new ArrayList<Map<String, Object>>();
+    	Map<String, Object> mockMap1 = new HashMap<String, Object>();
+    	mockMap1.put("yearMonth", "20191101");
+    	mockMap1.put("purchaseCount", 10);
+		Map<String, Object> mockMap2 = new HashMap<String, Object>();
+		mockMap2.put("yearMonth", "20191201");
+		mockMap2.put("purchaseCount", 20);
+		mockList.add(mockMap1);
+		mockList.add(mockMap2);
+
+    	given(statsQuery.queryPurchaseTransitionMonth()).willReturn(mockList);
+		
+    	List<Map<String, Object>> result = statsService.getPurchaseTransitionMonth();
+		assertEquals(2, result.size());
+		
+		verify(statsQuery, atLeastOnce()).queryPurchaseTransitionMonth();
+    }
+    
+    // 앱사용 사용자 추이
+    @Test
+    public void getUsageTransition() {
+    	List<Map<String, Object>> mockList = new ArrayList<Map<String, Object>>();
+    	Map<String, Object> mockMap1 = new HashMap<String, Object>();
+    	mockMap1.put("yearMonth", "20191101");
+    	mockMap1.put("usageUserCount", 10);
+		Map<String, Object> mockMap2 = new HashMap<String, Object>();
+		mockMap2.put("yearMonth", "20191201");
+		mockMap2.put("usageUserCount", 20);
+		mockList.add(mockMap1);
+		mockList.add(mockMap2);
+
+    	given(statsQuery.queryUsageTransition()).willReturn(mockList);
+		
+    	List<Map<String, Object>> result = statsService.getUsageTransition();
+		assertEquals(2, result.size());
+		
+		verify(statsQuery, atLeastOnce()).queryUsageTransition();
+    }
+    
+    // 상품별 사용앱 데이터 조회 (Chart)
+    @Test
+    public void getStatsUseApp() {
+    	List<Map<String, Object>> mockList = new ArrayList<Map<String, Object>>();
+    	Map<String, Object> mockMap1 = new HashMap<String, Object>();
+    	mockMap1.put("name", "고길동");
+    	mockMap1.put("data", 10);
+		Map<String, Object> mockMap2 = new HashMap<String, Object>();
+		mockMap2.put("name", "둘리");
+		mockMap2.put("data", 20);
+		mockList.add(mockMap1);
+		mockList.add(mockMap2);
+    	
+    	given(statsQuery.queryStatsUseApp(any(String.class), any(String.class), any(String.class), any(String.class)))
+				.willReturn(mockList);
+		
+    	List<Map<String, Object>> result = statsService.getStatsUseApp(userId, categoryId, current.toString(), current.toString());
+		assertEquals(2, result.size());
+		
+		verify(statsQuery, atLeastOnce()).queryStatsUseApp(any(String.class), any(String.class), any(String.class), any(String.class));
+    }
+    
+    // 상품별 사용추이 데이터 조회 (Chart)
+    @Test
+    public void getStatsUseTransition() {
+    	List<Map<String, Object>> mockList = new ArrayList<Map<String, Object>>();
+    	Map<String, Object> mockMap1 = new HashMap<String, Object>();
+    	mockMap1.put("yearMonth", "20191101");
+    	mockMap1.put("name", "홍길동");
+    	mockMap1.put("usageUserCount", 10);
+
+		Map<String, Object> mockMap2 = new HashMap<String, Object>();
+		mockMap2.put("yearMonth", "20191201");
+		mockMap2.put("name", "김삿갓");
+		mockMap2.put("usageUserCount", 20);
+		mockList.add(mockMap1);
+		mockList.add(mockMap2);
+    	
+    	given(statsQuery.queryStatsUseTransition(any(String.class), any(String.class), any(String.class), any(String.class)))
+				.willReturn(mockList);
+		
+    	List<Map<String, Object>> result = statsService.getStatsUseTransition(userId, categoryId, current.toString(), current.toString());
+		assertEquals(2, result.size());
+		
+		verify(statsQuery, atLeastOnce()).queryStatsUseTransition(any(String.class), any(String.class), any(String.class), any(String.class));
+    }
+    
+    // 판매자별 등록앱 퍼센트 분포
+    @Test
+    public void getSellerCreatedAppPercent() {
+    	List<Map<String, Object>> mockList = new ArrayList<Map<String, Object>>();
+    	Map<String, Object> mockMap1 = new HashMap<String, Object>();
+    	mockMap1.put("name", "홍길동");
+    	mockMap1.put("data", 10);
+		Map<String, Object> mockMap2 = new HashMap<String, Object>();
+		mockMap2.put("name", "김삿갓");
+		mockMap2.put("data", 20);
+		mockList.add(mockMap1);
+		mockList.add(mockMap2);
+    	
+    	given(statsQuery.querySellerCreatedAppPercent(any(String.class))).willReturn(mockList);
+		
+    	List<Map<String, Object>> result = statsService.getSellerCreatedAppPercent(sellerName);
+		assertEquals(2, result.size());
+		
+		verify(statsQuery, atLeastOnce()).querySellerCreatedAppPercent(any(String.class));
+    }
+    
+    // 판매자별 앱 사용 추이
+    @Test
+    public void getSellerCreatedAppTransition() {
+    	List<Map<String, Object>> mockList = new ArrayList<Map<String, Object>>();
+    	Map<String, Object> mockMap1 = new HashMap<String, Object>();
+    	mockMap1.put("name", "홍길동");
+    	mockMap1.put("data", 10);
+		Map<String, Object> mockMap2 = new HashMap<String, Object>();
+		mockMap2.put("name", "김삿갓");
+		mockMap2.put("data", 20);
+		mockList.add(mockMap1);
+		mockList.add(mockMap2);
+		
+		given(statsQuery.querySellerCreatedAppTransition(any(String.class))).willReturn(mockList);
+		
+		List<Map<String,Object>> resultQuery = statsQuery.querySellerCreatedAppTransition(sellerName);
+		assertEquals(2, resultQuery.size());
+		assertEquals("홍길동", resultQuery.get(0).get("name"));
+		assertEquals("김삿갓", resultQuery.get(1).get("name"));
+		
+		given(statsQuery.querySellerCreatedAppTransition(any(String.class))).willReturn(mockList);
+    	List<Map<String, Object>> result = statsService.getSellerCreatedAppTransition(sellerName);
+		assertEquals(2, result.size());
+		assertEquals("홍길동", result.get(0).get("name"));
+		assertEquals("김삿갓", result.get(1).get("name"));
+		
+		verify(statsQuery, atLeastOnce()).querySellerCreatedAppTransition(any(String.class));
+    }
 }

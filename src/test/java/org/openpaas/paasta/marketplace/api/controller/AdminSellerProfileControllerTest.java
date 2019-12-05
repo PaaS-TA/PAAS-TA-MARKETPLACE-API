@@ -40,11 +40,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.restdocs.snippet.Snippet;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.StringUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(AdminSellerProfileController.class)
@@ -53,6 +57,9 @@ public class AdminSellerProfileControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @MockBean
     private UserRepository userRepository;
@@ -200,6 +207,57 @@ public class AdminSellerProfileControllerTest {
                 )
             );
         // @formatter:on
+    }
+    
+    @Test
+    public void update() throws Exception {
+    	Profile profile = profile(userId);
+    	
+    	given(profileService.update(any(Profile.class))).willReturn(profile);
+    	
+    	ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders
+    													.put("/admin/profiles/{id}", userId)
+    													.contentType(MediaType.APPLICATION_JSON)
+    													.accept(MediaType.APPLICATION_JSON)
+    													.header("Authorization", adminId)
+    													.content(objectMapper.writeValueAsString(profile))
+    													.characterEncoding("utf-8"));
+    	
+    	result.andExpect(status().isOk());
+    	result.andDo(print());
+    	
+    	// @formatter:off
+    	result.andDo(
+    			document("admin/profile/update",
+    					preprocessRequest(
+    							modifyUris()
+    							.scheme("http")
+    							.host("marketplace.yourdomain.com")
+    							.removePort(),
+    							prettyPrint()
+    							),
+    					preprocessResponse(
+    							prettyPrint()
+    							),
+    					pathParameters(
+    							parameterWithName("id").description("Profile's id")
+    							),
+    					requestParameters(
+    							),
+//    					relaxedRequestFields(
+//    							fieldWithPath("profile").type(JsonFieldType.OBJECT).description("profile")
+//    							),
+    					relaxedResponseFields(
+    							fieldWithPath("id").type(JsonFieldType.STRING).description("id (PK)"),
+    							fieldWithPath("name").type(JsonFieldType.STRING).description("name"),
+    							fieldWithPath("type").type(JsonFieldType.STRING).description(String.format("status (%s)", StringUtils.arrayToCommaDelimitedString(Profile.Type.values()))),
+    							fieldWithPath("manager").type(JsonFieldType.STRING).description("manager"),
+    							fieldWithPath("email").type(JsonFieldType.STRING).description("email"),
+    							fieldWithPath("siteUrl").type(JsonFieldType.STRING).description("site url")
+    							)
+    					)
+    			);
+    	// @formatter:on
     }
 
 }

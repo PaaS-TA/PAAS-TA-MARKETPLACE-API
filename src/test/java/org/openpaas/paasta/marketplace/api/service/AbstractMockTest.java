@@ -27,11 +27,17 @@ public abstract class AbstractMockTest {
     protected String adminId;
 
     protected LocalDateTime current;
+    
+    protected String categoryId;
+    
+    protected String sellerName;
 
     @Before
     public void setUp() throws Exception {
         userId = "foo";
         adminId = "admin";
+        categoryId = "1";
+        sellerName = "홍길동";
         current = LocalDateTime.now();
     }
 

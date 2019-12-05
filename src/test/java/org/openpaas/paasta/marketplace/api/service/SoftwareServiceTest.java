@@ -6,8 +6,11 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.Before;
@@ -214,6 +217,47 @@ public class SoftwareServiceTest extends AbstractMockTest {
         assertEquals(softwareList, result);
 
         verify(softwareRepository).findByCreatedBy(userId);
+    }
+    
+    // 판매자의 판매상품 갯수
+    @Test
+    public void getSoldSoftwareCount() {
+    	given(softwareRepository.getSoldSoftwareCount(any(String.class), any(String.class)))
+				.willReturn(1);
+		
+		Integer result = softwareService.getSoldSoftwareCount(userId, "Approval");
+		assertEquals(1, result.intValue());
+		
+		verify(softwareRepository, atLeastOnce()).getSoldSoftwareCount(any(String.class), any(String.class));
+    }
+    
+    // 카테고리를 사용하고 있는 소프트웨어 카운트
+    @Test
+    public void getSoftwareUsedCategoryCount() {
+    	given(softwareRepository.getSoftwareUsedCategoryCount(any(Long.class)))
+				.willReturn(1L);
+		
+		Long result = softwareService.getSoftwareUsedCategoryCount(Long.parseLong(categoryId));
+		assertEquals(1, result.intValue());
+		
+		verify(softwareRepository, atLeastOnce()).getSoftwareUsedCategoryCount(any(Long.class));
+    }
+    
+    // 판매된 소프트웨어의 카운트정보 조회
+	@Test
+	@SuppressWarnings("unchecked")
+    public void getSoftwareInstanceCountMap() {
+    	List<Long> softwareIdList = Arrays.asList(1L, 2L);
+    	List<Object[]> mockList = Arrays.asList(new Object[] {"1", new BigDecimal(10)}, new Object[] {"2", new BigDecimal(20)});
+    	
+    	given(softwareRepository.getSoftwareInstanceCountMap(any(List.class))).willReturn(mockList);
+		
+    	Map<String,Object> result = softwareService.getSoftwareInstanceCountMap(softwareIdList);
+		assertEquals(softwareIdList.size(), result.size());
+		assertEquals(new BigDecimal(10), result.get("1"));
+		assertEquals(new BigDecimal(20), result.get("2"));
+		
+		verify(softwareRepository, atLeastOnce()).getSoftwareInstanceCountMap(softwareIdList);
     }
 
 }

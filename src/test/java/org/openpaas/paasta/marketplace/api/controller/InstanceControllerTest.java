@@ -3,6 +3,7 @@ package org.openpaas.paasta.marketplace.api.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
@@ -19,7 +20,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.After;
@@ -49,6 +53,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindException;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -143,9 +150,75 @@ public class InstanceControllerTest {
 
         return instance;
     }
-
+    
     @Test
     public void getPage() throws Exception {
+        Category category1 = category(1L, "category-01");
+        Category category2 = category(2L, "category-02");
+        Software software1 = software(1L, "software-01", category1);
+        Software software2 = software(2L, "software-02", category2);
+        software2.setCreatedBy("bar");
+        Instance instance1 = instance(1L, software1);
+        Instance instance2 = instance(2L, software2);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        List<Instance> content = new ArrayList<>();
+        content.add(instance1);
+        content.add(instance2);
+        Page<Instance> page = new PageImpl<>(content, pageable, content.size());
+        
+        Map<String,Long> mockPlanInfoMap = new HashMap<String,Long>();
+        mockPlanInfoMap.put(String.valueOf(instance1.getSoftwarePlanId()), 1000L);
+        mockPlanInfoMap.put(String.valueOf(instance2.getSoftwarePlanId()), 2000L);
+
+        given(instanceService.getPage(any(InstanceSpecification.class), any(Pageable.class))).willReturn(page);
+        given(softwarePlanService.getPricePerMonthList(any(List.class))).willReturn(mockPlanInfoMap);
+        
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/instances/page")
+                .param("page", "0").param("size", "10").param("sort", "id,asc")
+                .param("status", Instance.Status.Approval.toString()).param("categoryId", "1")
+                .param("softwareNameLike", "software").contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON).header("Authorization", userId).characterEncoding("utf-8"));
+
+        result.andExpect(status().isOk());
+        result.andDo(print());
+
+        // @formatter:off
+        result.andDo(
+            document("/instance/getPage",
+                preprocessRequest(
+                        modifyUris()
+                            .scheme("http")
+                            .host("marketplace.yourdomain.com")
+                            .removePort(),
+                        prettyPrint()
+                    ),
+                preprocessResponse(
+                        prettyPrint()
+                    ),
+                pathParameters(
+                    ),
+                requestParameters(
+                        parameterWithName("page").description("index of page (starting from 0)"),
+                        parameterWithName("size").description("size of page"),
+                        parameterWithName("sort").description("sort condition (column,direction)"),
+                        parameterWithName("status").description("status"),
+                        parameterWithName("categoryId").description("category's id"),
+                        parameterWithName("softwareNameLike").description("search word of software's name")
+                    ),
+                relaxedResponseFields(
+                        fieldWithPath("content").type(JsonFieldType.ARRAY).description("content of page"),
+                        fieldWithPath("pageable").type(JsonFieldType.OBJECT).description("request pageable"),
+                        fieldWithPath("numberOfElements").type(JsonFieldType.NUMBER).description("total count of elements")
+                    )
+                )
+            );
+        // @formatter:on
+    }
+
+    @Test
+    public void getMyPage() throws Exception {
         Category category1 = category(1L, "category-01");
         Category category2 = category(2L, "category-02");
         Software software1 = software(1L, "software-01", category1);
@@ -304,6 +377,62 @@ public class InstanceControllerTest {
             );
         // @formatter:on
     }
+    
+    @Test
+    public void createWithSoftwareIdNull() throws Exception {
+    	Category category = category(1L, "category-01");
+    	Software software = software(1L, "software-01", category);
+    	Instance instance = instance(1L, software);
+    	
+    	Software s = new Software();
+    	s.setId(software.getId());
+    	Instance i = new Instance();
+    	i.setSoftware(s);
+    	i.setSoftwarePlanId(instance.getSoftwarePlanId());
+    	s.setId(null);
+    	
+    	given(instanceService.create(any(Instance.class))).willReturn(instance);
+    	
+    	ResultActions result = this.mockMvc.perform(
+    			RestDocumentationRequestBuilders.post("/instances")
+    			.contentType(MediaType.APPLICATION_JSON)
+    			.accept(MediaType.APPLICATION_JSON)
+    			.header("Authorization", userId)
+    			.content(objectMapper.writeValueAsString(i))
+    			.characterEncoding("utf-8")
+    			);
+    	
+    	result.andExpect(status().is4xxClientError());
+    	result.andDo(print());
+    }
+    
+    @Test
+    public void createWithSoftwarePlanIdNull() throws Exception {
+    	Category category = category(1L, "category-01");
+    	Software software = software(1L, "software-01", category);
+    	Instance instance = instance(1L, software);
+    	
+    	Software s = new Software();
+    	s.setId(software.getId());
+    	Instance i = new Instance();
+    	i.setSoftware(s);
+    	i.setSoftwarePlanId(instance.getSoftwarePlanId());
+    	i.setSoftwarePlanId(null);
+    	
+    	given(instanceService.create(any(Instance.class))).willReturn(instance);
+    	
+    	ResultActions result = this.mockMvc.perform(
+    			RestDocumentationRequestBuilders.post("/instances")
+    			.contentType(MediaType.APPLICATION_JSON)
+    			.accept(MediaType.APPLICATION_JSON)
+    			.header("Authorization", userId)
+    			.content(objectMapper.writeValueAsString(i))
+    			.characterEncoding("utf-8")
+    			);
+    	
+    	result.andExpect(status().is4xxClientError());
+    	result.andDo(print());
+    }
 
     @Test
     public void delete() throws Exception {
@@ -348,4 +477,281 @@ public class InstanceControllerTest {
         // @formatter:on
     }
 
+    @Test
+    public void getMyTotalPage() throws Exception {
+        Category category1 = category(1L, "category-01");
+        Category category2 = category(2L, "category-02");
+        Software software1 = software(1L, "software-01", category1);
+        Software software2 = software(2L, "software-02", category2);
+        software2.setCreatedBy("bar");
+        Instance instance1 = instance(1L, software1);
+        Instance instance2 = instance(2L, software2);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        List<Instance> content = new ArrayList<>();
+        content.add(instance1);
+        content.add(instance2);
+        Page<Instance> page = new PageImpl<>(content, pageable, content.size());
+        
+        Map<String,Long> mockPlanInfoMap = new HashMap<String,Long>();
+        mockPlanInfoMap.put(String.valueOf(instance1.getSoftwarePlanId()), 1000L);
+        mockPlanInfoMap.put(String.valueOf(instance2.getSoftwarePlanId()), 2000L);
+
+        given(instanceService.getPage(any(InstanceSpecification.class), any(Pageable.class))).willReturn(page);
+        given(softwarePlanService.getPricePerMonthList(any(List.class))).willReturn(mockPlanInfoMap);
+        
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/instances/my/totalPage")
+                .param("page", "0").param("size", "10").param("sort", "id,asc")
+                .param("status", Instance.Status.Approval.toString()).param("categoryId", "1")
+                .param("softwareNameLike", "software").contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON).header("Authorization", userId).characterEncoding("utf-8"));
+
+        result.andExpect(status().isOk());
+        result.andDo(print());
+
+        result.andDo(
+            document("/instance/getMyTotalPage",
+                preprocessRequest(
+                    modifyUris()
+                        .scheme("http")
+                        .host("marketplace.yourdomain.com")
+                        .removePort(),
+                    prettyPrint()
+                ),
+                preprocessResponse(
+                        prettyPrint()
+                ),
+                pathParameters(
+                ),
+                requestParameters(
+                    parameterWithName("page").description("index of page (starting from 0)"),
+                    parameterWithName("size").description("size of page"),
+                    parameterWithName("sort").description("sort condition (column,direction)"),
+                    parameterWithName("status").description("status"),
+                    parameterWithName("categoryId").description("category's id"),
+                    parameterWithName("softwareNameLike").description("search word of software's name")
+                ),
+                relaxedResponseFields(
+                    fieldWithPath("content").type(JsonFieldType.ARRAY).description("content of page"),
+                    fieldWithPath("pageable").type(JsonFieldType.OBJECT).description("request pageable"),
+                    fieldWithPath("numberOfElements").type(JsonFieldType.NUMBER).description("total count of elements")
+                )
+            )
+        );
+    }
+    
+    // 사용자 총 사용요금 계산 (기간한정)
+    @Test
+    public void usagePriceTotal() throws Exception {
+    	given(instanceService.usagePriceTotal(any(String.class), any(String.class), any(String.class))).willReturn(10000L);
+    	
+    	ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/instances/usagePriceTotal")
+											            .param("userId", "test")
+											            .param("usageStartDate", current.toString())
+											            .param("usageEndDate", current.toString())
+											            .contentType(MediaType.APPLICATION_JSON)
+											            .accept(MediaType.APPLICATION_JSON)
+											            .header("Authorization", userId)
+											            .characterEncoding("utf-8"));
+        result.andExpect(status().isOk());
+        result.andDo(print());
+        result.andDo(
+            document("/instance/getMyTotalPage",
+                preprocessRequest(
+                    modifyUris()
+                        .scheme("http")
+                        .host("marketplace.yourdomain.com")
+                        .removePort(),
+                    prettyPrint()
+                ),
+                preprocessResponse(
+                        prettyPrint()
+                ),
+                pathParameters(
+                ),
+                requestParameters(
+                    parameterWithName("userId").description("User's Id"),
+                    parameterWithName("usageStartDate").description("Usage Start Date"),
+                    parameterWithName("usageEndDate").description("Usage End Date")
+                ),
+                relaxedResponseFields(
+                )
+            )
+        );
+    }
+    
+    // 사용자 총 사용요금 계산 (기간한정)
+    @Test
+    public void usagePriceTotalWithUserIdNull() throws Exception {
+    	given(instanceService.usagePriceTotal(any(String.class), any(String.class), any(String.class))).willReturn(10000L);
+    	
+    	ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/instances/usagePriceTotal")
+										    			//.param("userId", "test")
+										    			.param("usageStartDate", current.toString())
+										    			.param("usageEndDate", current.toString())
+										    			.contentType(MediaType.APPLICATION_JSON)
+										    			.accept(MediaType.APPLICATION_JSON)
+										    			.header("Authorization", userId)
+										    			.characterEncoding("utf-8"));
+    	result.andExpect(status().isOk());
+    	result.andDo(print());
+    	result.andDo(
+                document("/instance/getMyTotalPage",
+                preprocessRequest(
+                    modifyUris()
+                        .scheme("http")
+                        .host("marketplace.yourdomain.com")
+                        .removePort(),
+                    prettyPrint()
+                ),
+                preprocessResponse(
+                        prettyPrint()
+                ),
+                pathParameters(
+                ),
+                requestParameters(
+                    //parameterWithName("userId").description("User's Id"),
+                    parameterWithName("usageStartDate").description("Usage Start Date"),
+                    parameterWithName("usageEndDate").description("Usage End Date")
+                ),
+                relaxedResponseFields(
+                )
+            )
+        );
+    }
+    
+    // 상품별 사용요금 계산 (기간한정)
+    @Test
+    public void pricePerInstanceList() throws Exception {
+    	List<Long> inInstanceId = Arrays.asList(1L, 2L, 3L);
+    	Map<String, String> mockPricePerInstanceMap = new HashMap<String,String>();
+    	for (Long instanceId : inInstanceId) {
+    		mockPricePerInstanceMap.put(String.valueOf(instanceId), "1000");
+    	}
+    	
+    	given(instanceService.getPricePerInstanceList(any(List.class), any(String.class), any(String.class))).willReturn(mockPricePerInstanceMap);
+    	
+    	ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/instances/pricePerInstanceList")
+										    			.param("inInstanceId", "1").param("inInstanceId", "2").param("inInstanceId", "3")
+										    			.param("usageStartDate", current.toString())
+										    			.param("usageEndDate",   current.toString())
+										    			.contentType(MediaType.APPLICATION_JSON)
+										    			.accept(MediaType.APPLICATION_JSON)
+										    			.header("Authorization", userId)
+										    			.characterEncoding("utf-8"));
+    	result.andExpect(status().isOk());
+    	result.andDo(print());
+    	result.andDo(
+			document("/instance/pricePerInstanceList",
+				preprocessRequest(
+					modifyUris()
+					.scheme("http")
+					.host("marketplace.yourdomain.com")
+					.removePort(),
+					prettyPrint()
+				),
+				preprocessResponse(
+					prettyPrint()
+				),
+				pathParameters(),
+				requestParameters(
+					parameterWithName("inInstanceId").description("Instance's Id"),
+					parameterWithName("usageStartDate").description("Usage Start Date"),
+					parameterWithName("usageEndDate").description("Usage End Date")
+				),
+				relaxedResponseFields()
+			)
+		);
+    	//andDo
+    }
+    
+    // 상품별 사용요금 계산 (기간한정)
+    @Test
+    public void pricePerInstanceListWithInstanceIdNull() throws Exception {
+    	List<Long> inInstanceId = Arrays.asList(1L, 2L, 3L);
+    	Map<String, String> mockPricePerInstanceMap = new HashMap<String,String>();
+    	for (Long instanceId : inInstanceId) {
+    		mockPricePerInstanceMap.put(String.valueOf(instanceId), "1000");
+    	}
+    	
+    	given(instanceService.getPricePerInstanceList(any(List.class), any(String.class), any(String.class))).willReturn(mockPricePerInstanceMap);
+    	
+    	ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/instances/pricePerInstanceList")
+										    			//.param("inInstanceId", "1").param("inInstanceId", "2").param("inInstanceId", "3")
+										    			.param("usageStartDate", current.toString())
+										    			.param("usageEndDate",   current.toString())
+										    			.contentType(MediaType.APPLICATION_JSON)
+										    			.accept(MediaType.APPLICATION_JSON)
+										    			.header("Authorization", userId)
+										    			.characterEncoding("utf-8"));
+    	result.andExpect(status().isOk());
+    	result.andDo(print());
+    	result.andDo(
+			document("/instance/pricePerInstanceList",
+				preprocessRequest(
+					modifyUris()
+					.scheme("http")
+					.host("marketplace.yourdomain.com")
+					.removePort(),
+					prettyPrint()
+				),
+				preprocessResponse(
+					prettyPrint()
+				),
+				pathParameters(),
+				requestParameters(
+					//parameterWithName("inInstanceId").description("Instance's Id"),
+					parameterWithName("usageStartDate").description("Usage Start Date"),
+					parameterWithName("usageEndDate").description("Usage End Date")
+				),
+				relaxedResponseFields()
+			)
+		);
+    	//andDo
+    }
+    
+    // 상품별 사용요금 계산 (기간한정)
+    @Test
+    public void pricePerInstanceListWithUsageStartDateNull() throws Exception {
+    	List<Long> inInstanceId = Arrays.asList(1L, 2L, 3L);
+    	Map<String, String> mockPricePerInstanceMap = new HashMap<String,String>();
+    	for (Long instanceId : inInstanceId) {
+    		mockPricePerInstanceMap.put(String.valueOf(instanceId), "1000");
+    	}
+    	
+    	given(instanceService.getPricePerInstanceList(any(List.class), any(String.class), any(String.class))).willReturn(mockPricePerInstanceMap);
+    	
+    	ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/instances/pricePerInstanceList")
+										    			.param("inInstanceId", "1").param("inInstanceId", "2").param("inInstanceId", "3")
+										    			//.param("usageStartDate", current.toString())
+										    			.param("usageEndDate",   current.toString())
+										    			.contentType(MediaType.APPLICATION_JSON)
+										    			.accept(MediaType.APPLICATION_JSON)
+										    			.header("Authorization", userId)
+										    			.characterEncoding("utf-8"));
+    	result.andExpect(status().isOk());
+    	result.andDo(print());
+    	result.andDo(
+			document("/instance/pricePerInstanceList",
+				preprocessRequest(
+					modifyUris()
+					.scheme("http")
+					.host("marketplace.yourdomain.com")
+					.removePort(),
+					prettyPrint()
+				),
+				preprocessResponse(
+					prettyPrint()
+				),
+				pathParameters(),
+				requestParameters(
+					parameterWithName("inInstanceId").description("Instance's Id"),
+					//parameterWithName("usageStartDate").description("Usage Start Date"),
+					parameterWithName("usageEndDate").description("Usage End Date")
+				),
+				relaxedResponseFields()
+			)
+		);
+    }
 }

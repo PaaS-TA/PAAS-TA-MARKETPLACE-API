@@ -80,17 +80,6 @@ public class InstanceController {
         spec.setCreatedBy(SecurityUtils.getUserId());
         spec.setStatus(Instance.Status.Approval);
         Page<Instance> result = instanceService.getPage(spec, pageable);
-        
-        // softwarePlan의 가격정보 조회
-//        List<Instance> instanceList = result.getContent();
-//        Long pricePerMonth = 0L;
-//        if (instanceList != null && !instanceList.isEmpty()) {
-//	        for (Instance instance : instanceList) {
-//	        	pricePerMonth = softwarePlanService.getPricePerMonth(String.valueOf(instance.getSoftware().getId()), instance.getSoftwarePlanId());
-//	        	instance.getSoftware().setPricePerMonth(pricePerMonth);
-//	        }
-//        }
-        
         return result;
     }
 
@@ -169,6 +158,14 @@ public class InstanceController {
         return saved;
     }
     
+    /**
+     * 사용자 총 사용요금 계산 (기간한정)
+     * @param userId
+     * @param usageStartDate
+     * @param usageEndDate
+     * @return
+     * @throws BindException
+     */
     @GetMapping("/usagePriceTotal")
     public Long usagePriceTotal(@RequestParam(name = "userId", required = false) String userId
     							,@RequestParam(name = "usageStartDate", required = false) String usageStartDate
@@ -179,6 +176,13 @@ public class InstanceController {
     	return instanceService.usagePriceTotal(userId, usageStartDate, usageEndDate);
     }
 
+    /**
+     * 상품별 사용요금 계산 (기간한정)
+     * @param inInstanceId
+     * @param usageStartDate
+     * @param usageEndDate
+     * @return
+     */
     @GetMapping("/pricePerInstanceList")
     public Map<String, String> pricePerInstanceList(
     		@RequestParam(name = "inInstanceId", required = false) List<Long> inInstanceId
