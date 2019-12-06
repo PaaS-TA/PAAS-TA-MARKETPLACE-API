@@ -559,6 +559,7 @@ public class SoftwareControllerTest {
                 										.characterEncoding("utf-8"));
         result.andExpect(status().isOk());
         result.andDo(print());
+        // @formatter:off
         result.andDo(
             document("software/getHistoryList",
                 preprocessRequest(
@@ -578,13 +579,15 @@ public class SoftwareControllerTest {
                 	parameterWithName("sort").description("sort condition (column,direction)")
                 ),
                 relaxedResponseFields(
-                	fieldWithPath("[0].id").type(JsonFieldType.NUMBER).description("version"),
-                	fieldWithPath("[0].description").type(JsonFieldType.STRING).description("description"),
-                	fieldWithPath("[0].createdBy").type(JsonFieldType.STRING).description("createdBy"),
-                	fieldWithPath("[0].inUse").type(JsonFieldType.STRING).description("inUse")
+                	fieldWithPath("[]").type(JsonFieldType.ARRAY).description("list of history"),
+                	fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("version"),
+                	fieldWithPath("[].description").type(JsonFieldType.STRING).description("description"),
+                	fieldWithPath("[].createdBy").type(JsonFieldType.STRING).description("createdBy"),
+                	fieldWithPath("[].inUse").type(JsonFieldType.STRING).description("inUse")
                 )
             )
         );
+        // @formatter:on
     }
     
     // 판매자의 상태별 상품 갯수 조회
@@ -601,6 +604,7 @@ public class SoftwareControllerTest {
                 										.characterEncoding("utf-8"));
         result.andExpect(status().isOk());
         result.andDo(print());
+        // @formatter:off
         result.andDo(
             document("software/getHistoryList",
                 preprocessRequest(
@@ -621,6 +625,7 @@ public class SoftwareControllerTest {
                 relaxedResponseFields()
             )
         );
+        // @formatter:on
     }
 
     // 판매된 소프트웨어의 카운트정보 조회
@@ -641,6 +646,7 @@ public class SoftwareControllerTest {
                 										.characterEncoding("utf-8"));
         result.andExpect(status().isOk());
         result.andDo(print());
+        // @formatter:off
         result.andDo(
             document("software/softwareInstanceCountMap",
                 preprocessRequest(
@@ -660,5 +666,6 @@ public class SoftwareControllerTest {
                 relaxedResponseFields()
             )
         );
+        // @formatter:on
     }
 }

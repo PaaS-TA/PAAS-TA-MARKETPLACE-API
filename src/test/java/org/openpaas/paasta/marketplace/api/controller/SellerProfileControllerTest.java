@@ -295,6 +295,8 @@ public class SellerProfileControllerTest {
 										                .characterEncoding("utf-8"));
         result.andExpect(status().isOk());
         result.andDo(print());
+        
+        // @formatter:off
         result.andDo(
             document("/profiles/getPage",
                 preprocessRequest(
@@ -319,6 +321,7 @@ public class SellerProfileControllerTest {
                 )
             )
         );
+        // @formatter:on
     }
 
 }

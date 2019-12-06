@@ -19,6 +19,7 @@ import javax.persistence.EntityManager;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.openpaas.paasta.marketplace.api.domain.Instance;
 import org.openpaas.paasta.marketplace.api.domain.Software;
@@ -30,6 +31,7 @@ import org.springframework.data.domain.Pageable;
 
 public class StatsServiceTest extends AbstractMockTest {
 
+	@InjectMocks
     StatsService statsService;
 
     @Mock
@@ -44,9 +46,8 @@ public class StatsServiceTest extends AbstractMockTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        
-        statsQuery.setEntityManager(entityManager);
-        statsService = new StatsService(statsRepository, statsQuery);
+//        statsQuery.setEntityManager(entityManager);
+//        statsService = new StatsService(statsRepository, statsQuery);
     }
 
     @Test

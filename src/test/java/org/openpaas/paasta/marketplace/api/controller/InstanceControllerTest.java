@@ -509,7 +509,7 @@ public class InstanceControllerTest {
 
         result.andExpect(status().isOk());
         result.andDo(print());
-
+        // @formatter:off
         result.andDo(
             document("/instance/getMyTotalPage",
                 preprocessRequest(
@@ -539,6 +539,7 @@ public class InstanceControllerTest {
                 )
             )
         );
+        // @formatter:on
     }
     
     // 사용자 총 사용요금 계산 (기간한정)
@@ -556,6 +557,7 @@ public class InstanceControllerTest {
 											            .characterEncoding("utf-8"));
         result.andExpect(status().isOk());
         result.andDo(print());
+        // @formatter:off
         result.andDo(
             document("/instance/getMyTotalPage",
                 preprocessRequest(
@@ -579,6 +581,7 @@ public class InstanceControllerTest {
                 )
             )
         );
+        // @formatter:on
     }
     
     // 사용자 총 사용요금 계산 (기간한정)
@@ -596,6 +599,7 @@ public class InstanceControllerTest {
 										    			.characterEncoding("utf-8"));
     	result.andExpect(status().isOk());
     	result.andDo(print());
+    	// @formatter:off
     	result.andDo(
                 document("/instance/getMyTotalPage",
                 preprocessRequest(
@@ -619,6 +623,7 @@ public class InstanceControllerTest {
                 )
             )
         );
+    	// @formatter:on
     }
     
     // 상품별 사용요금 계산 (기간한정)
@@ -642,6 +647,7 @@ public class InstanceControllerTest {
 										    			.characterEncoding("utf-8"));
     	result.andExpect(status().isOk());
     	result.andDo(print());
+    	// @formatter:off
     	result.andDo(
 			document("/instance/pricePerInstanceList",
 				preprocessRequest(
@@ -663,7 +669,7 @@ public class InstanceControllerTest {
 				relaxedResponseFields()
 			)
 		);
-    	//andDo
+    	// @formatter:on
     }
     
     // 상품별 사용요금 계산 (기간한정)
@@ -687,6 +693,7 @@ public class InstanceControllerTest {
 										    			.characterEncoding("utf-8"));
     	result.andExpect(status().isOk());
     	result.andDo(print());
+    	// @formatter:off
     	result.andDo(
 			document("/instance/pricePerInstanceList",
 				preprocessRequest(
@@ -708,7 +715,7 @@ public class InstanceControllerTest {
 				relaxedResponseFields()
 			)
 		);
-    	//andDo
+    	// @formatter:on
     }
     
     // 상품별 사용요금 계산 (기간한정)
@@ -732,6 +739,7 @@ public class InstanceControllerTest {
 										    			.characterEncoding("utf-8"));
     	result.andExpect(status().isOk());
     	result.andDo(print());
+    	// @formatter:off
     	result.andDo(
 			document("/instance/pricePerInstanceList",
 				preprocessRequest(
@@ -753,5 +761,6 @@ public class InstanceControllerTest {
 				relaxedResponseFields()
 			)
 		);
+    	// @formatter:on
     }
 }

@@ -383,7 +383,7 @@ public class AdminSoftwareControllerTest {
                 										.characterEncoding("utf-8"));
         result.andExpect(status().isOk());
         result.andDo(print());
-
+        // @formatter:off
         result.andDo(
             document("admin/software/getHistoryList",
                 preprocessRequest(
@@ -406,6 +406,7 @@ public class AdminSoftwareControllerTest {
                 )
             )
         );
+        // @formatter:on
     }
 
     // 상품가격 리스트 조회
@@ -427,7 +428,7 @@ public class AdminSoftwareControllerTest {
                 										.characterEncoding("utf-8"));
         result.andExpect(status().isOk());
         result.andDo(print());
-
+        // @formatter:off
         result.andDo(
             document("admin/software/currentSoftwarePlanList",
                 preprocessRequest(
@@ -449,6 +450,7 @@ public class AdminSoftwareControllerTest {
                 )
             )
         );
+        // @formatter:on
     }
 
     // 상품가격 리스트 조회
@@ -471,7 +473,7 @@ public class AdminSoftwareControllerTest {
                 										.characterEncoding("utf-8"));
         result.andExpect(status().isOk());
         result.andDo(print());
-
+        // @formatter:off
         result.andDo(
             document("admin/software/getList",
                 preprocessRequest(
@@ -494,6 +496,7 @@ public class AdminSoftwareControllerTest {
                 )
             )
         );
+        // @formatter:on
     }
 
     // 상품가격 정보를 적용일자로 조회
@@ -516,7 +519,7 @@ public class AdminSoftwareControllerTest {
                 										.characterEncoding("utf-8"));
         result.andExpect(status().isOk());
         result.andDo(print());
-
+        // @formatter:off
         result.andDo(
             document("admin/software/getApplyMonth",
                 preprocessRequest(
@@ -539,6 +542,7 @@ public class AdminSoftwareControllerTest {
                 )
             )
         );
+        // @formatter:on
     }
 
     // 앱 배포 테스트
@@ -559,7 +563,7 @@ public class AdminSoftwareControllerTest {
                 										.characterEncoding("utf-8"));
         result.andExpect(status().isOk());
         result.andDo(print());
-
+        // @formatter:off
         result.andDo(
             document("admin/software/deployTestSoftware",
                 preprocessRequest(
@@ -582,6 +586,7 @@ public class AdminSoftwareControllerTest {
                 )
             )
         );
+        // @formatter:on
     }
 
     // 각 상품에 대한 배포 테스한 앱 목록 조회
@@ -604,7 +609,7 @@ public class AdminSoftwareControllerTest {
                 										.characterEncoding("utf-8"));
         result.andExpect(status().isOk());
         result.andDo(print());
-
+        // @formatter:off
         result.andDo(
             document("admin/software/getTestSwInfoList",
                 preprocessRequest(
@@ -626,6 +631,7 @@ public class AdminSoftwareControllerTest {
                 )
             )
         );
+        // @formatter:on
     }
 
     // 배포 테스트한 앱 삭제
@@ -646,7 +652,7 @@ public class AdminSoftwareControllerTest {
                 										.characterEncoding("utf-8"));
         result.andExpect(status().isOk());
         result.andDo(print());
-
+        // @formatter:off
         result.andDo(
             document("admin/software/deleteDeployTestApp",
                 preprocessRequest(
@@ -670,6 +676,7 @@ public class AdminSoftwareControllerTest {
                 )
             )
         );
+        // @formatter:on
     }
 
     // 배포 테스트 실패한 앱 삭제
@@ -682,7 +689,7 @@ public class AdminSoftwareControllerTest {
                 										.characterEncoding("utf-8"));
         result.andExpect(status().isOk());
         result.andDo(print());
-
+        // @formatter:off
         result.andDo(
             document("admin/software/deleteDeployTestFailedApp",
                 preprocessRequest(
@@ -704,6 +711,7 @@ public class AdminSoftwareControllerTest {
                 )
             )
         );
+        // @formatter:on
     }
 
     // 카테고리를 사용하고 있는 소프트웨어 카운트
@@ -718,7 +726,7 @@ public class AdminSoftwareControllerTest {
 														.characterEncoding("utf-8"));
 		result.andExpect(status().isOk());
 		result.andDo(print());
-
+		// @formatter:off
         result.andDo(
             document("admin/software/softwareUsedCategoryCount",
                 preprocessRequest(
@@ -740,5 +748,6 @@ public class AdminSoftwareControllerTest {
                 )
             )
         );
+        // @formatter:on
     }
 }
