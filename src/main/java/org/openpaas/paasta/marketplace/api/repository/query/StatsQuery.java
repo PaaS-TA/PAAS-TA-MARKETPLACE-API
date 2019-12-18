@@ -598,7 +598,8 @@ public class StatsQuery<T> {
 			excQuery.append("                    AND     DATE_FORMAT(so.created_date, '%Y%m%d') BETWEEN DATE_FORMAT(:srchStartDate, '%Y%m%d') \n");
 			excQuery.append("                                                                       AND DATE_FORMAT(:srchEndDate, '%Y%m%d') \n");
 		} else {
-			
+			excQuery.append("                    AND     DATE_FORMAT(so.created_date, '%Y%m%d') BETWEEN DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -5 MONTH), '%Y%m%d') \n");
+			excQuery.append("                                                                       AND DATE_FORMAT(NOW(), '%Y%m%d')  \n");
 		}
 		excQuery.append("                        GROUP BY so.name \n");
 		excQuery.append("                    ) b \n");
