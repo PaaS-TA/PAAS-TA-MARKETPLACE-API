@@ -1,0 +1,85 @@
+applications:
+- name: marketplace-api
+  memory: 2G
+  disk_quota: 2G
+  instances: 1
+  buildpacks:
+  - java_buildpack
+  path: build/libs/marketplace-api.jar
+  env:
+    server_port: 8777
+    spring_application_name: marketplace-api
+    spring_security_username: admin
+    spring_security_password: openpaasta
+    spring_datasource_driver-class-name: com.mysql.cj.jdbc.Driver
+    spring_datasource_url: jdbc:mysql://<DB_IP>:<DB_PORT>/marketplace?characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul
+    spring_datasource_username: root
+    spring_datasource_password: <DB_ADMIN_PASSWORD>
+    spring_jpa_database: mysql
+    spring_jpa_hibernate_ddl-auto: update
+    spring_jpa_hibernate_use-new-id-generator-mappings: false
+    spring_jpa_show-sql: true
+    spring_jpa_database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    spring_jpa_properties_hibernate_jdbc: Asia/Seoul
+    spring_jackson_serialization_fail-on-empty-beans: false
+    spring_jackson_default-property-inclusion: NON_NULL
+    spring_servlet_multipart_max-file-size: 100MB
+    spring_servlet_multipart_max-request-size: 100MB
+
+    # marketplace Uaa 계정 정보
+    cloudfoundry_cc_api_url: https://api.<DOMAIN>
+    cloudfoundry_cc_api_uaaUrl: https://uaa.<DOMAIN>
+    cloudfoundry_cc_api_sslSkipValidation: true
+    cloudfoundry_cc_api_proxyUrl: ""
+    cloudfoundry_cc_api_host: ".<DOMAIN>"
+    cloudfoundry_user_admin_username: admin
+    cloudfoundry_user_admin_password: 'admin'
+    cloudfoundry_user_uaaClient_clientId: admin                   # uaac admin client의 id를 입력한다.
+    cloudfoundry_user_uaaClient_clientSecret: admin-secret        # uaac admin client의 secret를 입력한다.
+    cloudfoundry_user_uaaClient_adminClientId: admin              # CF 관리자 계정 id를 입력한다.
+    cloudfoundry_user_uaaClient_adminClientSecret: admin-secret   # CF 관리자 계정 secret를 입력한다.
+    cloudfoundry_user_uaaClient_loginClientId: admin              # CF 로그인 계정 id를 입력한다.
+    cloudfoundry_user_uaaClient_loginClientSecret: admin-secret   # CF 로그인 계정 secret를 입력한다.
+    cloudfoundry_user_uaaClient_skipSSLValidation: true           # Uaa와 통신할 때, ssl 유효성 체크 skip 여부(기본값 true이며 true 일때 유효성 체크 하지 않음)
+    cloudfoundry_authorization: cf-Authorization
+
+    market_org_name: "marketplace-org"
+    market_org_guid: "<marketplace-org 조직 GUID>"                # [cf org marketplace-org --guid] 명령어를 통해 확인 가능
+    market_space_name: "marketplace-space"
+    market_space_guid: "<marketplace-space 공간 GUID>"            # [cf space marketplace-space --guid] 명령어를 통해 확인 가능
+    market_quota_guid: "<marketplace_quota 쿼타 GUID>"            # [cf curl "/v2/quota_definitions"] 명령어를 통해 "marketplace_quota"에 해당하는 GUID 확인 가능
+    market_domain_guid: "<도메인 GUID>"                           # [cf curl "/v2/domains"] 명령어를 통해 확인 가능
+    market_naming-type: "Auto"
+
+    # 파일 업로드 Swift
+    objectStorage_swift_tenantName: <OBJECT_STORAGE_TENANTNAME>
+    objectStorage_swift_username: <OBJECT_STORAGE_USERNAME>
+    objectStorage_swift_password: <OBJECT_STORAGE_PASSWORD>
+    objectStorage_swift_authUrl: http://<OBJECT_STORAGE_IP>:<OBJECT_STORAGE_AUTH_PORT>/v2.0/tokens
+    objectStorage_swift_authMethod: keystone
+    objectStorage_swift_preferredRegion: Public
+    objectStorage_swift_container: <OBJECT_STORAGE_CONTAINER>
+
+    provisioning_pool-size: 3
+    provisioning_try-count: 7
+    provisioning_timeout: 3600000
+    provisioning_ready-fixed-rate: 10000
+    provisioning_ready-initial-delay: 3000
+    provisioning_progress-fixed-rate: 10000
+    provisioning_progress-initial-delay: 5000
+    provisioning_timeout-fixed-rate: 30000
+    provisioning_timeout-initial-delay: 1700
+
+    deprovisioning_pool-size: 3
+    deprovisioning_try-count: 7
+    deprovisioning_timeout: 3600000
+    deprovisioning_ready-fixed-rate: 10000
+    deprovisioning_ready-initial-delay: 7000
+    deprovisioning_progress-fixed-rate: 10000
+    deprovisioning_progress-initial-delay: 13000
+    deprovisioning_timeout-fixed-rate: 30000
+    deprovisioning_timeout-initial-delay: 1700
+
+    task_execution_restrict-to-same-host: false
+
+    java_opts: '-XX:MaxMetaspaceSize=256000K -Xss349K -Xms1G -XX:MetaspaceSize=256000K -Xmx1G'
